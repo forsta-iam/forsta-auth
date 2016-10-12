@@ -1,2 +1,5 @@
-python-social-auth
 Django
+django-reversion
+#python3-saml
+psycopg2
+python-social-auth

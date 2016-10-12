@@ -18,7 +18,7 @@
             </thead>
             <tbody>{% for user_social_auth in associated %}
                 <tr>
-                    <td>{{ user_social_auth.name }}</td>
+                    <td><i class="fa fa-2x fa-{{ user_social_auth.font_awesome }}" title="{{ user_social_auth.name }}"> </i></td>
                     <td>{{ user_social_auth.username }}</td>
                     <td>
                         <form method="post" action="{% url "social:disconnect_individual" backend=user_social_auth.provider association_id=user_social_auth.id %}">

@@ -1,3 +1,4 @@
+import django
 import os
 from social.pipeline import DEFAULT_AUTH_PIPELINE
 
@@ -22,7 +23,8 @@ if 'DJANGO_ADMINS' in os.environ:
 
 DATABASES = {
     'default': {
-        'ENGINE': 'transaction_hooks.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.' + (
+            'postgresql' if django.VERSION >= (1, 9) else 'postgresql_psycopg2'),
         'NAME': os.environ.get('DATABASE_NAME', 'idm_auth'),
     },
 }
@@ -65,11 +67,21 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'social.apps.django_app.context_processors.backends',
-    'social.apps.django_app.context_processors.login_redirect',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': (
+                'django.contrib.auth.context_processors.auth',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
+                'django.template.context_processors.static',
+            ),
+        },
+    },
+]
 
 ROOT_URLCONF = 'idm_auth.urls'
 
