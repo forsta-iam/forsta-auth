@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Login</h1>
+
+    <section>
+        <input type="text" placeholder="Username (e.g. 'abcd1234')" name="username"><br>
+        <input type="password" placeholder="Password" name="password"><br>
+        <input type="submit" value="Forgotten" name="forgotten">
+        <input type="submit" value="Login" name="submit">
+    </section>
+
+    {% if 'twitter' in backends.backends %}
+    <a href="{% url "social:begin" backend="twitter" %}">Twitter</a>
+    {% endif %}
+    {{ backends.backends }}
+{% endblock %}
