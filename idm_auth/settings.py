@@ -36,10 +36,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-    'idm_auth',
+    'idm_auth.apps.IDMAuthConfig',
     'idm_brand',
     'social.apps.django_app.default',
     'reversion',
+    # Two-factor auth
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
+    'otp_yubikey',
 ]
 try:
     __import__('django_extensions')
@@ -49,11 +55,14 @@ else:
     INSTALLED_APPS.append('django_extensions')
 
 MIDDLEWARE_CLASSES = [
+    'django.middleware.common.CommonMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    # Always include for two-factor auth
+    'django_otp.middleware.OTPMiddleware',
 
 ]
 
@@ -83,11 +92,14 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = 'idm_auth.User'
+
 ROOT_URLCONF = 'idm_auth.urls'
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = '/profile/'
+LOGIN_REDIRECT_URL = '/account/profile/'
+LOGIN_URL = '/login/'
 
 SOCIAL_AUTH_TWITTER_KEY = os.environ.get('SOCIAL_AUTH_TWITTER_KEY')
 SOCIAL_AUTH_TWITTER_SECRET = os.environ.get('SOCIAL_AUTH_TWITTER_SECRET')
@@ -95,7 +107,19 @@ SOCIAL_AUTH_TWITTER_SECRET = os.environ.get('SOCIAL_AUTH_TWITTER_SECRET')
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
-SOCIAL_AUTH_PIPELINE = DEFAULT_AUTH_PIPELINE + ('idm_auth.pipeline.create_user',)
+SOCIAL_AUTH_PIPELINE = list(DEFAULT_AUTH_PIPELINE)
+SOCIAL_AUTH_PIPELINE.remove('social.pipeline.user.user_details')
+SOCIAL_AUTH_PIPELINE[SOCIAL_AUTH_PIPELINE.index('social.pipeline.user.create_user')] = 'idm_auth.pipeline.create_user'
+
 
 # AMQP
-BROKER_URL = os.environ.get('AMQP_BROKER_URL', 'amqp://guest:guest@localhost/')
+BROKER_PARAMS = {
+    'hostname': os.environ.get('AMQP_BROKER_HOSTNAME', 'localhost'),
+    'userid': os.environ.get('AMQP_BROKER_USERNAME', 'guest'),
+    'password': os.environ.get('AMQP_BROKER_PASSWORD', 'guest'),
+    'virtual_host': os.environ.get('AMQP_BROKER_VHOST', '/'),
+    'ssl': bool(os.environ.get('AMQP_BROKER_SSL')),
+}
+BROKER_PREFIX = 'idm_auth.'
+
+IDENTITY_API_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/')

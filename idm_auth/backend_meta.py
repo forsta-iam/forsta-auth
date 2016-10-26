@@ -1,12 +1,12 @@
 class BackendMeta(object):
     registry = {}
 
-    def __new__(cls, user_social_auth):
-        subcls = cls.registry.get(user_social_auth.provider, cls)
-        print(cls, subcls, user_social_auth)
-        return super(cls, subcls).__new__(subcls)
+    @classmethod
+    def wrap(cls, user_social_auth):
+        print(user_social_auth.provider, type(cls.registry.get(user_social_auth.provider)))
+        return type(cls.registry.get(user_social_auth.provider))(user_social_auth)
 
-    def __init__(self, user_social_auth):
+    def __init__(self, user_social_auth=None):
         self.user_social_auth = user_social_auth
 
     @property
@@ -23,8 +23,9 @@ class BackendMeta(object):
 
 
 class TwitterBackendMeta(BackendMeta):
+    backend_id = 'twitter'
     name = 'Twitter'
-    font_awesome = 'twitter'
+    font_icon = 'fa fa-twitter'
 
     @property
     def username(self):
@@ -36,11 +37,15 @@ class TwitterBackendMeta(BackendMeta):
 
 
 class GoogleOAuth2BackendMeta(BackendMeta):
+    backend_id = 'google-oauth2'
     name = 'Google'
-    font_awesome = 'google'
+    font_icon = 'fa fa-google'
 
 
-BackendMeta.registry.update({
-    'twitter': TwitterBackendMeta,
-    'google-oauth2': GoogleOAuth2BackendMeta,
-})
+class ORCIDBackendMeta(BackendMeta):
+    backend_id = 'orcid'
+    name = 'ORCID'
+    font_icon = 'ai ai-orcid'
+
+for backend_meta in (TwitterBackendMeta, GoogleOAuth2BackendMeta, ORCIDBackendMeta):
+    BackendMeta.registry[backend_meta.backend_id] = backend_meta()

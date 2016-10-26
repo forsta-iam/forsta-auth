@@ -1,0 +1,38 @@
+.social-account-icon {
+    cursor: default;
+}
+
+a .social-account-icon {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.social-account-icon-twitter.social-account-icon i.fa-stack-2x {
+    color: #1da1f2;
+}
+
+.social-account-icon-facebook.social-account-icon i.fa-stack-2x {
+    color: #3b5998;
+}
+
+.social-account-icon-google-oauth2.social-account-icon i.fa-stack-2x {
+    color: #dd4b39;
+}
+
+.social-account-icon-orcid.social-account-icon i.fa-stack-2x {
+    color: #a6ce39;
+}
+
+ul.social-link-links {
+    padding-left: 0;
+    text-align: center;
+}
+
+ul.social-link-links a {
+    text-decoration: none;
+}
+
+ul.social-link-links li {
+    display: inline;
+    list-style: none;
+}
