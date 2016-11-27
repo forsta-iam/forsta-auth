@@ -3,7 +3,6 @@ class BackendMeta(object):
 
     @classmethod
     def wrap(cls, user_social_auth):
-        print(user_social_auth.provider, type(cls.registry.get(user_social_auth.provider)))
         return type(cls.registry.get(user_social_auth.provider))(user_social_auth)
 
     def __init__(self, user_social_auth=None):
@@ -47,5 +46,31 @@ class ORCIDBackendMeta(BackendMeta):
     name = 'ORCID'
     font_icon = 'ai ai-orcid'
 
-for backend_meta in (TwitterBackendMeta, GoogleOAuth2BackendMeta, ORCIDBackendMeta):
+
+class FacebookBackendMeta(BackendMeta):
+    backend_id = 'facebook'
+    name = 'Facebook'
+    font_icon = 'fa fa-facebook-official'
+
+
+class FigshareBackendMeta(BackendMeta):
+    backend_id = 'figshare'
+    name = 'Figshare'
+    font_icon = 'ai ai-figshare'
+
+
+class LinkedinBackendMeta(BackendMeta):
+    backend_id = 'linkedin'
+    name = 'LinkedIn'
+    font_icon = 'fa fa-linkedin'
+
+
+class GithubBackendMeta(BackendMeta):
+    backend_id = 'github'
+    name = 'GitHub'
+    font_icon = 'fa fa-github'
+
+
+for backend_meta in (TwitterBackendMeta, GoogleOAuth2BackendMeta, ORCIDBackendMeta, FacebookBackendMeta,
+                     FigshareBackendMeta, LinkedinBackendMeta, GithubBackendMeta):
     BackendMeta.registry[backend_meta.backend_id] = backend_meta()

@@ -1,4 +1,5 @@
 import django
+import email.utils
 import os
 from social.pipeline import DEFAULT_AUTH_PIPELINE
 
@@ -109,6 +110,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SEC
 
 SOCIAL_AUTH_PIPELINE = list(DEFAULT_AUTH_PIPELINE)
 SOCIAL_AUTH_PIPELINE.remove('social.pipeline.user.user_details')
+SOCIAL_AUTH_PIPELINE.remove('social.pipeline.user.get_username')
 SOCIAL_AUTH_PIPELINE[SOCIAL_AUTH_PIPELINE.index('social.pipeline.user.create_user')] = 'idm_auth.pipeline.create_user'
 
 
@@ -120,6 +122,6 @@ BROKER_PARAMS = {
     'virtual_host': os.environ.get('AMQP_BROKER_VHOST', '/'),
     'ssl': bool(os.environ.get('AMQP_BROKER_SSL')),
 }
-BROKER_PREFIX = 'idm_auth.'
+BROKER_PREFIX = 'idm.auth.'
 
-IDENTITY_API_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/')
+IDM_CORE_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/')

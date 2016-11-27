@@ -17,10 +17,10 @@ def create_user(**kwargs):
     with app_config.broker.acquire(block=True) as conn:
         queue = conn.SimpleQueue(Queue(exclusive=True,
                                        exchange=user_exchange,
-                                       routing_key='created.*'))
+                                       routing_key='User.created.*'))
 
-        identity_url = urllib.parse.urljoin(settings.IDENTITY_API_URL, '/identity/')
-        identity_id = app_config.session.post(identity_url, {
+        identity_url = urllib.parse.urljoin(settings.IDM_CORE_URL, '/person/')
+        response = app_config.session.post(identity_url, {
             'names': [{
                 'contexts': ['presentational'],
                 'components': [{
@@ -34,8 +34,11 @@ def create_user(**kwargs):
             'emails': [{
                 'context': 'home',
                 'value': kwargs['details']['email'],
-            }]
-        }).json()['id']
+            }],
+            'state': 'active',
+        })
+        response.raise_for_status()
+        person_id = response.json()['id']
 
         while True:
             try:
@@ -43,10 +46,9 @@ def create_user(**kwargs):
             except queue.Empty:
                 raise Exception
             message.ack()
-            if message.payload['id'] == identity_id:
+            if message.payload['person_id'] == person_id:
                 break
 
     kwargs['details'].pop('username', None)
-    return {'user': models.User.objects.get(pk=identity_id)}
-    import pprint
-    pprint.pprint(kwargs)
+    return {'user': models.User.objects.get(person_id=person_id)}
+

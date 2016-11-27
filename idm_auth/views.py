@@ -1,3 +1,11 @@
+import http.client
+from urllib.parse import urljoin
+
+import dateutil.parser
+import requests
+from django.apps import apps
+from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import AuthenticationForm
@@ -5,6 +13,7 @@ from two_factor.utils import default_device
 
 from idm_auth import backend_meta, models
 from idm_auth.backend_meta import BackendMeta
+from idm_auth.exceptions import ServiceUnavailable
 
 
 class LoginView(TemplateView):
@@ -17,8 +26,8 @@ class LoginView(TemplateView):
         }
 
 
-class ProfileView(TemplateView):
-    template_name = 'profile.html'
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'idm-auth/profile.html'
 
     def get_context_data(self, **kwargs):
         return {
@@ -29,11 +38,50 @@ class ProfileView(TemplateView):
         }
 
 
-class IndexView(TemplateView):
-    template_name = 'index.html'
+class SocialLoginsView(LoginRequiredMixin, TemplateView):
+    template_name = 'idm-auth/social-logins.html'
+
+    def get_context_data(self, **kwargs):
+        return {
+            'associated': [BackendMeta.wrap(user_social_auth)
+                           for user_social_auth in self.request.user.social_auth.all()],
+            'social_backends': list(sorted(backend_meta.BackendMeta.registry.values(), key=lambda sb: sb.name)),
+        }
+
+
+class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'idm-auth/index.html'
 
     def get_context_data(self, **kwargs):
         return {}
+
+
+class AffiliationListView(LoginRequiredMixin, TemplateView):
+    template_name = 'idm-auth/affiliation-list.html'
+
+    state_order = ('offered', 'active', 'suspended', 'pending', 'historic')
+    def order_key(self, affiliation):
+        try:
+            return self.state_order.index(affiliation['state']), affiliation['start_date']
+        except IndexError:
+            return 100, affiliation['start_date']
+
+    def get_context_data(self, **kwargs):
+        url = urljoin(settings.IDM_CORE_URL, '/person/{}/affiliation/'.format(self.request.user.person_id))
+        try:
+            response = apps.get_app_config('idm_auth').session.get(url)
+            response.raise_for_status()
+        except (requests.HTTPError, requests.ConnectionError) as e:
+            raise ServiceUnavailable from e
+        affiliations = response.json()
+        for affiliation in affiliations:
+            for name in ('start_date', 'end_date', 'effective_start_date', 'effective_end_date', 'suspended_until'):
+                if affiliation.get(name):
+                    affiliation[name] = dateutil.parser.parse(affiliation[name])
+        affiliations.sort(key=self.order_key)
+        return {
+            'affiliations': affiliations,
+        }
 
 
 class ClaimView(TemplateView):

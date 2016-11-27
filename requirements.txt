@@ -5,4 +5,5 @@ django-two-factor-auth
 django-otp-yubikey
 #python3-saml
 psycopg2
+python-dateutil
 python-social-auth

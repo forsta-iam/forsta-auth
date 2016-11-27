@@ -1,5 +1,6 @@
 import logging
 import pprint
+import uuid
 
 import kombu
 import kombu.message
@@ -9,7 +10,7 @@ from django.core.management import BaseCommand
 from django.db import transaction
 from kombu.mixins import ConsumerMixin
 
-identity_queue = kombu.Queue('iam.idm_auth.identity', exchange=kombu.Exchange('iam.idm.identity', type='topic'), auto_declare=True, routing_key='#')
+identity_queue = kombu.Queue('idm.auth.person', exchange=kombu.Exchange('idm.core.person', type='topic'), auto_declare=True, routing_key='#')
 
 
 class IDMAuthDaemon(ConsumerMixin):
@@ -31,12 +32,17 @@ class IDMAuthDaemon(ConsumerMixin):
 
         with transaction.atomic(savepoint=False):
             assert isinstance(message, kombu.message.Message)
-            action, id = message.delivery_info['routing_key'].split('.')
+            print(message.delivery_info)
+            _, action, id = message.delivery_info['routing_key'].split('.')
+            id = uuid.UUID(id)
             if action in ('created', 'updated'):
                 try:
-                    user = models.User.objects.get(id=id)
+                    user = models.User.objects.get(person_id=id, primary=True)
                 except models.User.DoesNotExist:
-                    user = models.User(id=id)
+                    if body['state'] == ('new', 'ready_for_claim'):
+                        # No need to create users here before they've been claimed.
+                        return
+                    user = models.User(person_id=id, primary=True)
                 user.state = body['state']
                 #user.email = body['primary_email'] or body['rescue_email']
                 user.save()

@@ -31,7 +31,6 @@ def init(broker):
 
 
 def send_message(sender, instance):
-    print("MESSAGE", sender, instance)
     for broker_action in ('deleted', 'created', 'changed'):
         if broker_action in instance._broker_action:
             break
@@ -49,11 +48,12 @@ def send_message(sender, instance):
                                          content_type='application/json')
 
         bound_exchange.publish(message,
-                               routing_key='{}.{}'.format(broker_action, instance.pk))
+                               routing_key='{}.{}.{}'.format(type(instance).__name__,
+                                                             broker_action,
+                                                             instance.pk))
 
 
 def model_changed(sender, instance, created, **kwargs):
-    print("CHANGED", sender, instance)
     if sender not in _config:
         return
 

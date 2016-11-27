@@ -1,0 +1,38 @@
+{% extends "idm-auth/base.html" %}
+
+{% block extra_head %}{{ block.super }}
+<link rel="stylesheet" href="{{ STATIC_URL }}idm-auth.css" type="text/css">
+{% endblock %}
+
+{% block content %}
+    <div class="pure-g">
+        <div class="pure-u-1">
+            <div class="pad-1">
+                <h1>Affiliations</h1>
+
+            {% regroup affiliations by state as affiliations_by_state %}
+
+            {% for group in affiliations_by_state %}
+
+                <h2>{{ group.grouper|capfirst }}</h2>
+                <table class="pure-table">
+                    <thead>
+                        <th>Organization</th>
+                        <th>Type</th>
+                        <th>Start</th>
+                        <th>End</th>
+                    </thead>
+                    <tbody>{% for affiliation in group.list %}
+                        <tr>
+                            <td>{{ affiliation.organization.label }}</td>
+                            <td>{{ affiliation.type.label }}</td>
+                            <td>{{ affiliation.start_date }}</td>
+                            <td>{{ affiliation.end_date|default_if_none:"" }}</td>
+                        </tr>{% endfor %}
+                    </tbody>
+                </table>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^login/$', views.LoginView.as_view(), name='login'),
     url(r'^claim/(?P<activation_code>[a-f0-9]{32})/$', views.ClaimView.as_view(), name='claim'),
     url(r'^account/profile/$', views.ProfileView.as_view(), name='profile'),
+    url(r'^account/social-logins/$', views.SocialLoginsView.as_view(), name='social-logins'),
+    url(r'^account/affiliations/$', views.AffiliationListView.as_view(), name='affiliation-list'),
     url(r'', include('social.apps.django_app.urls', namespace='social')),
     url(r'', include(tf_urls, 'two_factor')),
     url(r'^admin/', admin.site.urls),
