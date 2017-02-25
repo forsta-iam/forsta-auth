@@ -22,7 +22,7 @@
                         </thead>
                         <tbody>{% for user_social_auth in associated %}
                             <tr class="social-account-{{ user_social_auth.backend_id }}">
-                                <td>
+                                <td class="align-center">
                                    <i class="{{ user_social_auth.font_icon }} fa-2x social-account-icon-{{ user_social_auth.backend_id }}" title="{{ user_social_auth.name }}"> </i>
                                 </td>
                                 <td>{{ user_social_auth.username }}</td>

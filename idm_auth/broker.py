@@ -9,6 +9,13 @@ from kombu.pools import connections
 
 from . import models, serializers
 
+
+connection = connections[Connection(hostname=settings.BROKER_HOSTNAME,
+                                    ssl=settings.BROKER_SSL,
+                                    virtual_host=settings.BROKER_VHOST,
+                                    userid=settings.BROKER_USERNAME,
+                                    password=settings.BROKER_PASSWORD,
+                                    transport=settings.BROKER_TRANSPORT)]
 broker_prefix = settings.BROKER_PREFIX
 
 user_exchange = Exchange(broker_prefix + 'user', type='topic')
@@ -16,6 +23,7 @@ user_exchange = Exchange(broker_prefix + 'user', type='topic')
 _config = {
     models.User: (serializers.UserSerializer, user_exchange),
 }
+
 
 class _StubRequest(object):
     def build_absolute_uri(self, path):

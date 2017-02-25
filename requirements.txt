@@ -3,7 +3,10 @@ djangorestframework
 django-reversion
 django-two-factor-auth
 django-otp-yubikey
+-e git://github.com/alexsdutton/idm-broker.git#egg=idm-broker
+kombu
 #python3-saml
 psycopg2
 python-dateutil
 python-social-auth
+PyYAML

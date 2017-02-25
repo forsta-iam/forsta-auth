@@ -12,15 +12,22 @@
 
             {% regroup affiliations by state as affiliations_by_state %}
 
+                <table class="pure-table">
             {% for group in affiliations_by_state %}
 
-                <h2>{{ group.grouper|capfirst }}</h2>
-                <table class="pure-table">
                     <thead>
+                        <tr>
+                            <th style="background-color: white; border: 1px solid #fff; border-top: 1px solid #cbcbcb; padding-top:2em" colspan="5">
+                                <h2 style="margin: auto">{{ group.grouper|capfirst }}</h2>
+                            </th>
+                        </tr>
+                        <tr>
                         <th>Organization</th>
                         <th>Type</th>
                         <th>Start</th>
                         <th>End</th>
+                        <th>Actions</th>
+                    </tr>
                     </thead>
                     <tbody>{% for affiliation in group.list %}
                         <tr>
@@ -28,10 +35,23 @@
                             <td>{{ affiliation.type.label }}</td>
                             <td>{{ affiliation.start_date }}</td>
                             <td>{{ affiliation.end_date|default_if_none:"" }}</td>
+                            <td>
+                                {% if affiliation.state == 'offered' %}
+                                    <form method="post">{% csrf_token %}
+                                        <input type="hidden" name="affiliation" value="{{ affiliation_id }}">
+                                        <button type="submit" name="accept" class="pure-button button-success">
+                                            <i class="fa fa-fw fa-check"> </i>
+                                        </button>
+                                        <button type="submit" name="accept" class="pure-button button-error">
+                                            <i class="fa fa-fw fa-times"> </i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </td>
                         </tr>{% endfor %}
                     </tbody>
-                </table>
                 {% endfor %}
+                </table>
             </div>
         </div>
     </div>

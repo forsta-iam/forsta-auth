@@ -10,7 +10,7 @@ def get_uuid():
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=get_uuid, editable=False)
-    person_id = models.UUIDField(db_index=True, null=True, blank=True)
+    identity_id = models.UUIDField(db_index=True, null=True, blank=True)
     username = models.CharField(max_length=256, unique=True, null=True, blank=True)
     primary = models.BooleanField(help_text="Whether this is the primary account for the connected resource")
 
@@ -21,6 +21,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return '<User {}>'.format(self.id)
+
+    def get_username(self):
+        return str(self.id)
 
     def save(self, *args, **kwargs):
         if self.state == 'pending_claim' and not self.activation_code:

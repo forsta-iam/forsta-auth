@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
                 ('id', models.UUIDField(default=idm_auth.models.get_uuid, editable=False, primary_key=True, serialize=False)),
-                ('person_id', models.UUIDField(blank=True, db_index=True, null=True)),
+                ('identity_id', models.UUIDField(blank=True, db_index=True, null=True)),
                 ('username', models.CharField(blank=True, max_length=256, null=True, unique=True)),
                 ('primary', models.BooleanField(help_text='Whether this is the primary account for the connected resource')),
                 ('state', models.CharField(max_length=32)),

@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 
 {% block nav %}
-    <span class="pure-menu-heading">Personal</span>
-<ul class="pure-menu-list">
+    {% if user.is_authenticated %}
+<ul class="pure-menu-list"><!--
+    <li class="pure-menu-heading">Personal</li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">Personal details</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">Images</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">Contact details</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "affiliation-list" %}">Affiliations</a></li>
-    </ul>
-<span class="pure-menu-heading">Authentication</span>
-<ul class="pure-menu-list">
+    <li class="pure-menu-heading">Authentication</li>-->
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">Password management</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="#">Device management</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="#">GPG and SSH keys</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "social-logins" %}">Social logins</a></li>
-    <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "two_factor:setup" %}">Two-factor auth</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "two_factor:profile" %}">Two-factor auth
+        {% if two_factor_enabled %}<i class="fa fa-check-circle" title="(enabled)"> </i>{% endif %}</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="#">Audit and logging</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "logout" %}">Log out</a></li>
 </ul>
+    {% endif %}
 {% endblock %}

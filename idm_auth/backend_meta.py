@@ -1,3 +1,7 @@
+from django.urls import reverse
+from social.apps.django_app.utils import load_backend, load_strategy
+
+
 class BackendMeta(object):
     registry = {}
 
@@ -71,6 +75,26 @@ class GithubBackendMeta(BackendMeta):
     font_icon = 'fa fa-github'
 
 
+class SAMLBackendMeta(BackendMeta):
+    backend_id = 'saml'
+    name = 'SAML'
+    font_icon = 'fa fa-university'
+
+    @property
+    def name(self):
+        saml_backend = load_backend(
+            load_strategy(),
+            "saml",
+            redirect_uri=reverse('social:complete', args=("saml",))
+        )
+        return saml_backend.get_idp(self.user_social_auth.uid.split(':')[0]).conf['label']
+
+
+    @property
+    def username(self):
+        return '{} at {}'.format(self.user_social_auth.uid.split(':')[1], self.name)
+
+
 for backend_meta in (TwitterBackendMeta, GoogleOAuth2BackendMeta, ORCIDBackendMeta, FacebookBackendMeta,
-                     FigshareBackendMeta, LinkedinBackendMeta, GithubBackendMeta):
+                     FigshareBackendMeta, LinkedinBackendMeta, GithubBackendMeta, SAMLBackendMeta):
     BackendMeta.registry[backend_meta.backend_id] = backend_meta()
