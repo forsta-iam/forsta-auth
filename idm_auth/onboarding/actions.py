@@ -26,11 +26,11 @@ def create_identity_and_user(first_name, last_name, email, date_of_birth):
         identity_url = urllib.parse.urljoin(settings.IDM_CORE_URL, '/person/')
         data = {
             'names': [{
-                'contexts': ['presentational'],
+                'context': 'presentational',
                 'components': [{
                     'type': 'given',
                     'value': first_name,
-                }, {
+                }, ' ', {
                     'type': 'family',
                     'value': last_name,
                 }]

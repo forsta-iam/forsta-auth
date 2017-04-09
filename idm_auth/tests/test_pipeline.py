@@ -45,7 +45,8 @@ class CreateUserTestCase(TestCase):
             response.json.return_value = {'id': str(identity_id)}
             return response
 
-        kwargs = {'details': {'first_name': 'Lewis', 'last_name': 'Carroll', 'email': None}}
+        kwargs = {'details': {'first_name': 'Lewis', 'last_name': 'Carroll',
+                              'email': 'lewiscarroll@example.org', 'date_of_birth': '1832-01-27'}}
         identity_id = uuid.uuid4()
         app_config = apps.get_app_config('idm_auth')
         app_config.session, response = Mock(), Mock()

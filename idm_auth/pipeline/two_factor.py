@@ -17,7 +17,7 @@ def add_user_id(user=None, **kwargs):
 @partial
 def perform_two_factor(user=None, user_id=None, two_factor_complete=False, **kwargs):
     if user and default_device(user) and not two_factor_complete:
-        return HttpResponseRedirect(reverse('social-two-factor-login'))
+        return HttpResponseRedirect(reverse('login'))
     elif not user and user_id and two_factor_complete:
         User = get_user_model()
         return {'user': User.objects.get(id=uuid.UUID(user_id))}

@@ -45,12 +45,17 @@ INSTALLED_APPS = [
     'idm_broker.apps.IDMBrokerConfig',
     'social.apps.django_app.default',
     'reversion',
+    'rest_framework',
     # Two-factor auth
     'django_otp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
     'otp_yubikey',
+    # OpenID Connect
+    'oidc_provider',
+    # Kerberos auth
+    'django_auth_kerberos',
 ]
 try:
     __import__('django_extensions')
@@ -74,6 +79,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 AUTHENTICATION_BACKENDS = (
+    'django_auth_kerberos.backends.KrbBackend',
     'social.backends.open_id.OpenIdAuth',
     'social.backends.google.GoogleOpenId',
     'social.backends.google.GoogleOAuth2',
@@ -167,6 +173,8 @@ BROKER_USERNAME = os.environ.get('BROKER_USERNAME', 'guest')
 BROKER_PASSWORD = os.environ.get('BROKER_PASSWORD', 'guest')
 BROKER_PREFIX = os.environ.get('BROKER_PREFIX', 'idm.auth.')
 
+OIDC_USERINFO = 'idm_auth.oidc.get_userinfo'
+
 
 IDM_CORE_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/')
 
@@ -182,6 +190,8 @@ SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
     "givenName": "Alexander Dutton",
     "emailAddress": "alexander.dutton@it.ox.ac.uk",
 }
+
+SESSION_COOKIE_NAME = 'idm-auth-sessionid'
 
 # The SOCIAL_AUTH_SAML_ENABLED_IDPS setting mentioned in the docs (http://psa.matiasaguirre.net/docs/backends/saml.html)
 # is replaced by idm_auth.saml.models.IDP, and you can add more with fixtures, the admin, or the load_saml_metadata
