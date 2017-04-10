@@ -4,7 +4,7 @@ django-oidc-provider
 django-reversion
 django-two-factor-auth
 django-otp-yubikey
--e git://github.com/alexsdutton/idm-broker.git#egg=idm-broker
+-e git://github.com/alexsdutton/idm-notification.git#egg=idm-notification
 -e git://github.com/alexsdutton/idm-brand.git#egg=idm-brand
 kombu
 #python3-saml
