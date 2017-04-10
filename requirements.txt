@@ -9,7 +9,7 @@ social-auth-app-django
 -e git://github.com/alexsdutton/idm-notification.git#egg=idm-notification
 -e git://github.com/alexsdutton/idm-brand.git#egg=idm-brand
 kombu
-#python3-saml
+python3-saml
 psycopg2
 python-dateutil
 PyYAML
