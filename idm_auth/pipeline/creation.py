@@ -1,9 +1,7 @@
-import urllib.parse
-
 import dateutil.parser
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from social.pipeline.partial import partial
+from social_core.pipeline.partial import partial
 
 from idm_auth.onboarding.actions import create_identity_and_user
 

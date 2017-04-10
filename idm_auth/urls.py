@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^saml-metadata/$', views.SAMLMetadataView.as_view(), name='saml-metadata'),
     # OpenID Connect
     url(r'^openid/', include('oidc_provider.urls', namespace='oidc_provider')),
-    url(r'', include('social.apps.django_app.urls', namespace='social')),
+    url(r'', include('social_django.urls', namespace='social')),
     url(r'', include(tf_urls, 'two_factor')),
     url(r'^admin/', admin.site.urls),
 ]

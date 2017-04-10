@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from . import models
 
-class TypeMixin(object):
+class TypeMixin(serializers.Serializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['@type'] = self.Meta.model.__name__

@@ -12,5 +12,4 @@ kombu
 #python3-saml
 psycopg2
 python-dateutil
-python-social-auth
 PyYAML

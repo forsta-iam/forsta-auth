@@ -1,11 +1,9 @@
-import http.client
 from urllib.parse import urljoin
 
 import dateutil.parser
 import requests
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth import load_backend
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import Form
 from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -159,7 +157,7 @@ class ClaimView(TemplateView):
 
 class SAMLMetadataView(View):
     def get(self, request):
-        from social.apps.django_app.utils import load_strategy, load_backend
+        from social_django.utils import load_strategy, load_backend
         complete_url = reverse('social:complete', args=("saml",))
         saml_backend = load_backend(
             load_strategy(request),

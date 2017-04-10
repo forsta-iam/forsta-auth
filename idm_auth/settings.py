@@ -1,7 +1,7 @@
 import django
 import email.utils
 import os
-from social.pipeline import DEFAULT_AUTH_PIPELINE
+from social_core.pipeline import DEFAULT_AUTH_PIPELINE
 
 DEBUG = os.environ.get('DJANGO_DEBUG')
 
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'idm_auth.saml',
     'idm_brand',
     'idm_broker.apps.IDMBrokerConfig',
-    'social.apps.django_app.default',
+    'social_django',
     'reversion',
     'rest_framework',
     # Two-factor auth
@@ -80,13 +80,13 @@ MIDDLEWARE_CLASSES = [
 
 AUTHENTICATION_BACKENDS = (
     'django_auth_kerberos.backends.KrbBackend',
-    'social.backends.open_id.OpenIdAuth',
-    'social.backends.google.GoogleOpenId',
-    'social.backends.google.GoogleOAuth2',
-    'social.backends.google.GoogleOAuth',
-    'social.backends.username.UsernameAuth',
-    'social.backends.twitter.TwitterOAuth',
-    'social.backends.yahoo.YahooOpenId',
+    'social_core.backends.open_id.OpenIdAuth',
+    'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.google.GoogleOAuth',
+    'social_core.backends.username.UsernameAuth',
+    'social_core.backends.twitter.TwitterOAuth',
+    'social_core.backends.yahoo.YahooOpenId',
     'idm_auth.saml.social_backend.SAMLAuth',
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -99,8 +99,8 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': (
                 'django.contrib.auth.context_processors.auth',
-                'social.apps.django_app.context_processors.backends',
-                'social.apps.django_app.context_processors.login_redirect',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'django.template.context_processors.static',
                 'idm_auth.context_processors.two_factor_enabled',
             ),

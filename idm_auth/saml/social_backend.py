@@ -1,4 +1,4 @@
-from social.backends.saml import SAMLAuth as BaseSAMLAuth, SAMLIdentityProvider
+from social_core.backends.saml import SAMLAuth as BaseSAMLAuth, SAMLIdentityProvider
 
 from idm_auth.saml.models import IDP
 

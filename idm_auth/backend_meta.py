@@ -1,5 +1,5 @@
 from django.urls import reverse
-from social.apps.django_app.utils import load_backend, load_strategy
+from social_django.utils import load_backend, load_strategy
 
 
 class BackendMeta(object):

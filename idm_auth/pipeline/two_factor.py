@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from social.pipeline.partial import partial
+from social_core.pipeline.partial import partial
 from two_factor.utils import default_device
 
 
