@@ -1,4 +1,5 @@
 import threading
+import time
 import uuid
 from unittest import mock
 from unittest.mock import Mock
@@ -21,10 +22,9 @@ class CreateUserTestCase(TestCase):
         self.idm_auth_daemon_thread.start()
 
     def tearDown(self):
-        print("HHH")
         self.idm_auth_daemon.should_stop = True
         self.idm_auth_daemon_thread.join()
-        print("ZZZ")
+        time.sleep(0.1)
 
     def testDoesNothingIfUserFound(self):
         kwargs = {'user': Mock()}
