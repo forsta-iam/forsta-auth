@@ -43,7 +43,6 @@ def create_identity_and_user(first_name, last_name, email, date_of_birth):
             'state': 'active',
         }
         response = app_config.session.post(identity_url, data)
-        print(repr(date_of_birth), data, response.json())
         response.raise_for_status()
         identity_id = response.json()['id']
 
