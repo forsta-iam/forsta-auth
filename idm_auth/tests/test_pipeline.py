@@ -21,8 +21,10 @@ class CreateUserTestCase(TestCase):
         self.idm_auth_daemon_thread.start()
 
     def tearDown(self):
+        print("HHH")
         self.idm_auth_daemon.should_stop = True
         self.idm_auth_daemon_thread.join()
+        print("ZZZ")
 
     def testDoesNothingIfUserFound(self):
         kwargs = {'user': Mock()}
