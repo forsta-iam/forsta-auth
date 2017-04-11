@@ -10,7 +10,7 @@ before_install:
   - sudo apt-get install -y libxmlsec1-dev
 install:
   - pip install -r requirements.txt
-  - pip install codecov
+  - pip install codecov selenium
 env:
   - DJANGO_SETTINGS_MODULE=idm_auth.tests.settings DJANGO_ALLOWED_HOSTS=localhost DJANGO_SECRET_KEY=secret-key-for-travis
 script: PYTHONPATH=. coverage run --source=. `which django-admin.py` test
