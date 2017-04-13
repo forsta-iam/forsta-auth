@@ -2,7 +2,7 @@ import uuid
 
 import kombu
 from django.apps import apps
-from django.db import transaction
+from django.db import transaction, connection
 from kombu.mixins import ConsumerMixin
 
 user_queue = kombu.Queue('idm.auth.person',
@@ -16,6 +16,12 @@ class IDMAuthDaemon(ConsumerMixin):
         with idm_broker_config.broker.acquire(block=True) as conn:
             self.connection = conn
             self.run()
+
+    def run(self, _tokens=1, **kwargs):
+        try:
+            super().run(_tokens=_tokens, **kwargs)
+        finally:
+            connection.close()
 
     def get_consumers(self, Consumer, channel):
         return [Consumer(queues=[user_queue],
@@ -39,7 +45,9 @@ class IDMAuthDaemon(ConsumerMixin):
                         return
                     user = models.User(identity_id=id, primary=True)
                 user.state = body['state']
-                #user.email = body['primary_email'] or body['rescue_email']
+                user.first_name = body['primary_name']['first_name']
+                user.last_name = body['primary_name']['last_name']
+                user.email = body['primary_email'] or body['rescue_email']
                 user.save()
                 message.ack()
             elif action == 'deleted':
