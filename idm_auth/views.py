@@ -117,35 +117,6 @@ class IndexView(TemplateView):
         return {}
 
 
-class AffiliationListView(LoginRequiredMixin, TemplateView):
-    template_name = 'idm-auth/affiliation-list.html'
-
-    state_order = ('offered', 'active', 'suspended', 'pending', 'historic')
-    def order_key(self, affiliation):
-        try:
-            return self.state_order.index(affiliation['state']), affiliation['start_date']
-        except IndexError:
-            return 100, affiliation['start_date']
-
-    def get_context_data(self, **kwargs):
-        url = urljoin(settings.IDM_CORE_URL, '/person/{}/affiliation/'.format(self.request.user.identity_id))
-        try:
-            response = apps.get_app_config('idm_auth').session.get(url)
-            response.raise_for_status()
-        except (requests.HTTPError, requests.ConnectionError) as e:
-            raise ServiceUnavailable from e
-        data = response.json()
-        affiliations = data['results']
-        for affiliation in affiliations:
-            for name in ('start_date', 'end_date', 'effective_start_date', 'effective_end_date', 'suspended_until'):
-                if affiliation.get(name):
-                    affiliation[name] = dateutil.parser.parse(affiliation[name])
-        affiliations.sort(key=self.order_key)
-        return {
-            'affiliations': affiliations,
-        }
-
-
 class ClaimView(TemplateView):
     template_name = 'claim.html'
 

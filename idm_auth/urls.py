@@ -27,7 +27,6 @@ urlpatterns = [
     ), name='signup-done'),
     url(r'^account/profile/$', views.ProfileView.as_view(), name='profile'),
     url(r'^account/social-logins/$', views.SocialLoginsView.as_view(), name='social-logins'),
-    url(r'^account/affiliations/$', views.AffiliationListView.as_view(), name='affiliation-list'),
 
     url(r'^api/', include(router.urls)),
 
