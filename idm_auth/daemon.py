@@ -36,11 +36,13 @@ class IDMAuthDaemon(ConsumerMixin):
             assert isinstance(message, kombu.message.Message)
             _, action, id = message.delivery_info['routing_key'].split('.')
             id = uuid.UUID(id)
+            if action == 'created' and body['state'] != 'established':
+                return
             if action in ('created', 'updated'):
                 try:
                     user = models.User.objects.get(identity_id=id, primary=True)
                 except models.User.DoesNotExist:
-                    if body['state'] == ('new', 'ready_for_claim'):
+                    if body['state'] not in ('established', 'active'):
                         # No need to create users here before they've been claimed.
                         return
                     user = models.User(identity_id=id, primary=True)

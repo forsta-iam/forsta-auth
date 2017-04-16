@@ -1,8 +1,11 @@
 import json
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import kombu
+import re
 from django.apps import apps
+from django.core import mail
+from django.core.mail import EmailMultiAlternatives
 from kombu.message import Message
 from django.test import LiveServerTestCase
 from selenium import webdriver
@@ -22,6 +25,7 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
 
     @creates_idm_core_user
     def testNewRegistration(self, identity_id):
+        # This is the whole signup flow
         selenium = self.selenium
         selenium.get(urljoin(self.live_server_url, '/signup/'))
 
@@ -53,7 +57,21 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         self.assertEqual(json.loads(gm.message.body.decode())['@type'], 'User')
 
         user = User.objects.get()
-        self.assertEqual(user.identity_id, identity_id)
+        self.assertFalse(user.is_active)
+        self.assertIsNone(user.identity_id)
         self.assertEqual(user.first_name, 'Edgar')
         self.assertEqual(user.last_name, 'Poe')
         self.assertEqual(user.email, 'edgar@example.org')
+
+        message = mail.outbox[0]
+        assert isinstance(message, EmailMultiAlternatives)
+        self.assertEqual(message.subject, 'Activate your Oxford account')
+
+        activation_link = re.search('https://.*', message.body, re.MULTILINE).group(0)
+        activation_link = urljoin(self.live_server_url, urlparse(activation_link).path)
+        selenium.get(activation_link)
+        self.assertEqual(selenium.current_url, urljoin(self.live_server_url, '/activate/complete/'))
+
+        user = User.objects.get()
+        self.assertTrue(user.is_active)
+        self.assertEqual(user.identity_id, identity_id)

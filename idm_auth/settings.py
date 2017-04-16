@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'idm_auth.apps.IDMAuthConfig',
+    'idm_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
     'idm_auth.onboarding',
     'idm_auth.saml',
     'idm_brand',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
     'two_factor',
     'otp_yubikey',
+    'registration',
     # OpenID Connect
     'oidc_provider',
     # Kerberos auth
@@ -137,17 +139,16 @@ SOCIAL_AUTH_PIPELINE = (
     # Checks if the current social-account is already associated in the site.
     'social.pipeline.social_auth.social_user',
 
+    # Send the user through the creation flow if we've not seen them before
     'idm_auth.pipeline.creation.confirm_user_details',
 
     # Send a validation email to the user to verify its email address.
+    # This is removed as the signup flow sends the verification email
     # 'social.pipeline.mail.mail_validation',
 
     # Associates the current social details with another user account with
     # a similar email address.
     # 'social.pipeline.social_auth.associate_by_email',
-
-    # Create an identity and user account if we haven't found one yet.
-    'idm_auth.pipeline.creation.create_user',
 
     # Create the record that associated the social account with this user.
     'social.pipeline.social_auth.associate_user',
@@ -193,6 +194,9 @@ SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
 
 SESSION_COOKIE_NAME = 'idm-auth-sessionid'
 
+# django-registration
+ACCOUNT_ACTIVATION_DAYS = 7
+
 # The SOCIAL_AUTH_SAML_ENABLED_IDPS setting mentioned in the docs (http://psa.matiasaguirre.net/docs/backends/saml.html)
 # is replaced by idm_auth.saml.models.IDP, and you can add more with fixtures, the admin, or the load_saml_metadata
 # management command.
@@ -200,3 +204,8 @@ SESSION_COOKIE_NAME = 'idm-auth-sessionid'
 for key in os.environ:
     if key.startswith('SOCIAL_AUTH_'):
         locals()[key] = os.environ[key]
+
+EMAIL_HOST = os.environ.get('SMTP_SERVER')
+EMAIL_HOST_USER = os.environ.get('SMTP_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD')
+EMAIL_USE_TLS = True

@@ -5,6 +5,7 @@ django-reversion
 django-two-factor-auth
 django-otp-yubikey
 django-auth-kerberos
+django-registration
 social-auth-app-django
 -e git://github.com/alexsdutton/idm-notification.git#egg=idm-notification
 -e git://github.com/alexsdutton/idm-brand.git#egg=idm-brand

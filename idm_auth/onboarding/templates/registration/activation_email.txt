@@ -1,0 +1,15 @@
+Dear {{ user.first_name }} {{ user.last_name }},
+
+Thank you for registering for an Oxford account.
+
+To complete your registration, please follow the following link:
+
+https://{{ site.domain }}{% url "registration_activate" activation_key=activation_key %}
+
+If it wasn't you who registered for an Oxford account, you can safely ignore
+this email.
+
+Yours,
+
+The Identity Management System
+University of Oxford

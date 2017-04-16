@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 import kombu
@@ -19,7 +20,8 @@ class BrokerTestCase(TransactionTestCase):
             queue.bind_to(exchange=kombu.Exchange('idm.auth.user'), routing_key='#')
             with transaction.atomic():
                 user = User.objects.create(identity_id=uuid.uuid4(),
-                                           primary=True)
+                                           primary=True, is_active=True,
+                                           date_of_birth=datetime.datetime(1970, 1, 1))
             message = queue.get()
             self.assertIsInstance(message, Message)
             self.assertEqual(message.delivery_info['routing_key'],

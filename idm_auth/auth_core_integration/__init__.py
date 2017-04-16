@@ -1,0 +1,1 @@
+"""This Django app integrates idm-auth with idm-core"""
