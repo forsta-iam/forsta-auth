@@ -1,4 +1,5 @@
 import datetime
+import time
 import uuid
 
 import kombu
@@ -22,7 +23,11 @@ class BrokerTestCase(TransactionTestCase):
                 user = User.objects.create(identity_id=uuid.uuid4(),
                                            primary=True, is_active=True,
                                            date_of_birth=datetime.datetime(1970, 1, 1))
-            message = queue.get()
+            for i in range(5):
+                message = queue.get()
+                if message:
+                    break
+                time.sleep(0.1)
             self.assertIsInstance(message, Message)
             self.assertEqual(message.delivery_info['routing_key'],
                              'User.created.{}'.format(str(user.id)))

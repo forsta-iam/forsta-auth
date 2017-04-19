@@ -9,15 +9,11 @@ USE_TZ = True
 TIME_ZONE = 'Europe/London'
 
 
-ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split() if not DEBUG else ['*']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() if not DEBUG else ['*']
 
-try:
-    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
-except KeyError:
-    if DEBUG:
-        SECRET_KEY = 'very secret key'
-    else:
-        raise
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
+if not SECRET_KEY and DEBUG:
+    SECRET_KEY = 'very secret key'
 
 if 'DJANGO_ADMINS' in os.environ:
     ADMINS = [email.utils.parseaddr(addr.strip()) for addr in os.environ['DJANGO_ADMINS'].split(',')]

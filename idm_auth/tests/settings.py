@@ -4,6 +4,10 @@ BROKER_TRANSPORT = 'memory'
 
 AUTHENTICATION_BACKENDS += ('idm_auth.tests.social_backend.DummyBackend',)
 
+ALLOWED_HOSTS = ['testserver', 'testserver.local']
+
+SECRET_KEY = 'test secret key'
+
 SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = """\
 -----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkR4S26dW8j+yO

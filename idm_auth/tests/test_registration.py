@@ -10,7 +10,6 @@ from kombu.message import Message
 from django.test import LiveServerTestCase
 from selenium import webdriver
 
-from idm_auth.models import User
 from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, creates_idm_core_user, GeneratesMessage
 
 
@@ -25,6 +24,8 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
 
     @creates_idm_core_user
     def testNewRegistration(self, identity_id):
+        from idm_auth.models import User
+
         # This is the whole signup flow
         selenium = self.selenium
         selenium.get(urljoin(self.live_server_url, '/signup/'))
