@@ -1,12 +1,7 @@
-from urllib.parse import urljoin
-
-import dateutil.parser
-import requests
-from django.apps import apps
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import Form
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, resolve_url, redirect
 from django.urls import reverse
 from django.utils.http import is_safe_url
@@ -19,14 +14,9 @@ from two_factor.utils import default_device
 
 from idm_auth import backend_meta, models
 from idm_auth.backend_meta import BackendMeta
-from idm_auth.exceptions import ServiceUnavailable
 from idm_auth.forms import AuthenticationForm
 from idm_auth.models import User
 from idm_auth.saml.models import IDP
-
-
-class SocialForm(Form):
-    pass
 
 
 def login(request):
@@ -124,20 +114,6 @@ class ClaimView(TemplateView):
         return {
             'user': get_object_or_404(models.User, activation_code=activation_code),
         }
-
-
-class SAMLMetadataView(View):
-    def get(self, request):
-        from social_django.utils import load_strategy, load_backend
-        complete_url = reverse('social:complete', args=("saml",))
-        saml_backend = load_backend(
-            load_strategy(request),
-            "saml",
-            redirect_uri=complete_url,
-        )
-        metadata, errors = saml_backend.generate_metadata_xml()
-        if not errors:
-            return HttpResponse(content=metadata, content_type='text/xml')
 
 
 class RecoverView(View):

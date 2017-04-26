@@ -9,6 +9,7 @@ from two_factor.urls import urlpatterns as tf_urls
 
 import idm_auth.onboarding.views
 import idm_auth.oidc.views
+import idm_auth.saml.views
 from registration.backends.hmac import views as hmac_views
 from . import views
 
@@ -56,7 +57,7 @@ urlpatterns = [
         name='registration_disallowed'),
     url(r'', include('registration.auth_urls')),
 
-    url(r'^saml-metadata/$', views.SAMLMetadataView.as_view(), name='saml-metadata'),
+    url(r'^saml-metadata/$', idm_auth.saml.views.SAMLMetadataView.as_view(), name='saml-metadata'),
     # OpenID Connect
     url(r'^openid/', include('oidc_provider.urls', namespace='oidc_provider')),
     url(r'', include('social_django.urls', namespace='social')),

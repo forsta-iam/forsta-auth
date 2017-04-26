@@ -13,6 +13,3 @@ class ClientViewSet(viewsets.ModelViewSet):
         *viewsets.ModelViewSet.renderer_classes,
     ]
     permission_classes = (DjangoModelPermissions,)
-
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)

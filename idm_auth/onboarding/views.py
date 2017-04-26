@@ -12,10 +12,6 @@ from idm_auth.onboarding.forms import PersonalDataForm, WelcomeForm, SetPassword
 
 from .. import models
 
-class ActivationView(TemplateView):
-    def get(self):
-        pass
-
 
 class SignupView(SessionWizardView):
     template_name = 'onboarding/signup.html'
@@ -61,7 +57,7 @@ class SignupView(SessionWizardView):
         if 'partial_pipeline_token' in self.request.session:
             try:
                 return Partial.objects.get(token=self.request.session['partial_pipeline_token'])
-            except Partial.DoesNotExist:
+            except Partial.DoesNotExist:  # pragma: nocover
                 return None
 
     def get_form_initial(self, step):
