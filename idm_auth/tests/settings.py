@@ -2,8 +2,6 @@ from ..settings import *
 
 BROKER_TRANSPORT = 'memory'
 
-AUTHENTICATION_BACKENDS += ('idm_auth.tests.social_backend.DummyBackend',)
-
 ALLOWED_HOSTS = ['testserver', 'testserver.local']
 
 SECRET_KEY = 'test secret key'
@@ -65,3 +63,7 @@ Gw==
 """
 
 SOCIAL_AUTH_SAML_SP_ENTITY_ID = 'http://localhost/'
+
+AUTHENTICATION_BACKENDS += (
+    'idm_auth.tests.social_backends.DummyBackend',
+)

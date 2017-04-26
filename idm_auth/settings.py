@@ -1,7 +1,6 @@
 import django
 import email.utils
 import os
-from social_core.pipeline import DEFAULT_AUTH_PIPELINE
 
 DEBUG = os.environ.get('DJANGO_DEBUG')
 
@@ -121,19 +120,19 @@ SOCIAL_AUTH_PIPELINE = (
     # format to create the user instance later. On some cases the details are
     # already part of the auth response from the provider, but sometimes this
     # could hit a provider API.
-    'social.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_details',
 
     # Get the social uid from whichever service we're authing thru. The uid is
     # the unique identifier of the given user in the provider.
-    'social.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_uid',
 
     # Verifies that the current auth process is valid within the current
     # project, this is where emails and domains whitelists are applied (if
     # defined).
-    'social.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.auth_allowed',
 
     # Checks if the current social-account is already associated in the site.
-    'social.pipeline.social_auth.social_user',
+    'social_core.pipeline.social_auth.social_user',
 
     # Send the user through the creation flow if we've not seen them before
     'idm_auth.pipeline.creation.confirm_user_details',
@@ -147,11 +146,11 @@ SOCIAL_AUTH_PIPELINE = (
     # 'social.pipeline.social_auth.associate_by_email',
 
     # Create the record that associated the social account with this user.
-    'social.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.associate_user',
 
     # Populate the extra_data field in the social record with the values
     # specified by settings (and the default ones like access_token, etc).
-    'social.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.social_auth.load_extra_data',
 
     # If the user has two-factor authentication enabled, let's do that.
     'idm_auth.pipeline.two_factor.add_user_id',

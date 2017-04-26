@@ -6,6 +6,7 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 from formtools.wizard.views import SessionWizardView
 from registration.backends.hmac.views import RegistrationView, REGISTRATION_SALT
+from social_django.models import Partial
 
 from idm_auth.onboarding.forms import PersonalDataForm, WelcomeForm, SetPasswordForm
 
@@ -26,7 +27,7 @@ class SignupView(SessionWizardView):
     )
 
     def has_password_step(self):
-        return 'partial_pipeline' not in self.request.session
+        return self.social_partial is None
 
     condition_dict = {
         'password': has_password_step,
@@ -49,19 +50,27 @@ class SignupView(SessionWizardView):
             obj=str(getattr(user, user.USERNAME_FIELD)),
             salt=REGISTRATION_SALT
         )
+
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             raise PermissionDenied
         return super().dispatch(request, *args, **kwargs)
 
+    @cached_property
+    def social_partial(self):
+        if 'partial_pipeline_token' in self.request.session:
+            try:
+                return Partial.objects.get(token=self.request.session['partial_pipeline_token'])
+            except Partial.DoesNotExist:
+                return None
+
     def get_form_initial(self, step):
         if step == 'personal':
-            try:
-                details = self.request.session['partial_pipeline']['kwargs']['details']
-            except KeyError:
-                return {}
-            else:
+            if self.social_partial:
+                details = self.social_partial.data['kwargs']['details']
                 return {k: details.get(k, '') for k in ['first_name', 'last_name', 'email']}
+            else:
+                return {}
 
     def done(self, form_list, form_dict, **kwargs):
         personal_cleaned_data = form_dict['personal'].cleaned_data
@@ -77,17 +86,22 @@ class SignupView(SessionWizardView):
         user.save()
         self.registration_view.send_activation_email(user)
 
-        if 'partial_pipeline' in self.request.session:
-            self.request.session['partial_pipeline']['kwargs']['details'].update({
+        if self.social_partial:
+            partial = self.social_partial
+            partial.data['kwargs']['details'].update({
                 'first_name': personal_cleaned_data['first_name'],
                 'last_name': personal_cleaned_data['last_name'],
                 'email': personal_cleaned_data['email'],
                 'date_of_birth': personal_cleaned_data['date_of_birth'].isoformat(),
-                'user': user,
             })
-            self.request.session['partial_pipeline']['kwargs']['user_details_confirmed'] = True
+            partial.data['kwargs'].update({
+                'user': str(user.pk),
+                'user_details_confirmed': True,
+
+            })
+            partial.save()
             return HttpResponseRedirect(
-                reverse('social:complete', kwargs={'backend': self.request.session['partial_pipeline']['backend']}))
+                reverse('social:complete', kwargs={'backend': partial.backend}))
         else:
             return HttpResponseRedirect(
                 reverse('signup-done')
