@@ -18,26 +18,29 @@ class AuthenticationForm(BaseAuthenticationForm):
         widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'pure-u-1'}),
     )
 
-    def clean_username(self):
-        value = self.cleaned_data['username']
-        try:
-            return str(uuid.UUID(value))
-        except ValueError:
-            pass
-        try:
-            user = models.User.objects.get(username=value)
-        except models.User.DoesNotExist:
-            try:
-                user = models.User.objects.get(email=value)
-            except models.User.DoesNotExist:
-                pass
-            else:
-                return str(user.pk)
-        else:
-            try:
-                models.User.objects.get(email=value)
-            except models.User.DoesNotExist:
-                pass
-            return str(user.pk)
+    error_messages = {**BaseAuthenticationForm.error_messages,
+                      'inactive': _('You need to activate your account before you can log in. Follow the instructions '
+                                    'in the email you received, and then try again.')}
 
-        return str(uuid.uuid4())
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        try:
+            str(uuid.UUID(username or ''))
+        except ValueError:
+            try:
+                user = models.User.objects.get(username=username)
+            except models.User.DoesNotExist:
+                try:
+                    user = models.User.objects.get(email=username)
+                except models.User.DoesNotExist:
+                    username = str(uuid.uuid4())
+                else:
+                    username = str(user.pk)
+            else:
+                try:
+                    models.User.objects.get(email=username)
+                except models.User.DoesNotExist:
+                    pass
+                username = str(user.pk)
+        self.cleaned_data['username'] = username
+        return super().clean()

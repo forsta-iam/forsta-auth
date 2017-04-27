@@ -65,6 +65,7 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
             context.update({
                 'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.backend_id != 'saml'], key=lambda sb: sb.name)),
                 'idps': IDP.objects.all().order_by('label'),
+                'awaiting_activation': 'awaiting-activation' in self.request.GET,
             })
         return context
 

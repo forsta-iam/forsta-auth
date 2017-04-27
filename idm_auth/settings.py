@@ -1,6 +1,9 @@
 import django
 import email.utils
 import os
+import six
+from django.urls import reverse
+from django.utils.functional import lazy
 
 DEBUG = os.environ.get('DJANGO_DEBUG')
 
@@ -85,7 +88,9 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.yahoo.YahooOpenId',
     'idm_auth.saml.social_backend.SAMLAuth',
-    'django.contrib.auth.backends.ModelBackend',
+    # The authentication form will forbid inactive users from logging in regardless, but this means we can present them
+    # with a "not yet active" message
+    'django.contrib.auth.backends.AllowAllUsersModelBackend',
 )
 
 TEMPLATES = [
@@ -186,6 +191,11 @@ SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
     "givenName": "Alexander Dutton",
     "emailAddress": "alexander.dutton@it.ox.ac.uk",
 }
+
+
+def _get_inactive_user_url():
+    return reverse('login') + '?awaiting-activation'
+SOCIAL_AUTH_INACTIVE_USER_URL = lazy(_get_inactive_user_url, six.text_type)()
 
 SESSION_COOKIE_NAME = 'idm-auth-sessionid'
 

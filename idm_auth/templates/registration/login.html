@@ -26,6 +26,10 @@
                                         {{ error }}
                                     </p>
                                 {% endfor %}
+                            {% elif awaiting_activation %}
+                                <p class="errornote">
+                                    {{ wizard.form.error_messages.inactive }}
+                                </p>
                             {% endif %}
 
 
