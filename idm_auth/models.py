@@ -34,7 +34,7 @@ class User(AbstractUser):
     must_use_password = models.BooleanField(default=False)
 
     state = models.CharField(max_length=32)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
 
     USERNAME_FIELD = 'id'
 

@@ -34,7 +34,7 @@ class IDMAuthCoreIntegrationConfig(AppConfig):
                     'context': 'home',
                     'value': instance.email,
                 }],
-                'date_of_birth': instance.date_of_birth.isoformat(),
+                'date_of_birth': instance.date_of_birth.isoformat() if instance.date_of_birth else None,
                 'state': 'active',
             }
             response = app_config.session.post(identity_url, data)
