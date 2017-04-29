@@ -31,7 +31,8 @@ def creates_idm_core_user(f):
     def wrapped(*args, **kwargs):
         identity_id = uuid.uuid4()
 
-        def create_identity(url, data, *args, **kwargs):
+        def create_identity(url, *args, **kwargs):
+            data = kwargs['json']
             idm_broker_config = apps.get_app_config('idm_broker')
             with idm_broker_config.broker.acquire(block=True) as conn:
                 exchange = kombu.Exchange('idm.core.identity').bind(conn)

@@ -33,10 +33,11 @@ class IDMAuthCoreIntegrationConfig(AppConfig):
                 'emails': [{
                     'context': 'home',
                     'value': instance.email,
+                    'validated': True,
                 }],
                 'date_of_birth': instance.date_of_birth.isoformat() if instance.date_of_birth else None,
                 'state': 'active',
             }
-            response = app_config.session.post(identity_url, data)
+            response = app_config.session.post(identity_url, json=data)
             response.raise_for_status()
             instance.identity_id = response.json()['id']
