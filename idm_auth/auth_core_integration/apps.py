@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db.models.signals import pre_save
 
 
-
 class IDMAuthCoreIntegrationConfig(AppConfig):
     name = 'idm_auth.auth_core_integration'
 

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
@@ -103,5 +104,29 @@ class SignupView(SessionWizardView):
                 reverse('signup-done')
             )
 
-class SignupDoneView(TemplateView):
-    template_name = 'onboarding/signup-done.html'
+
+class ClaimView(TemplateView):
+    template_name = 'onboarding/claim.html'
+
+    def get(self, request, claim_key):
+        username = self.validate_key(claim_key)
+
+
+    def validate_key(self, claim_key):
+        """
+        Verify that the activation key is valid and within the
+        permitted activation time window, returning the username if
+        valid or ``None`` if not.
+
+        """
+        try:
+            username = signing.loads(
+                claim_key,
+                salt='account-claim',
+                max_age=settings.ACCOUNT_ACTIVATION_DAYS * 86400
+            )
+            return username
+        # SignatureExpired is a subclass of BadSignature, so this will
+        # catch either one.
+        except signing.BadSignature:
+            return None

@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from social_django.models import UserSocialAuth
 
 from . import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class UserSocialAuthInline(admin.TabularInline):
@@ -22,5 +23,9 @@ class UserAdmin(BaseUserAdmin):
         UserSocialAuthInline,
     ]
     form = UserChangeForm
+    fieldsets = BaseUserAdmin.fieldsets[:1] + (
+        (_('Identity'), {'fields': ('identity_id', 'primary')}),
+    ) + BaseUserAdmin.fieldsets[1:]
+    readonly_fields = BaseUserAdmin.readonly_fields + ('identity_id', 'primary')
 
 admin.site.register(models.User, UserAdmin)

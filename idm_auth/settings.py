@@ -79,6 +79,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 AUTHENTICATION_BACKENDS = (
+    'idm_auth.tests.social_backends.DummyBackend',
     'django_auth_kerberos.backends.KrbBackend',
     'social_core.backends.open_id.OpenIdAuth',
     'social_core.backends.google.GoogleOpenId',

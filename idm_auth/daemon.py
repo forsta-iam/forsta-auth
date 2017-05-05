@@ -3,10 +3,10 @@ import uuid
 import kombu
 from django.apps import apps
 from django.db import transaction, connection
-from kombu.mixins import ConsumerMixin
+from kombu.mixins import ConsumerMixin, logger
 
 user_queue = kombu.Queue('idm.auth.person',
-                         exchange=kombu.Exchange('idm.core.identity', type='topic'),
+                         exchange=kombu.Exchange('idm.core.person', type='topic'),
                          auto_declare=True, routing_key='#')
 
 
@@ -37,21 +37,28 @@ class IDMAuthDaemon(ConsumerMixin):
             _, action, id = message.delivery_info['routing_key'].split('.')
             id = uuid.UUID(id)
             if action == 'created' and body['state'] != 'established':
+                message.ack()
                 return
-            if action in ('created', 'updated'):
+            if action in ('created', 'changed'):
                 try:
                     user = models.User.objects.get(identity_id=id, primary=True)
                 except models.User.DoesNotExist:
                     if body['state'] not in ('established', 'active'):
                         # No need to create users here before they've been claimed.
+                        message.ack()
                         return
-                    user = models.User(identity_id=id, primary=True)
+                    user = models.User(identity_id=id, primary=True, is_active=False)
                 user.state = body['state']
-                user.first_name = body['primary_name']['first_name']
-                user.last_name = body['primary_name']['last_name']
-                user.email = body['primary_email'] or body['rescue_email']
+                if body.get('primary_name'):
+                    user.first_name = body['primary_name']['first']
+                    user.last_name = body['primary_name']['last']
+                else:
+                    user.first_name = ''
+                    user.last_name = ''
+                user.email = body['primary_email']
                 user.save()
                 message.ack()
+                logger.info("Identity changed")
             elif action == 'deleted':
                 for user in models.Identity.objects.filter(id=id):
                     user.delete()
