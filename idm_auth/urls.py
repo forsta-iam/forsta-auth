@@ -10,16 +10,20 @@ from two_factor.urls import urlpatterns as tf_urls
 import idm_auth.onboarding.views
 import idm_auth.oidc.views
 import idm_auth.saml.views
+import idm_auth.api_views
 from registration.backends.hmac import views as hmac_views
 from . import views
 
 router = routers.DefaultRouter()
 router.register('oidc/client', idm_auth.oidc.views.ClientViewSet, base_name='client')
+router.register('user', idm_auth.api_views.UserViewSet, base_name='user')
 
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^login/$', views.SocialTwoFactorLoginView.as_view(), name='login'),
     url(r'^logout/$', logout, name='logout'),
+    url(r'^password/$', views.PasswordChangeView.as_view(), name='password-change'),
+    url(r'^password/done/$', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     url(r'^recover/$', views.RecoverView.as_view(), name='recover'),
     url(r'^claim/(?P<activation_code>[a-f0-9]{32})/$', views.ClaimView.as_view(), name='claim'),
     url(r'^signup/$', idm_auth.onboarding.views.SignupView.as_view(), name='signup'),

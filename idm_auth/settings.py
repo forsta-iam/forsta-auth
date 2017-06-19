@@ -30,18 +30,19 @@ DATABASES = {
 
 
 INSTALLED_APPS = [
+    'idm_auth.apps.IDMAuthConfig',
+    'idm_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
+    'idm_auth.kerberos.apps.KerberosConfig',
+    'idm_auth.onboarding',
+    'idm_auth.saml',
+    'idm_brand',
+    'idm_broker.apps.IDMBrokerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'idm_auth.apps.IDMAuthConfig',
-    'idm_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
-    'idm_auth.onboarding',
-    'idm_auth.saml',
-    'idm_brand',
-    'idm_broker.apps.IDMBrokerConfig',
     'social_django',
     'reversion',
     'rest_framework',
@@ -79,8 +80,9 @@ MIDDLEWARE_CLASSES = [
 ]
 
 AUTHENTICATION_BACKENDS = (
+    'idm_auth.kerberos.backends.KerberosBackend',
     'idm_auth.tests.social_backends.DummyBackend',
-    'django_auth_kerberos.backends.KrbBackend',
+    #'django_auth_kerberos.backends.KrbBackend',
     'social_core.backends.open_id.OpenIdAuth',
     'social_core.backends.google.GoogleOpenId',
     'social_core.backends.google.GoogleOAuth2',
@@ -175,10 +177,10 @@ BROKER_USERNAME = os.environ.get('BROKER_USERNAME', 'guest')
 BROKER_PASSWORD = os.environ.get('BROKER_PASSWORD', 'guest')
 BROKER_PREFIX = os.environ.get('BROKER_PREFIX', 'idm.auth.')
 
-OIDC_USERINFO = 'idm_auth.oidc.get_userinfo'
 
+OIDC_EXTRA_SCOPE_CLAIMS = 'idm_auth.oidc.claims.IDMAuthScopeClaims'
 
-IDM_CORE_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/')
+IDM_CORE_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/api/')
 
 SOCIAL_AUTH_SAML_ORG_INFO = {
     "en-GB": {
@@ -203,6 +205,8 @@ SESSION_COOKIE_NAME = 'idm-auth-sessionid'
 # django-registration
 ACCOUNT_ACTIVATION_DAYS = 7
 
+TWO_FACTOR_LOCAL_YUBIKEY_VALIDATION = True
+
 # The SOCIAL_AUTH_SAML_ENABLED_IDPS setting mentioned in the docs (http://psa.matiasaguirre.net/docs/backends/saml.html)
 # is replaced by idm_auth.saml.models.IDP, and you can add more with fixtures, the admin, or the load_saml_metadata
 # management command.
@@ -215,3 +219,15 @@ EMAIL_HOST = os.environ.get('SMTP_SERVER')
 EMAIL_HOST_USER = os.environ.get('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD')
 EMAIL_USE_TLS = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+IDM_APPLICATION_ID = '4ff517c5-532f-42ee-afb1-a5d3da2f61d5'
+
+from django.conf import global_settings
+
+PASSWORD_HASHERS = global_settings.PASSWORD_HASHERS + ['idm_auth.kerberos.hashers.KerberosHasher']
+
+DEFAULT_REALM = os.environ['DEFAULT_REALM']
+KADMIN_PRINCIPAL_NAME = os.environ.get('KADMIN_PRINCIPAL_NAME')
+CLIENT_PRINCIPAL_NAME = os.environ.get('CLIENT_PRINCIPAL_NAME')

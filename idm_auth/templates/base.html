@@ -1,4 +1,10 @@
-{% extends "base.html" %}
+{% extends "idm_brand/base.html" %}
+
+{% block site_name %}Account management{% endblock %}
+
+{% block extra_head %}{{ block.super }}
+<link rel="stylesheet" href="{{ STATIC_URL }}idm-auth.css" type="text/css">
+{% endblock %}
 
 {% block nav %}
 <ul class="pure-menu-list">
@@ -9,7 +15,7 @@
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">Images</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">Contact details</a></li>
     <li class="pure-menu-heading">Authentication</li>-->
-    <li class="pure-menu-item"><a class="pure-menu-link" href="#">Password management</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "password-change" %}">Password management</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">Device management</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="#">GPG and SSH keys</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "social-logins" %}">Social logins</a></li>
@@ -22,5 +28,9 @@
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "recover" %}">Recover</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "signup" %}">Sign-up</a></li>
     {% endif %}
+
+<hr>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="http://localhost:8000/">Identity self-service</a></li>
+
 </ul>
 {% endblock %}

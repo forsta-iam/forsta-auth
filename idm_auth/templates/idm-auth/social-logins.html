@@ -1,49 +1,41 @@
-{% extends "idm-auth/base.html" %}
+{% extends "base.html" %}
+
+{% block h1_title %}Social logins{% endblock %}
+{% block title %}Social logins{% endblock %}
 
 {% block extra_head %}{{ block.super }}
 <link rel="stylesheet" href="{{ STATIC_URL }}idm-auth.css" type="text/css">
 {% endblock %}
 
 {% block content %}
-    <div class="pure-g">
-        <div class="pure-u-1">
-            <div class="pad-1">
-                <h1>Social logins</h1>
-
-    <div class="pure-u-1-2"><div class="pad-1">
-    <h3>Existing</h3>
-                    <table class="pure-table pure-table-horizontal">
-                        <thead>
-                        <tr>
-                            <th>Service</th>
-                            <th>Username</th>
-                            <th>Disassociate</th>
-                        </tr>
-                        </thead>
-                        <tbody>{% for user_social_auth in associated %}
-                            <tr class="social-account-{{ user_social_auth.backend_id }}">
-                                <td class="align-center">
-                                   <i class="{{ user_social_auth.font_icon }} fa-2x social-account-icon-{{ user_social_auth.backend_id }}" title="{{ user_social_auth.name }}"> </i>
-                                </td>
-                                <td>{{ user_social_auth.username }}</td>
-                                <td>
-                                    <form method="post" action="{% url "social:disconnect_individual" backend=user_social_auth.provider association_id=user_social_auth.id %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="next" value="{% url "profile" %}">
-                                        <input type="submit" class="fa pure-button" value="&#61527;">
-                                    </form>
-                            </tr>{% endfor %}
-                        </tbody>
-                    </table>
-    </div></div>
-     <div class="pure-u-1-2"><div class="pad-1">
-
-                <section>
-                    <h3>Add new</h3>
-                    {% include "idm-auth/social-login-links.html" %}
-                </section>
-            </div></div></div>
-
-                </section>
-        </div>
+    <section>
+        <h2>Existing</h2>
+        <table class="pure-table pure-table-horizontal">
+            <thead>
+            <tr>
+                <th>Service</th>
+                <th>Username</th>
+                <th>Disassociate</th>
+            </tr>
+            </thead>
+            <tbody>{% for user_social_auth in associated %}
+                <tr class="social-account-{{ user_social_auth.backend_id }}">
+                    <td class="align-center">
+                        <i class="{{ user_social_auth.font_icon }} fa-2x social-account-icon-{{ user_social_auth.backend_id }}" title="{{ user_social_auth.name }}"> </i>
+                    </td>
+                    <td>{{ user_social_auth.username }}</td>
+                    <td>
+                        <form method="post" action="{% url "social:disconnect_individual" backend=user_social_auth.provider association_id=user_social_auth.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url "profile" %}">
+                            <input type="submit" class="fa pure-button" value="&#61527;">
+                        </form>
+                </tr>{% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <section>
+        <h3>Add new</h3>
+        {% include "idm-auth/social-login-links.html" %}
+    </section>
 {% endblock %}

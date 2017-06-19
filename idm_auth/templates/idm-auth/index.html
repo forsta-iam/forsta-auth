@@ -1,11 +1,12 @@
-{% extends "idm-auth/base.html" %}
+{% extends "base.html" %}
+
+{% block h1_title %}Account management{% endblock %}
+{% block title %}Account management{% endblock %}
 
 {% block content %}
     <div class="pure-g">
         <div class="pure-u-1">
             <div class="pad-1">
-
-<h1>Account management</h1>
 
                 {% if user.is_authenticated %}
                 <a href="{% url "profile" %}">Manage my account</a>

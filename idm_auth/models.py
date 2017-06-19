@@ -6,21 +6,23 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from idm_auth.kerberos.models import KerberosBackedUserMixin
+
 
 def get_uuid():
     return uuid.uuid4()
 
 
 class UsernameValidator(RegexValidator):
-    regex = r'^[a-z][a-z0-9_/.]+$'
+    regex = r'^[a-z][a-z0-9_/.\-]+$'
     message = _(
         'Enter a valid username. This value may contain only a-z letters, '
-        'numbers, and /_. characters, and must start with a letter.'
+        'numbers, and /_-. characters, and must start with a letter.'
     )
     flags = re.ASCII
 
 
-class User(AbstractUser):
+class User(KerberosBackedUserMixin, AbstractUser):
     username_validator = UsernameValidator()
 
     id = models.UUIDField(primary_key=True, default=get_uuid, editable=False)

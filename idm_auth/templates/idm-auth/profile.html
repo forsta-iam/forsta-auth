@@ -1,8 +1,7 @@
-{% extends "idm-auth/base.html" %}
+{% extends "base.html" %}
 
-{% block extra_head %}{{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}idm-auth.css" type="text/css">
-{% endblock %}
+{% block h1_title %}Account management{% endblock %}
+{% block title %}Account management{% endblock %}
 
 {% block content %}
     <div class="pure-g">

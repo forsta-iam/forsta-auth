@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import views as auth_views
 from django.forms import Form
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, resolve_url, redirect
@@ -8,6 +9,8 @@ from django.utils.http import is_safe_url
 from django.views import View
 from django.views.generic import TemplateView
 from django.contrib.auth.views import login as auth_login
+
+from idm_auth.kerberos.apps import get_kadmin
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views.core import LoginView as TwoFactorLoginView
 from two_factor.utils import default_device
@@ -61,6 +64,10 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
+        context.update({
+            'redirect_field_name': self.redirect_field_name,
+            'redirect_to': self.request.GET.get(self.redirect_field_name),
+        })
         if self.steps.current == 'auth':
             context.update({
                 'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.backend_id != 'saml'], key=lambda sb: sb.name)),
@@ -119,3 +126,17 @@ class ClaimView(TemplateView):
 
 class RecoverView(View):
     pass
+
+
+class PasswordChangeView(auth_views.PasswordChangeView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.password.startswith('kerberos$'):
+            kadmin = get_kadmin()
+            context['principal'] = kadmin.get_principal(self.request.user.password.split('$', 3)[2])
+        return context
+
+
+class PasswordChangeDoneView(auth_views.PasswordChangeDoneView):
+    pass
+

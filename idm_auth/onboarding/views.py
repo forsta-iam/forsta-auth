@@ -50,7 +50,7 @@ class SignupView(SessionWizardView):
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            raise PermissionDenied
+            raise PermissionDenied("You cannot sign up for a new account while you are logged in.")
         return super().dispatch(request, *args, **kwargs)
 
     @cached_property

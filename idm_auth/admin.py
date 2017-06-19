@@ -1,3 +1,4 @@
+import copy
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
@@ -19,6 +20,10 @@ class UserChangeForm(BaseUserChangeForm):
 
 
 class UserAdmin(BaseUserAdmin):
+    list_display = BaseUserAdmin.list_display + ('identity_id', 'primary')
+    add_fieldsets = copy.deepcopy(BaseUserAdmin.add_fieldsets)
+    add_fieldsets[0][1]['fields'] += ('identity_id', 'primary')
+
     inlines = [
         UserSocialAuthInline,
     ]
@@ -26,6 +31,6 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = BaseUserAdmin.fieldsets[:1] + (
         (_('Identity'), {'fields': ('identity_id', 'primary')}),
     ) + BaseUserAdmin.fieldsets[1:]
-    readonly_fields = BaseUserAdmin.readonly_fields + ('identity_id', 'primary')
+    #readonly_fields = BaseUserAdmin.readonly_fields + ('identity_id', 'primary')
 
 admin.site.register(models.User, UserAdmin)

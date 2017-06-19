@@ -1,2 +1,3 @@
 def get_userinfo(claims, user):
-    claims['sub'] = user.identity_id
+    claims['sub'] = str(user.identity_id)
+    return claims

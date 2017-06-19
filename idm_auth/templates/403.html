@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block h1_title %}Forbidden{% endblock %}
+{% block title %}Forbidden{% endblock %}
+
+{% block content %}
+    {% if exception %}
+        <p>{{ exception }}</p>
+    {% endif %}
+{% endblock %}

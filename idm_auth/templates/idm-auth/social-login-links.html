@@ -1,6 +1,6 @@
 <ul class="social-link-links">{% for social_backend in social_backends %}
     <li>
-        <a href="{% url "social:begin" backend=social_backend.backend_id %}">
+        <a href="{% url "social:begin" backend=social_backend.backend_id %}{% if redirect_to %}?{{ redirect_field_name }}={{ redirect_to|urlencode }}{% endif %}">
           <i class="{{ social_backend.font_icon }} fa-2x social-account-icon-{{ social_backend.backend_id }}" title="{{ social_backend.name }}"> </i>
         </a>
     </li>{% endfor %}

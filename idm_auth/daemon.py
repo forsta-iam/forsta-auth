@@ -60,7 +60,7 @@ class IDMAuthDaemon(ConsumerMixin):
                 message.ack()
                 logger.info("Identity changed")
             elif action == 'deleted':
-                for user in models.Identity.objects.filter(id=id):
+                for user in models.User.objects.filter(id=id):
                     user.delete()
                 message.ack()
             else:

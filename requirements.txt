@@ -3,6 +3,7 @@ djangorestframework
 django-oidc-provider
 django-reversion
 django-two-factor-auth
+django-otp
 django-otp-yubikey
 django-auth-kerberos
 django-registration
@@ -12,5 +13,9 @@ social-auth-app-django
 kombu
 python3-saml
 psycopg2
+pykerberos
 python-dateutil
+python-kadmin
 PyYAML
+requests
+requests-negotiate
