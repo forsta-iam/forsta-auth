@@ -17,7 +17,7 @@ from two_factor.utils import default_device
 
 from idm_auth import backend_meta, models
 from idm_auth.backend_meta import BackendMeta
-from idm_auth.forms import AuthenticationForm
+from . import forms
 from idm_auth.models import User
 from idm_auth.saml.models import IDP
 
@@ -28,7 +28,7 @@ def login(request):
         'idps': IDP.objects.all().order_by('label'),
     }
     return auth_login(request,
-                      authentication_form=AuthenticationForm,
+                      authentication_form=forms.AuthenticationForm,
                       extra_context=extra_context,
                       redirect_authenticated_user=True)
 
@@ -36,7 +36,7 @@ def login(request):
 class SocialTwoFactorLoginView(TwoFactorLoginView):
     template_name = 'registration/login.html'
     form_list = (
-        ('auth', AuthenticationForm),
+        ('auth', forms.AuthenticationForm),
         ('token', AuthenticationTokenForm),
         ('backup', BackupTokenForm),
     )
@@ -129,6 +129,8 @@ class RecoverView(View):
 
 
 class PasswordChangeView(auth_views.PasswordChangeView):
+    form_class = forms.PasswordChangeForm
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.password.startswith('kerberos$'):
