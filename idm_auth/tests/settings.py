@@ -1,3 +1,7 @@
+import os
+
+os.environ['DEFAULT_REALM'] = 'EXAMPLE.COM'
+
 from ..settings import *
 
 BROKER_TRANSPORT = 'memory'
@@ -67,3 +71,5 @@ SOCIAL_AUTH_SAML_SP_ENTITY_ID = 'http://localhost/'
 AUTHENTICATION_BACKENDS += (
     'idm_auth.tests.social_backends.DummyBackend',
 )
+
+PASSWORD_HASHERS.remove('idm_auth.kerberos.hashers.KerberosHasher')

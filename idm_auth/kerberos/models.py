@@ -1,19 +1,21 @@
 from django.apps import apps
-from django.contrib.auth.hashers import make_password, check_password, is_password_usable
+from django.contrib.auth.hashers import make_password, check_password, is_password_usable, get_hasher, \
+    get_hashers_by_algorithm
+
+from idm_auth.kerberos.apps import get_kadmin
 
 
 class KerberosBackedUserMixin(object):
     def set_password(self, raw_password):
-        if self.username:
+        if self.username and 'kerberos' in get_hashers_by_algorithm():
             self.password = make_password(raw_password, salt=self.username, hasher='kerberos')
         else:
-            if self.password and '$' in self.password:
+            if self.password and self.password.startswith('kerberos$'):
                 algorithm, _, principal, *_ = self.password.split('$')
-                if algorithm == 'kerberos':
-                    kadmin = get_kadmin()
-                    if kadmin.principal_exists(principal):
-                        kadmin.delete_principal(principal)
-                self.password = make_password(raw_password)
+                kadmin = get_kadmin()
+                if kadmin.principal_exists(principal):
+                    kadmin.delete_principal(principal)
+            self.password = make_password(raw_password)
         self._password = raw_password
 
     def check_password(self, raw_password):
@@ -21,7 +23,7 @@ class KerberosBackedUserMixin(object):
         Return a boolean of whether the raw_password was correct. Handles
         hashing formats behind the scenes.
         """
-        preferred = 'kerberos' if self.username else 'default'
+        preferred = 'kerberos' if self.username and 'kerberos' in get_hashers_by_algorithm() else 'default'
         def setter(raw_password):
             self.set_password(raw_password)
             # Password hash upgrades shouldn't be considered password changes.
