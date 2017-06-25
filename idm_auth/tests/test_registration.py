@@ -1,9 +1,7 @@
 import json
 from urllib.parse import urljoin, urlparse
 
-import kombu
 import re
-from django.apps import apps
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 from kombu.message import Message

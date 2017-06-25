@@ -60,9 +60,10 @@ def creates_idm_core_user(f):
 
 
 class GeneratesMessage(object):
-    def __init__(self, exchange_name, routing_key='#'):
+    def __init__(self, exchange_name, routing_key='#', timeout=0):
         self.exchange_name = exchange_name
         self.routing_key = routing_key
+        self.timeout = timeout
 
     def __enter__(self):
         idm_broker_config = apps.get_app_config('idm_broker')
@@ -73,5 +74,12 @@ class GeneratesMessage(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.message = self.queue.get()
+        self.message = None
+        for i in range(self.timeout+1):
+            self.message = self.queue.get()
+            if self.message:
+                break
+            time.sleep(1)
+
+
         self.conn.close()

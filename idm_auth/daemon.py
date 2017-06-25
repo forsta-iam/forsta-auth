@@ -63,7 +63,12 @@ class IDMAuthDaemon(ConsumerMixin):
                 else:
                     user.first_name = ''
                     user.last_name = ''
-                user.email = body['primary_email']
+                for email in body['emails']:
+                    if email['validated']:
+                        user.email = email['value']
+                        break
+                else:
+                    user.email = ''
                 user.save()
                 message.ack()
                 logger.info("Identity changed")
