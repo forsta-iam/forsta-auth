@@ -14,6 +14,8 @@ from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, creates_idm_core_us
 
 
 class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
+    test_password = 'ahCoi6shahch5aeViighie6oofiemeim'
+
     def setUp(self):
         self.selenium = webdriver.PhantomJS()
         super().setUp()
@@ -43,8 +45,8 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         self.assertEqual(continue_button.get_attribute('value'), 'Continue')
         continue_button.click()
 
-        selenium.find_element_by_name('password-password1').send_keys('secret')
-        selenium.find_element_by_name('password-password2').send_keys('secret')
+        selenium.find_element_by_name('password-password1').send_keys(self.test_password)
+        selenium.find_element_by_name('password-password2').send_keys(self.test_password)
 
         continue_button = selenium.find_element_by_css_selector('input[type=submit]')
         self.assertEqual(continue_button.get_attribute('value'), 'Go')
