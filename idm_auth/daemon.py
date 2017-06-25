@@ -1,9 +1,14 @@
+import logging
 import uuid
 
 import kombu
 from django.apps import apps
 from django.db import transaction, connection
 from kombu.mixins import ConsumerMixin, logger
+
+from idm_auth.onboarding.models import PendingActivation
+
+logger = logging.getLogger(__name__)
 
 user_queue = kombu.Queue('idm.auth.person',
                          exchange=kombu.Exchange('idm.core.person', type='topic'),
@@ -43,11 +48,14 @@ class IDMAuthDaemon(ConsumerMixin):
                 try:
                     user = models.User.objects.get(identity_id=id, primary=True)
                 except models.User.DoesNotExist:
-                    if body['state'] not in ('established', 'active'):
-                        # No need to create users here before they've been claimed.
-                        message.ack()
+                    if body['state'] == 'established':
+                        user = models.User(identity_id=id, primary=True, is_active=False)
+                        user.save()
+                        PendingActivation.objects.get_or_create(user=user)
+                    else:
+                        logger.warning("Identity %s in unexpected state (%s)", id, body['state'])
+                        message.reject()
                         return
-                    user = models.User(identity_id=id, primary=True, is_active=False)
                 user.state = body['state']
                 if body.get('primary_name'):
                     user.first_name = body['primary_name']['first']

@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     'idm_auth.apps.IDMAuthConfig',
     'idm_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
     'idm_auth.kerberos.apps.KerberosConfig',
-    'idm_auth.onboarding',
+    'idm_auth.onboarding.apps.OnboardingConfig',
     'idm_auth.saml',
     'idm_brand',
     'idm_broker.apps.IDMBrokerConfig',
@@ -229,7 +229,7 @@ from django.conf import global_settings
 
 PASSWORD_HASHERS = global_settings.PASSWORD_HASHERS + ['idm_auth.kerberos.hashers.KerberosHasher']
 
-DEFAULT_REALM = os.environ['DEFAULT_REALM']
+DEFAULT_REALM = os.environ.get('DEFAULT_REALM', 'EXAMPLE.COM')
 KADMIN_PRINCIPAL_NAME = os.environ.get('KADMIN_PRINCIPAL_NAME')
 CLIENT_PRINCIPAL_NAME = os.environ.get('CLIENT_PRINCIPAL_NAME')
 

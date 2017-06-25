@@ -1,4 +1,3 @@
-from idm_auth.daemon import IDMAuthDaemon
 
 
 if __name__ == '__main__':
@@ -9,5 +8,7 @@ if __name__ == '__main__':
     logging.getLogger('django.db.backends').setLevel(logging.DEBUG)
 
     django.setup()
+
+    from idm_auth.daemon import IDMAuthDaemon
     daemon = IDMAuthDaemon()
     daemon()
