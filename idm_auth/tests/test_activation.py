@@ -65,7 +65,6 @@ class ActivationTestCase(IDMAuthDaemonTestCaseMixin, TestCase):
 
             start_activation_task.delay.assert_called_once_with(str(pending_activation.id))
 
-    @unittest.expectedFailure
     def test_start_activation_email(self):
         # Tests whether the start_activation sends an appropriate activation email if the identity has a home contact
         # email address
@@ -77,10 +76,22 @@ class ActivationTestCase(IDMAuthDaemonTestCaseMixin, TestCase):
         with unittest.mock.patch.object(idm_auth_config, 'session') as session:
             response = unittest.mock.Mock()
             response.json.return_value = {
-
+                'state': 'established',
+                'emails': [{
+                    'context': 'work',
+                    'value': 'alice@example.com',
+                    'validated': True,
+                }, {
+                    'context': 'home',
+                    'value': 'alice@example.org',
+                    'validated': False,
+                }]
             }
             session.get.return_value = response
             onboarding_tasks.start_activation(str(pending_activation.id))
             self.assertEqual(session.get.call_count, 1)
 
         self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+
+        self.assertEqual(email.recipients(), ['alice@example.org'])

@@ -1,0 +1,15 @@
+{% block subject %}Activate your Oxford account{% endblock %}
+
+{% block plain %}
+Dear {{ identity.primary_name.plain }},
+
+Welcome to the University of Oxford!
+
+{{ pending_activation.activation_code }}
+
+Yours,
+
+The Identity Management System
+University of Oxford
+
+{% endblock %}

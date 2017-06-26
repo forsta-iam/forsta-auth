@@ -8,6 +8,7 @@ django-otp
 django-otp-yubikey
 django-auth-kerberos
 django-registration
+django-templated-email
 django-zxcvbn-password
 social-auth-app-django
 -e git://github.com/alexsdutton/idm-notification.git#egg=idm-notification
