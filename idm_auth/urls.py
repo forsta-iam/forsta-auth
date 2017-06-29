@@ -25,11 +25,12 @@ urlpatterns = [
     url(r'^password/$', views.PasswordChangeView.as_view(), name='password-change'),
     url(r'^password/done/$', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     url(r'^recover/$', views.RecoverView.as_view(), name='recover'),
-    url(r'^claim/(?P<activation_code>[a-f0-9]{32})/$', views.ClaimView.as_view(), name='claim'),
+    url(r'^claim/$',
+        idm_auth.onboarding.views.ActivationView.as_view(url_name='activate'), name='activate'),
+    url(r'^claim/(?P<step>[a-z-]+)/$',
+        idm_auth.onboarding.views.ActivationView.as_view(url_name='activate'), name='activate'),
     url(r'^signup/$', idm_auth.onboarding.views.SignupView.as_view(), name='signup'),
-    url(r'^signup/complete/$', TemplateView.as_view(
-        template_name='onboarding/signup-done.html'
-    ), name='signup-done'),
+    url(r'^signup/complete/$', idm_auth.onboarding.views.SignupCompleteView.as_view(), name='signup-done'),
     url(r'^account/profile/$', views.ProfileView.as_view(), name='profile'),
     url(r'^account/social-logins/$', views.SocialLoginsView.as_view(), name='social-logins'),
 

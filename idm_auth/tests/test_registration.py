@@ -1,4 +1,5 @@
 import json
+import unittest.mock
 from urllib.parse import urljoin, urlparse
 
 import re
@@ -8,9 +9,11 @@ from kombu.message import Message
 from django.test import LiveServerTestCase
 from selenium import webdriver
 
-from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, creates_idm_core_user, GeneratesMessage
+from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, creates_idm_core_user, GeneratesMessage, \
+    update_user_from_identity_noop
 
 
+@unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
 class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
     test_password = 'ahCoi6shahch5aeViighie6oofiemeim'
 
@@ -30,8 +33,8 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         selenium = self.selenium
         selenium.get(urljoin(self.live_server_url, '/signup/'))
 
-        continue_button = selenium.find_element_by_css_selector('input[type=submit]')
-        self.assertEqual(continue_button.get_attribute('value'), 'Continue')
+        continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
+        self.assertEqual(continue_button.text, 'Continue')
         continue_button.click()
 
         selenium.find_element_by_name('personal-first_name').send_keys('Edgar')
@@ -39,15 +42,15 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         selenium.find_element_by_name('personal-date_of_birth').send_keys('1809-01-19')
         selenium.find_element_by_name('personal-email').send_keys('edgar@example.org')
 
-        continue_button = selenium.find_element_by_css_selector('input[type=submit]')
-        self.assertEqual(continue_button.get_attribute('value'), 'Continue')
+        continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
+        self.assertEqual(continue_button.text, 'Continue')
         continue_button.click()
 
         selenium.find_element_by_name('password-password1').send_keys(self.test_password)
         selenium.find_element_by_name('password-password2').send_keys(self.test_password)
 
-        continue_button = selenium.find_element_by_css_selector('input[type=submit]')
-        self.assertEqual(continue_button.get_attribute('value'), 'Go')
+        continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
+        self.assertEqual(continue_button.text, 'Go')
 
         with GeneratesMessage('idm.auth.user') as gm:
             continue_button.click()

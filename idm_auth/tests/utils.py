@@ -83,3 +83,15 @@ class GeneratesMessage(object):
 
 
         self.conn.close()
+
+
+def get_fake_identity_data(identity_id):
+    return {
+        'id': identity_id,
+        '@type': 'Person',
+        'state': 'active',
+    }
+
+
+def update_user_from_identity_noop(user, identity=None):
+    pass

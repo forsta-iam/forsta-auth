@@ -1,11 +1,14 @@
+import unittest.mock
 import uuid
 
 from django.test import TestCase
 
 from idm_auth.forms import AuthenticationForm
 from idm_auth.models import User
+from idm_auth.tests.utils import get_fake_identity_data, update_user_from_identity_noop
 
 
+@unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
 class AuthenticationFormTestCase(TestCase):
     def testUUID(self):
         user = User(identity_id=uuid.uuid4(), primary=True)

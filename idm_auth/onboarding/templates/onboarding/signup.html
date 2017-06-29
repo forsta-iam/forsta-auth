@@ -1,25 +1,38 @@
-{% extends "idm_brand/base.html" %}
+{% extends "base.html" %}
 
 {% block extra_head %}{{ block.super }}
 {{ wizard.form.media }}
 {% endblock %}
 
+{% block header %}
+{% if pending_activation %}
+    <h1>Claim your Oxford identity</h1>
+    {% if wizard.steps.current == 'password' %}
+        <h2>Step 4 of 4: Set a password</h2>
+    {% endif %}
+{% else %}
+    <h1>Register for an Oxford identity</h1>
+{% endif %}
+{% endblock %}
+
 {% block content %}
-    <div class="pure-g">
-        <div class="pure-u pure-u-lg-1-3" style="margin-left: auto; margin-right: auto">
-            <h1>Signup</h1>
+    <form method="post" class="pure-form pure-form-aligned">{% csrf_token %}
+        {{ wizard.management_form }}
 
-            <form method="post">{% csrf_token %}
-                {{ wizard.management_form }}
-                {% if wizard.steps.current == "welcome" %}
-                    <p>Welcome to the University of Oxford.</p>
-                {% else %}
-                    <table>
-                        {{ form.as_table }}
-                    </table>
+        <fieldset>{% for field in form %}
+            <div class="pure-control-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% for error in field.errors %}
+                    <span class="pure-form-message-inline">{{ error }}</span>
+                {% endfor %}
+            </div>{% endfor %}
+            <div class="pure-controls">
+                {% if wizard.steps.prev %}
+                    <button type="submit" class="pure-button" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
                 {% endif %}
-                <input class="pure-form" type="submit" value="{% if wizard.steps.next %}Continue{% else %}Go{% endif %}">
-            </form>
-
-        </div></div>
+                <button type="submit" class="pure-button pure-button-primary">{% if wizard.steps.next %}Continue{% else %}Go{% endif %}</button>
+            </div>
+        </fieldset>
+    </form>
 {% endblock %}

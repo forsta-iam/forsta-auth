@@ -17,9 +17,10 @@ from kombu.pools import connections
 
 from idm_auth.onboarding.models import PendingActivation
 from idm_auth.onboarding import tasks as onboarding_tasks
-from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, GeneratesMessage
+from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, GeneratesMessage, update_user_from_identity_noop
 
 
+@unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
 class ActivationTestCase(IDMAuthDaemonTestCaseMixin, TestCase):
     def setUp(self):
         self.broker = connections[Connection(hostname=settings.BROKER_HOSTNAME,
@@ -43,6 +44,7 @@ class ActivationTestCase(IDMAuthDaemonTestCaseMixin, TestCase):
 
             message = {
                 'state': 'established',
+                '@type': 'Person',
                 'emails': [{
                     'context': 'home',
                     'value': 'alice@example.org',
@@ -50,46 +52,48 @@ class ActivationTestCase(IDMAuthDaemonTestCaseMixin, TestCase):
                 }]
             }
 
-            with GeneratesMessage('idm.auth.user', timeout=2) as gm:
-                exchange.publish(exchange.Message(json.dumps(message).encode(),
-                                                  content_type='application/json'),
-                                 routing_key='{}.{}.{}'.format('Person',
-                                                               'created',
-                                                               identity_id))
+            exchange.publish(exchange.Message(json.dumps(message).encode(),
+                                              content_type='application/json'),
+                             routing_key='{}.{}.{}'.format('Person',
+                                                           'created',
+                                                           identity_id))
 
-            self.assertIsInstance(gm.message, Message)
-            user = get_user_model().objects.get()
-            self.assertEqual(gm.message.delivery_info['routing_key'], 'User.created.{}'.format(user.pk))
-            pending_activation = PendingActivation.objects.get()
-            self.assertEqual(pending_activation.user, user)
+            # Wait briefly for the PendingActivation to appear
+            for i in range(4):
+                try:
+                    pending_activation = PendingActivation.objects.get()
+                    break
+                except PendingActivation.DoesNotExist:
+                    if i == 3:
+                        raise
+                    time.sleep(0.5)
+
+            self.assertEqual(pending_activation.identity_id, identity_id)
 
             start_activation_task.delay.assert_called_once_with(str(pending_activation.id))
 
-    def test_start_activation_email(self):
+    @unittest.mock.patch('idm_auth.auth_core_integration.utils.get_identity_data')
+    def test_start_activation_email(self, get_identity_data):
         # Tests whether the start_activation sends an appropriate activation email if the identity has a home contact
         # email address
         identity_id = uuid.uuid4()
-        user = get_user_model().objects.create(identity_id=identity_id, primary=True)
-        pending_activation = PendingActivation.objects.create(user=user)
+        pending_activation = PendingActivation.objects.create(identity_id=identity_id)
         idm_auth_config = apps.get_app_config('idm_auth')
 
-        with unittest.mock.patch.object(idm_auth_config, 'session') as session:
-            response = unittest.mock.Mock()
-            response.json.return_value = {
-                'state': 'established',
-                'emails': [{
-                    'context': 'work',
-                    'value': 'alice@example.com',
-                    'validated': True,
-                }, {
-                    'context': 'home',
-                    'value': 'alice@example.org',
-                    'validated': False,
-                }]
-            }
-            session.get.return_value = response
-            onboarding_tasks.start_activation(str(pending_activation.id))
-            self.assertEqual(session.get.call_count, 1)
+        get_identity_data.return_value = {
+            'state': 'established',
+            'emails': [{
+                'context': 'work',
+                'value': 'alice@example.com',
+                'validated': True,
+            }, {
+                'context': 'home',
+                'value': 'alice@example.org',
+                'validated': False,
+            }]
+        }
+        onboarding_tasks.start_activation(str(pending_activation.id))
+        self.assertEqual(get_identity_data.call_count, 1)
 
         self.assertEqual(len(mail.outbox), 1)
         email = mail.outbox[0]

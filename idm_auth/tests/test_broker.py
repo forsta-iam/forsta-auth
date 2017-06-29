@@ -1,5 +1,6 @@
 import datetime
 import time
+import unittest.mock
 import uuid
 
 import kombu
@@ -9,9 +10,11 @@ from django.db import transaction
 from django.test import TransactionTestCase
 from kombu.utils import json
 
+from idm_auth.tests.utils import get_fake_identity_data, update_user_from_identity_noop
 from ..models import User
 
 
+@unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
 class BrokerTestCase(TransactionTestCase):
     def test_user_published(self):
         idm_broker_config = apps.get_app_config('idm_broker')

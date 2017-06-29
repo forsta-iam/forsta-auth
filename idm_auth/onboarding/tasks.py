@@ -8,35 +8,30 @@ from templated_email import send_templated_mail
 from . import models
 
 @shared_task
-def start_activation(id):
-    pending_activation = models.PendingActivation.objects.get(id=id)
-    session = apps.get_app_config('idm_auth').session
-
-    person_url = urljoin(settings.IDM_CORE_URL, 'person/{}/'.format(pending_activation.user.identity_id))
-    response = session.get(person_url)
-    response.raise_for_status()
-
-    data = response.json()
+def start_activation(pending_activation_id):
+    from ..auth_core_integration.utils import get_identity_data
+    pending_activation = models.PendingActivation.objects.get(id=pending_activation_id)
+    identity = get_identity_data(pending_activation.identity_id)
 
     email = None
-    for email in data.get('emails', ()):
+    for email in identity.get('emails', ()):
         if email['context'] == 'home':
             email = email['value']
             break
 
     if email:
-        start_activation_by_email(pending_activation, data, email)
+        start_activation_by_email(pending_activation, identity, email)
     else:
         raise Exception
 
 
-def start_activation_by_email(pending_activation, data, email):
+def start_activation_by_email(pending_activation, identity, email):
     send_templated_mail(
         template_name='onboarding/activation',
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[email],
         context={
-            'identity': data,
+            'identity': identity,
             'pending_activation': pending_activation,
         },
         headers={'X-IDM-Activation-Code': pending_activation.activation_code},

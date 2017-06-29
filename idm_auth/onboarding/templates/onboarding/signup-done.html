@@ -1,4 +1,13 @@
 {% extends "base.html" %}
 
+{% block h1_title %}Account created{% endblock %}
+{% block title %}Account created{% endblock %}
+
 {% block content %}
+    <p>Your account has been created!</p>
+
+    <p>We've sent you an email, and you'll need to follow the link to confirm your email address before you can
+        log in.</p>
+
+    <a class="pure-button pure-button-primary" href="{{ redirect_to }}">I've confirmed my email address</a>
 {% endblock %}

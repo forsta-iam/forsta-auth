@@ -11,13 +11,7 @@ class IDMAuthScopeClaims(ScopeClaims):
     @cached_property
     def profile(self):
         if self.user.identity_id:
-            session = apps.get_app_config('idm_auth').session
-            response = session.get(urljoin(settings.IDM_CORE_URL,
-                                           'person/{}/'.format(self.user.identity_id)))
-            if response.status_code == http.client.OK:
-                return response.json()
-            else:
-                return {}
+            return get_identity_data(self.user.identity_id)
         else:
             return {}
 

@@ -1,6 +1,7 @@
 import uuid
 
 import re
+from dirtyfields import DirtyFieldsMixin
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
@@ -22,11 +23,13 @@ class UsernameValidator(RegexValidator):
     flags = re.ASCII
 
 
-class User(KerberosBackedUserMixin, AbstractUser):
+class User(KerberosBackedUserMixin, DirtyFieldsMixin, AbstractUser):
     username_validator = UsernameValidator()
 
     id = models.UUIDField(primary_key=True, default=get_uuid, editable=False)
     identity_id = models.UUIDField(db_index=True, null=True, blank=True)
+    identity_type = models.CharField(max_length=32, blank=True)
+
     username = models.CharField(max_length=256, unique=True, null=True, blank=True,
                                 validators=[username_validator])
     primary = models.BooleanField(help_text="Whether this is the primary account for the connected resource")

@@ -18,6 +18,6 @@ new_activation_code.valid_characters = 'ABCDEFGHJKMNPRTUVWXY346789'
 
 class PendingActivation(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    identity_id = models.UUIDField(db_index=True, unique=True)
     created = models.DateTimeField(auto_now_add=True)
     activation_code = models.CharField(max_length=14, default=new_activation_code, unique=True, db_index=True)

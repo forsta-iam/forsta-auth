@@ -43,28 +43,7 @@
                                 <div class="pure-u pure-u-1 pure-center"><a href="{% url "recover" %}">Forgotten your password?</a></div>
 
                             </div>
-                        </section>
-                        <hr>
-                        <section>
-                            <h2>Institutional login</h2>
-                            <form method="get" action="{% url "social:begin" backend='saml' %}" class="pure-form">
-                                <select name="idp" class="pure-u pure-3-4">{% for idp in idps %}
-                                    <option value="{{ idp.name }}">{{ idp.label }}</option>{% endfor %}
-                                </select>
-                                <input class="pure-u pure-u-1-4 pure-button" type="submit" value="Go">
-                            </form>
-                        </section>
-                        <hr>
-                        <section>
-                            <h2>Social login</h2>
-                            {% include "idm-auth/social-login-links.html" %}
-                        </section><hr>
-                        <section>
-                            <h2>Register new account</h2>
-                            Don’t have an account?
-                            <a href="{% url "signup" %}{% if redirect_to %}?{{ redirect_field_name }}={{ redirect_to|urlencode }}{% endif %}">Create an Oxford account</a>.
-                        </section>
-                    {%  elif wizard.steps.current == 'token' %}
+                        </section>                    {%  elif wizard.steps.current == 'token' %}
                         {% if device.method == 'call' %}
                             <p>{% blocktrans %}We are calling your phone right now, please enter the
                                 digits you hear.{% endblocktrans %}</p>
@@ -108,6 +87,32 @@
                         {% include "two_factor/_wizard_actions.html" %}
                     {% endif %}
                 </form>
+                {% if wizard.steps.current == 'auth' %}
+                    <hr>
+                    <section>
+                        <h2>Institutional login</h2>
+                        <form method="get" action="{% url "social:begin" backend='saml' %}" class="pure-form">
+                            <select name="idp" class="pure-u pure-3-4">{% for idp in idps %}
+                                <option value="{{ idp.name }}">{{ idp.label }}</option>{% endfor %}
+                            </select>
+                        {% if redirect_to %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_to }}">
+                        {% endif %}
+                            <input class="pure-u pure-u-1-4 pure-button" type="submit" value="Go">
+                        </form>
+                    </section>
+                    <hr>
+                    <section>
+                        <h2>Social login</h2>
+                        {% include "idm-auth/social-login-links.html" %}
+                    </section><hr>
+                    <section>
+                        <h2>Register new account</h2>
+                        Don’t have an account?
+                        <a href="{% url "signup" %}{% if redirect_to %}?{{ redirect_field_name }}={{ redirect_to|urlencode }}{% endif %}">Create an Oxford account</a>.
+                    </section>
+                {% endif %}
+
             </div></div>
     </div>
 {% endblock %}

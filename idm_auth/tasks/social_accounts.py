@@ -38,7 +38,6 @@ def sync_social_accounts(user_pk):
                                        'managed_by': settings.IDM_APPLICATION_ID})
         response.raise_for_status()
         response_data = response.json()
-        print(response_data)
         results.extend(response_data['results'])
         url = response_data.get('next')
 

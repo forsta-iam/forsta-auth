@@ -1,4 +1,4 @@
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlencode
 
 from django.test import LiveServerTestCase
 from django.urls import reverse
@@ -18,14 +18,15 @@ class SocialAuthTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         super().tearDown()
 
     def testDummyNewcomer(self):
+        begin_dummy_login_url = reverse('social:begin', kwargs={'backend': 'dummy'})
         selenium = self.selenium
-        selenium.get(urljoin(self.live_server_url, reverse('social:begin', kwargs={'backend': 'dummy'})) +
-                     '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice')
+        selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
+                     '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
         self.assertEqual(selenium.current_url,
                          urljoin(self.live_server_url, reverse('signup')))
 
-        continue_button = selenium.find_element_by_css_selector('input[type=submit]')
-        self.assertEqual(continue_button.get_attribute('value'), 'Continue')
+        continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
+        self.assertEqual(continue_button.text, 'Continue')
         continue_button.click()
 
         self.assertEqual(selenium.find_element_by_name('personal-first_name').get_attribute('value'), 'Alice')
@@ -35,9 +36,14 @@ class SocialAuthTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         selenium.find_element_by_name('personal-email').clear()
         selenium.find_element_by_name('personal-email').send_keys('eve@example.org')
 
-        continue_button = selenium.find_element_by_css_selector('input[type=submit]')
-        self.assertEqual(continue_button.get_attribute('value'), 'Go')
+        continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
+        self.assertEqual(continue_button.text, 'Go')
         continue_button.click()
+
+        self.assertEqual(urljoin(self.live_server_url,
+                                 reverse('signup-done') + '?' + urlencode({'next': begin_dummy_login_url})),
+                         selenium.current_url)
+        self.assertEqual(selenium.find_element_by_css_selector('h1').text, "Account created")
 
         user = User.objects.get()
         self.assertFalse(user.is_active)

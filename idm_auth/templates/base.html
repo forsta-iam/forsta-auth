@@ -25,6 +25,7 @@
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "logout" %}">Log out</a></li>
     {% else %}
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "login" %}">Log in</a></li>
+    <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "activate" %}?reset">Claim</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "recover" %}">Recover</a></li>
     <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "signup" %}">Sign-up</a></li>
     {% endif %}

@@ -11,6 +11,7 @@ from idm_auth.tasks.social_accounts import sync_social_accounts
 
 class IDMAuthConfig(AppConfig):
     name = 'idm_auth'
+    session = None
 
     def ready(self):
         self.session = requests.Session()

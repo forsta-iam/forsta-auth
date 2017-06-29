@@ -22,17 +22,6 @@ from idm_auth.models import User
 from idm_auth.saml.models import IDP
 
 
-def login(request):
-    extra_context = {
-        'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.backend_id != 'saml'], key=lambda sb: sb.name)),
-        'idps': IDP.objects.all().order_by('label'),
-    }
-    return auth_login(request,
-                      authentication_form=forms.AuthenticationForm,
-                      extra_context=extra_context,
-                      redirect_authenticated_user=True)
-
-
 class SocialTwoFactorLoginView(TwoFactorLoginView):
     template_name = 'registration/login.html'
     form_list = (
@@ -77,11 +66,14 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
         return context
 
     def dispatch(self, request, *args, **kwargs):
+        redirect_to = self.request.GET.get(self.redirect_field_name, '')
         if request.user.is_authenticated and request.user.is_verified():
-            redirect_to = self.request.GET.get(self.redirect_field_name, '')
             if not is_safe_url(url=redirect_to, host=request.get_host()):
                 redirect_to = resolve_url(settings.LOGIN_REDIRECT_URL)
             return redirect(redirect_to)
+        elif 'awaiting-activation' in self.request.GET and redirect_to.split('?')[0].startswith(reverse('signup-done')):
+            return redirect(redirect_to)
+
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -113,15 +105,6 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         return {}
-
-
-class ClaimView(TemplateView):
-    template_name = 'claim.html'
-
-    def get_context_data(self, activation_code, **kwargs):
-        return {
-            'user': get_object_or_404(models.User, activation_code=activation_code),
-        }
 
 
 class RecoverView(View):

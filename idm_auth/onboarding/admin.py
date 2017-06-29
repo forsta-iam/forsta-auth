@@ -4,6 +4,6 @@ from . import models
 
 
 class PendingActivationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'created')
+    list_display = ('id', 'identity_id', 'created')
 
 admin.site.register(models.PendingActivation, PendingActivationAdmin)
