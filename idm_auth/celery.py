@@ -2,7 +2,6 @@ import os
 
 from celery import Celery
 from django.apps import apps
-from django.conf import settings
 
 app = Celery(__package__)
 
