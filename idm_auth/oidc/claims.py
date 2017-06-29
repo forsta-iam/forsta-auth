@@ -1,10 +1,7 @@
-import http.client
-from urllib.parse import urljoin
-
-from django.apps import apps
-from django.conf import settings
 from django.utils.functional import cached_property
 from oidc_provider.lib.claims import ScopeClaims
+
+from idm_auth.auth_core_integration.utils import get_identity_data
 
 
 class IDMAuthScopeClaims(ScopeClaims):

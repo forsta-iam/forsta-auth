@@ -31,7 +31,7 @@ class KerberosHasher(BasePasswordHasher):
             kadmin.get_principal(salt).randomize_key()
         else:
             kadmin.change_password(salt, password)
-            kvno = kadmin.get_principal(salt).kvno
+        kvno = kadmin.get_principal(salt).kvno
         return 'kerberos${}${}'.format(kvno, salt)
 
     def salt(self):
