@@ -4,6 +4,8 @@ from urllib.parse import urljoin
 from celery import shared_task
 from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
 
 from idm_auth import settings
 
@@ -64,6 +66,8 @@ def sync_social_accounts(user_pk):
             'validated': True,
             'context': 'home',
             'managed': True,
+            'manage_url': 'https://{}{}'.format(get_current_site(None).domain,
+                                                reverse('social-logins'))
         })
         if not response.ok:
             logger.error("Couldn't create online-account:\n{}".format(response.content))
