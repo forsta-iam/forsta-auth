@@ -5,6 +5,7 @@ os.environ['DEFAULT_REALM'] = 'EXAMPLE.COM'
 from ..settings import *
 
 BROKER_TRANSPORT = 'memory'
+CELERY_BROKER_URL = 'memory://localhost/idm-auth-celery'
 
 ALLOWED_HOSTS = ['testserver', 'testserver.local']
 

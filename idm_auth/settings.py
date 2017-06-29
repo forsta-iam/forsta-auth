@@ -179,6 +179,8 @@ BROKER_PASSWORD = os.environ.get('BROKER_PASSWORD', 'guest')
 BROKER_PREFIX = os.environ.get('BROKER_PREFIX', 'idm.auth.')
 
 
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+
 OIDC_EXTRA_SCOPE_CLAIMS = 'idm_auth.oidc.claims.IDMAuthScopeClaims'
 
 IDM_CORE_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/api/')
