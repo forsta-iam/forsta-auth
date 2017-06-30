@@ -18,7 +18,8 @@ from registration.backends.hmac.views import RegistrationView, REGISTRATION_SALT
 from social_django.models import Partial
 
 from idm_auth.auth_core_integration.utils import get_identity_data
-from idm_auth.onboarding.forms import PersonalDataForm, WelcomeForm, SetPasswordForm, ActivationCodeForm, \
+from idm_auth.forms import SetPasswordForm
+from idm_auth.onboarding.forms import PersonalDataForm, WelcomeForm, ActivationCodeForm, \
     ConfirmDetailsForm, ExistingAccountForm, LoginForm, ConfirmActivationForm
 from idm_auth.onboarding.models import PendingActivation
 
@@ -143,7 +144,7 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
                                primary=True)
 
         if form_dict.get('password'):
-            user.set_password(form_dict['password'].cleaned_data['password1'])
+            user.set_password(form_dict['password'].cleaned_data['new_password1'])
 
         user.save()
         self.registration_view.send_activation_email(user)

@@ -19,6 +19,8 @@
     <form method="post" class="pure-form pure-form-aligned">{% csrf_token %}
         {{ wizard.management_form }}
 
+    {{ form.non_field_errors }}
+
         <fieldset>{% for field in form %}
             <div class="pure-control-group">
                 {{ field.label_tag }}

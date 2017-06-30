@@ -47,7 +47,15 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
         return super().clean()
 
 
-class PasswordChangeForm(auth_forms.PasswordChangeForm):
+class SetPasswordForm(auth_forms.SetPasswordForm):
     new_password1 = zxcvbn_password.fields.PasswordField(label=_("New password"))
     new_password2 = zxcvbn_password.fields.PasswordConfirmationField(label=_("New password confirmation"),
                                                                      confirm_with='password1')
+
+    # Make the user optional
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(user, *args, **kwargs)
+
+
+class PasswordChangeForm(SetPasswordForm, auth_forms.PasswordChangeForm):
+    pass

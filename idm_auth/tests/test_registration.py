@@ -46,8 +46,8 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         self.assertEqual(continue_button.text, 'Continue')
         continue_button.click()
 
-        selenium.find_element_by_name('password-password1').send_keys(self.test_password)
-        selenium.find_element_by_name('password-password2').send_keys(self.test_password)
+        selenium.find_element_by_name('password-new_password1').send_keys(self.test_password)
+        selenium.find_element_by_name('password-new_password2').send_keys(self.test_password)
 
         continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
         self.assertEqual(continue_button.text, 'Go')
