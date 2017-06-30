@@ -4,15 +4,15 @@
 {% block header %}
     <h1>Claim your Oxford identity</h1>
     <h2>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}:
-{% if wizard.steps.current == "activation-code" %}
-    Enter your activation code
-{% elif wizard.steps.current == "confirm-details" %}
-    Confirm your identity
-{% elif wizard.steps.current == "existing-account" %}
-    Have we met before?
-{% elif wizard.steps.current == "confirm" %}
-    Ready?
-{% endif %}
+        {% if wizard.steps.current == "activation-code" %}
+            Enter your activation code
+        {% elif wizard.steps.current == "confirm-details" %}
+            Confirm your identity
+        {% elif wizard.steps.current == "existing-account" %}
+            Have we met before?
+        {% elif wizard.steps.current == "confirm" %}
+            Ready?
+        {% endif %}
     </h2>
 {% endblock %}
 
@@ -23,32 +23,33 @@
     {{ user }}
     {% endcomment %}
 
-            <form method="post" class="pure-form pure-form-aligned">{% csrf_token %}
-                {{ wizard.management_form }}
+    <form method="post" class="pure-form pure-form-aligned">{% csrf_token %}
+        {{ wizard.management_form }}
 
-    {% if wizard.steps.current == "activation-code" %}
-    <p>To get started, enter the activation code you were provided. This will often come by email, but you might have
-        received it in a letter. If you can't find it, you can <a href="#">request a new one here</a>.</p>
+        {% if wizard.steps.current == "activation-code" %}
+            <p>To get started, enter the activation code you were provided. This will often come by email, but you might have
+                received it in a letter. If you can't find it, you can <a href="#">request a new one here</a>.</p>
         {% endif %}
 
-    <fieldset>{% for field in form %}
+        <fieldset>{% for field in form %}
 
-        <div class="pure-control-group">
-            {{ field.label_tag }}
-            {{ field }}
-            {% for error in field.errors %}
-                <span class="pure-form-message-inline">{{ error }}</span>
+            <div class="pure-control-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% for error in field.errors %}
+                    <span class="pure-form-message-inline">{{ error }}</span>
                 {% endfor %}
-        </div>{% endfor %}
-    <div class="pure-controls">
-    {% if wizard.steps.prev %}
-        <button type="submit" class="pure-button" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
-    {% endif %}
-        <button type="submit" class="pure-button pure-button-primary">{% if wizard.steps.next %}Continue{% else %}Go{% endif %}</button>
-
-    </div>
-    </fieldset>
-            </form>
+            </div>{% endfor %}
+            <div class="pure-controls">
+                {% if wizard.steps.prev %}
+                    {% comment %}https://stackoverflow.com/a/31911751{% endcomment %}
+                    <button type="submit" class="default-button-handler" aria-hidden="true" tabindex="-1"></button>
+                    <button class="pure-button" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
+                {% endif %}
+                <button type="submit" class="pure-button pure-button-primary">{% if wizard.steps.next %}Continue{% else %}Go{% endif %}</button>
+            </div>
+        </fieldset>
+    </form>
 
 
 {% endblock %}

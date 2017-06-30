@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 
 {% block extra_head %}{{ block.super }}
-{{ wizard.form.media }}
+    {{ wizard.form.media }}
 {% endblock %}
 
 {% block header %}
-{% if pending_activation %}
-    <h1>Claim your Oxford identity</h1>
-    {% if wizard.steps.current == 'password' %}
-        <h2>Step 4 of 4: Set a password</h2>
+    {% if pending_activation %}
+        <h1>Claim your Oxford identity</h1>
+        {% if wizard.steps.current == 'password' %}
+            <h2>Step 4 of 4: Set a password</h2>
+        {% endif %}
+    {% else %}
+        <h1>Register for an Oxford identity</h1>
     {% endif %}
-{% else %}
-    <h1>Register for an Oxford identity</h1>
-{% endif %}
 {% endblock %}
 
 {% block content %}
     <form method="post" class="pure-form pure-form-aligned">{% csrf_token %}
         {{ wizard.management_form }}
 
-    {{ form.non_field_errors }}
+        {{ form.non_field_errors }}
 
         <fieldset>{% for field in form %}
             <div class="pure-control-group">
@@ -31,7 +31,9 @@
             </div>{% endfor %}
             <div class="pure-controls">
                 {% if wizard.steps.prev %}
-                    <button type="submit" class="pure-button" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
+                    {% comment %}https://stackoverflow.com/a/31911751{% endcomment %}
+                    <button type="submit" class="default-button-handler" aria-hidden="true" tabindex="-1"></button>
+                    <button class="pure-button" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
                 {% endif %}
                 <button type="submit" class="pure-button pure-button-primary">{% if wizard.steps.next %}Continue{% else %}Go{% endif %}</button>
             </div>
