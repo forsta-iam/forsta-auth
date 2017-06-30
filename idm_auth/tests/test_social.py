@@ -74,5 +74,3 @@ class SocialAuthTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
             selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
                                  '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
             self.assertEqual(selenium.find_element_by_css_selector('h1').text, 'Registration closed')
-
-
