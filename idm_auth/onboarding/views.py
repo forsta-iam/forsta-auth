@@ -95,6 +95,8 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             raise PermissionDenied("You cannot sign up for a new account while you are logged in.")
+        if not settings.ONBOARDING['REGISTRATION_OPEN'] and not self.pending_activation:
+            return render(request, 'onboarding/signup-closed.html', status=503)
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_initial(self, step):

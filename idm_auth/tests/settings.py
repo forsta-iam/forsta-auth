@@ -74,3 +74,9 @@ AUTHENTICATION_BACKENDS += (
 )
 
 PASSWORD_HASHERS.remove('idm_auth.kerberos.hashers.KerberosHasher')
+
+ONBOARDING = {
+    'REGISTRATION_OPEN': True,
+    'REGISTRATION_OPEN_SOCIAL': True,
+    'REGISTRATION_OPEN_SAML': True,
+}

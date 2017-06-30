@@ -77,6 +77,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.csrf.CsrfViewMiddleware',
     # Always include for two-factor auth
     'django_otp.middleware.OTPMiddleware',
+    'idm_auth.onboarding.middleware.OnboardingMiddleware',
 
 ]
 
@@ -109,6 +110,7 @@ TEMPLATES = [
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.static',
                 'idm_auth.context_processors.two_factor_enabled',
+                'idm_auth.onboarding.context_processors.onboarding',
             ),
         },
     },
@@ -144,7 +146,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_user',
 
     # Send the user through the creation flow if we've not seen them before
-    'idm_auth.pipeline.creation.confirm_user_details',
+    'idm_auth.onboarding.pipeline.confirm_user_details',
 
     # Send a validation email to the user to verify its email address.
     # This is removed as the signup flow sends the verification email
@@ -251,3 +253,10 @@ AUTH_PASSWORD_VALIDATORS = [{
         'user_attributes': ('username', 'email', 'first_name', 'last_name')
     }
 }]
+
+
+ONBOARDING = {
+    'REGISTRATION_OPEN': True,
+    'REGISTRATION_OPEN_SOCIAL': True,
+    'REGISTRATION_OPEN_SAML': True,
+}

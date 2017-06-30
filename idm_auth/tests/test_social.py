@@ -51,3 +51,28 @@ class SocialAuthTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         self.assertEqual(user.first_name, 'Alice')
         self.assertEqual(user.last_name, 'Hacker')
         self.assertEqual(user.email, 'eve@example.org')
+
+    def test_closed_social_registration(self):
+        with self.settings(ONBOARDING={
+            'REGISTRATION_OPEN': True,
+            'REGISTRATION_OPEN_SOCIAL': False,
+            'REGISTRATION_OPEN_SAML': True,
+        }):
+            begin_dummy_login_url = reverse('social:begin', kwargs={'backend': 'dummy'})
+            selenium = self.selenium
+            selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
+                         '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
+            self.assertEqual(selenium.find_element_by_css_selector('h1').text, 'Registration closed')
+
+        with self.settings(ONBOARDING={
+            'REGISTRATION_OPEN': False,
+            'REGISTRATION_OPEN_SOCIAL': True,
+            'REGISTRATION_OPEN_SAML': True,
+        }):
+            begin_dummy_login_url = reverse('social:begin', kwargs={'backend': 'dummy'})
+            selenium = self.selenium
+            selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
+                                 '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
+            self.assertEqual(selenium.find_element_by_css_selector('h1').text, 'Registration closed')
+
+
