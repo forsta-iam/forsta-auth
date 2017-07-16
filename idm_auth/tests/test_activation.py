@@ -1,68 +1,42 @@
-import json
 import unittest.mock
 import uuid
 
-import kombu
-import time
-
 from django.apps import apps
-from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase
-
-from kombu import Connection
-from kombu.message import Message
-from kombu.pools import connections
 
 from idm_auth.auth_core_integration.tasks import process_person_update
 from idm_auth.onboarding.models import PendingActivation
 from idm_auth.onboarding import tasks as onboarding_tasks
-from idm_auth.tests.utils import BrokerTaskConsumerTestCaseMixin, GeneratesMessage, update_user_from_identity_noop
+from idm_auth.tests.utils import update_user_from_identity_noop
 
 
 @unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
-class ActivationTestCase(BrokerTaskConsumerTestCaseMixin, TestCase):
-    def setUp(self):
-        self.broker = connections[Connection(hostname=settings.BROKER_HOSTNAME,
-                                             ssl=settings.BROKER_SSL,
-                                             virtual_host=settings.BROKER_VHOST,
-                                             userid=settings.BROKER_USERNAME,
-                                             password=settings.BROKER_PASSWORD,
-                                             transport=settings.BROKER_TRANSPORT)]
-        super().setUp()
-
+class ActivationTestCase(TestCase):
     @unittest.mock.patch('idm_auth.onboarding.tasks.start_activation')
     def test_new_established_identity(self, start_activation_task):
-        # This test ensures that when idm-core creates a new person in the 'established' state, and we didn't previously
-        # have a primary user for them, that we create that user and set the activation process in motion.
-
         identity_id = uuid.uuid4()
-        exchange = kombu.Exchange('idm.core.person', 'topic', durable=True)
-        with self.broker.acquire(block=True) as conn:
-            exchange = exchange(conn)
-            exchange.declare()
 
-            message = {
-                'state': 'established',
-                '@type': 'Person',
-                'emails': [{
-                    'context': 'home',
-                    'value': 'alice@example.org',
-                    'validated': False,
-                }]
-            }
+        message = {
+            'state': 'established',
+            '@type': 'Person',
+            'emails': [{
+                'context': 'home',
+                'value': 'alice@example.org',
+                'validated': False,
+            }]
+        }
 
-            process_person_update(body=message,
-                                  delivery_info={'routing_key': '{}.{}.{}'.format('Person',
-                                                                                  'created',
-                                                                                  identity_id)})
+        process_person_update(body=message,
+                              delivery_info={'routing_key': '{}.{}.{}'.format('Person',
+                                                                              'created',
+                                                                              identity_id)})
 
-            pending_activation = PendingActivation.objects.get()
+        pending_activation = PendingActivation.objects.get()
 
-            self.assertEqual(pending_activation.identity_id, identity_id)
+        self.assertEqual(pending_activation.identity_id, identity_id)
 
-            start_activation_task.delay.assert_called_once_with(str(pending_activation.id))
+        start_activation_task.delay.assert_called_once_with(str(pending_activation.id))
 
     @unittest.mock.patch('idm_auth.auth_core_integration.utils.get_identity_data')
     def test_start_activation_email(self, get_identity_data):
