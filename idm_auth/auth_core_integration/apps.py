@@ -45,6 +45,7 @@ class IDMAuthCoreIntegrationConfig(AppConfig):
             response = app_config.session.post(identity_url, json=data)
             response.raise_for_status()
             instance.identity_id = response.json()['id']
+            instance.email = ''
 
         elif instance.is_active and instance.identity_id and instance.primary and 'is_active' in instance.get_dirty_fields():
             utils.activate_identity(instance, instance.identity_id)

@@ -15,13 +15,14 @@ from kombu import Connection
 from kombu.message import Message
 from kombu.pools import connections
 
+from idm_auth.auth_core_integration.tasks import process_person_update
 from idm_auth.onboarding.models import PendingActivation
 from idm_auth.onboarding import tasks as onboarding_tasks
-from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, GeneratesMessage, update_user_from_identity_noop
+from idm_auth.tests.utils import BrokerTaskConsumerTestCaseMixin, GeneratesMessage, update_user_from_identity_noop
 
 
 @unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
-class ActivationTestCase(IDMAuthDaemonTestCaseMixin, TestCase):
+class ActivationTestCase(BrokerTaskConsumerTestCaseMixin, TestCase):
     def setUp(self):
         self.broker = connections[Connection(hostname=settings.BROKER_HOSTNAME,
                                              ssl=settings.BROKER_SSL,
@@ -52,21 +53,12 @@ class ActivationTestCase(IDMAuthDaemonTestCaseMixin, TestCase):
                 }]
             }
 
-            exchange.publish(exchange.Message(json.dumps(message).encode(),
-                                              content_type='application/json'),
-                             routing_key='{}.{}.{}'.format('Person',
-                                                           'created',
-                                                           identity_id))
+            process_person_update(body=message,
+                                  delivery_info={'routing_key': '{}.{}.{}'.format('Person',
+                                                                                  'created',
+                                                                                  identity_id)})
 
-            # Wait briefly for the PendingActivation to appear
-            for i in range(4):
-                try:
-                    pending_activation = PendingActivation.objects.get()
-                    break
-                except PendingActivation.DoesNotExist:
-                    if i == 3:
-                        raise
-                    time.sleep(0.5)
+            pending_activation = PendingActivation.objects.get()
 
             self.assertEqual(pending_activation.identity_id, identity_id)
 

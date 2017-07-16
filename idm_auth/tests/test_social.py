@@ -5,10 +5,10 @@ from django.urls import reverse
 from selenium import webdriver
 
 from idm_auth.models import User
-from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin
+from idm_auth.tests.utils import BrokerTaskConsumerTestCaseMixin
 
 
-class SocialAuthTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
+class SocialAuthTestCase(BrokerTaskConsumerTestCaseMixin, LiveServerTestCase):
     def setUp(self):
         self.selenium = webdriver.PhantomJS()
         super().setUp()

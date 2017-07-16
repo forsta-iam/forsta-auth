@@ -2,6 +2,7 @@ import uuid
 
 import re
 from dirtyfields import DirtyFieldsMixin
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
@@ -48,3 +49,8 @@ class User(KerberosBackedUserMixin, DirtyFieldsMixin, AbstractUser):
 
     def get_username(self):
         return str(self.id)
+
+
+class UserEmail(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    email = models.EmailField(db_index=True, unique=True)

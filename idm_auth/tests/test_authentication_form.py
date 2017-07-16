@@ -4,7 +4,7 @@ import uuid
 from django.test import TestCase
 
 from idm_auth.forms import AuthenticationForm
-from idm_auth.models import User
+from idm_auth.models import User, UserEmail
 from idm_auth.tests.utils import get_fake_identity_data, update_user_from_identity_noop
 
 
@@ -19,10 +19,11 @@ class AuthenticationFormTestCase(TestCase):
         self.assertEqual(str(user.id), form.cleaned_data['username'])
 
     def testEmail(self):
-        user = User(identity_id=uuid.uuid4(), primary=True, email='alice@example.org')
+        user = User(identity_id=uuid.uuid4(), primary=True)
+        UserEmail.objects.create(user=user, email='alice@example.org')
         user.set_password('password')
         user.save()
-        form = AuthenticationForm(data={'username': user.email, 'password': 'password'})
+        form = AuthenticationForm(data={'username': 'alice@example.org', 'password': 'password'})
         self.assertTrue(form.is_valid())
         self.assertEqual(str(user.id), form.cleaned_data['username'])
 

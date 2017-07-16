@@ -16,6 +16,8 @@ def get_identity_data(identity_id):
 
 
 def update_user_from_identity(user, identity=None):
+    from idm_auth.models import UserEmail
+
     if not identity:
         identity = get_identity_data(user.identity_id)
 
@@ -33,15 +35,23 @@ def update_user_from_identity(user, identity=None):
         user.first_name = ''
         user.last_name = identity['label']
 
-    for email in identity.get('emails', ()):
-        if identity['state'] == 'established' and email['context'] == 'home':
-            user.email = email['value']
-            break
-        elif email['validated']:
-            user.email = email['value']
-            break
+    if identity['state'] == 'established':
+        for email in identity.get('emails', ()):
+            if email['context'] == 'home':
+                user.email = email['value']
+                break
+        else:
+            user.email = ''
     else:
-        user.email = ''
+        validated_emails = [email['value']
+                            for email in identity.get('emails', ())
+                            if email['validated'] and user.primary]
+        user.useremail_set.exclude(email__in=validated_emails).delete()
+        UserEmail.objects.bulk_create([
+            UserEmail(user=user, email=email)
+            for email in validated_emails
+            if email not in user.useremail_set.values_list('email', flat=True)
+        ])
 
 
 def activate_identity(user, identity_id):

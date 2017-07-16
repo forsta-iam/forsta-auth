@@ -1,7 +1,7 @@
 import uuid
 
 from django import forms
-from django.contrib.auth import forms as auth_forms
+from django.contrib.auth import forms as auth_forms, get_user_model
 from django.utils.translation import ugettext_lazy as _
 import zxcvbn_password.fields
 
@@ -32,14 +32,14 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
                 user = models.User.objects.get(username=username)
             except models.User.DoesNotExist:
                 try:
-                    user = models.User.objects.get(email=username)
+                    user = models.User.objects.get(useremail__email=username)
                 except models.User.DoesNotExist:
                     username = str(uuid.uuid4())
                 else:
                     username = str(user.pk)
             else:
                 try:
-                    models.User.objects.get(email=username)
+                    models.User.objects.get(useremail__email=username)
                 except models.User.DoesNotExist:
                     pass
                 username = str(user.pk)

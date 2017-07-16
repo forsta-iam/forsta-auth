@@ -1,20 +1,22 @@
 import json
 import unittest.mock
+import uuid
 from urllib.parse import urljoin, urlparse
 
 import re
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 from kombu.message import Message
-from django.test import LiveServerTestCase
+from django.test import LiveServerTestCase, TestCase
 from selenium import webdriver
 
-from idm_auth.tests.utils import IDMAuthDaemonTestCaseMixin, creates_idm_core_user, GeneratesMessage, \
+from idm_auth.auth_core_integration.utils import update_user_from_identity
+from idm_auth.tests.utils import BrokerTaskConsumerTestCaseMixin, creates_idm_core_user, GeneratesMessage, \
     update_user_from_identity_noop
 
 
 @unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
-class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
+class RegistrationTestCase(BrokerTaskConsumerTestCaseMixin, LiveServerTestCase):
     test_password = 'ahCoi6shahch5aeViighie6oofiemeim'
 
     def setUp(self):
@@ -79,3 +81,42 @@ class RegistrationTestCase(IDMAuthDaemonTestCaseMixin, LiveServerTestCase):
         user = User.objects.get()
         self.assertTrue(user.is_active)
         self.assertEqual(user.identity_id, identity_id)
+
+
+@unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
+class DuplicateEmailTestCase(TestCase):
+    # We let users register with email addresses that might be in use by other people so as not to give away the fact
+    # that that person is already registered. When they come to confirm their email address, we tell them to pick a new
+    # one.
+
+    @creates_idm_core_user
+    def test_duplicate_email_registration_works(self, identity_id):
+        from idm_auth.models import User
+        user_one = User.objects.create(email='alice@example.org', is_active=False, primary=True)
+        user_two = User.objects.create(email='alice@example.org', is_active=False, primary=True)
+
+        user_one.is_active = True
+        user_one.save()
+        # Email addresses on User are only for activation; they get removed afterwards.
+        self.assertEqual(user_one.email, '')
+
+    def test_non_primary_no_email(self):
+        identity_id = uuid.uuid4()
+        from idm_auth.models import User
+        user_one = User.objects.create(identity_id=identity_id, is_active=True, primary=True)
+        user_two = User.objects.create(identity_id=identity_id, is_active=True, primary=False)
+
+        identity = {
+            'id': str(identity_id),
+            '@type': 'Person',
+            'state': 'active',
+            'emails': [{
+                'context': 'home',
+                'value': 'alice@example.org',
+                'validated': True
+            }]
+        }
+
+        update_user_from_identity(user_one, identity)
+        update_user_from_identity(user_two, identity)
+

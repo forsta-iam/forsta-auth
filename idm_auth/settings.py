@@ -1,5 +1,7 @@
 import django
 import email.utils
+
+import kombu
 import os
 import six
 from django.urls import reverse
@@ -242,6 +244,9 @@ AUTH_PASSWORD_VALIDATORS = [{
     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
 }, {
     'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    'OPTIONS': {
+        'min_length': 10,
+    }
 }, {
     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
 }, {
@@ -259,4 +264,14 @@ ONBOARDING = {
     'REGISTRATION_OPEN': True,
     'REGISTRATION_OPEN_SOCIAL': True,
     'REGISTRATION_OPEN_SAML': True,
+}
+
+
+IDM_BROKER = {
+    'CONSUMERS': [{
+        'queues': [kombu.Queue('idm.auth.person',
+                               exchange=kombu.Exchange('idm.core.person', type='topic'),
+                               routing_key='#')],
+        'tasks': ['idm_auth.auth_core_integration.tasks.process_person_update'],
+    }],
 }

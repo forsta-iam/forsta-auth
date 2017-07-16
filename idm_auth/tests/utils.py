@@ -9,19 +9,19 @@ import functools
 import kombu
 from django.apps import apps
 
-from idm_auth.daemon import IDMAuthDaemon
+from idm_broker.consumer import BrokerTaskConsumer
 
 
-class IDMAuthDaemonTestCaseMixin(object):
+class BrokerTaskConsumerTestCaseMixin(object):
     def setUp(self):
-        self.idm_auth_daemon = IDMAuthDaemon()
-        self.idm_auth_daemon_thread = threading.Thread(target=self.idm_auth_daemon)
-        self.idm_auth_daemon_thread.start()
+        self.broker_task_consumer = BrokerTaskConsumer()
+        self.broker_task_consumer_thread = threading.Thread(target=self.broker_task_consumer)
+        self.broker_task_consumer_thread.start()
         super().setUp()
 
     def tearDown(self):
-        self.idm_auth_daemon.should_stop = True
-        self.idm_auth_daemon_thread.join()
+        self.broker_task_consumer.should_stop = True
+        self.broker_task_consumer_thread.join()
         super().tearDown()
 
 
