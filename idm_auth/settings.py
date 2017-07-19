@@ -188,7 +188,7 @@ CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
 OIDC_EXTRA_SCOPE_CLAIMS = 'idm_auth.oidc.claims.IDMAuthScopeClaims'
 
-IDM_CORE_URL = os.environ.get('IDENTITY_API_URL', 'http://localhost:8000/api/')
+IDM_CORE_URL = os.environ.get('IDM_CORE_API_URL', 'http://localhost:8000/api/')
 
 SOCIAL_AUTH_SAML_ORG_INFO = {
     "en-GB": {
