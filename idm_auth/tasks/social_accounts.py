@@ -31,7 +31,7 @@ def sync_social_accounts(user_pk):
     user_social_auths = UserSocialAuth.objects.filter(user=user)
     by_upstream_id = {str(usa.pk): usa
                       for usa in user_social_auths}
-    online_account_url = urljoin(settings.IDM_CORE_URL, 'online-account/')
+    online_account_url = urljoin(settings.IDM_CORE_API_URL, 'online-account/')
 
     results, url = [], online_account_url
     while url:
