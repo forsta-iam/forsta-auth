@@ -123,6 +123,7 @@ AUTH_USER_MODEL = 'idm_auth.User'
 ROOT_URLCONF = 'idm_auth.urls'
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT')
 
 LOGIN_REDIRECT_URL = '/account/profile/'
 LOGIN_URL = 'login'
