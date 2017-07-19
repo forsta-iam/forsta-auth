@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 def get_identity_url(identity_id):
-    return '{}identity/{}/'.format(settings.IDM_CORE_URL, identity_id)
+    return '{}identity/{}/'.format(settings.IDM_CORE_API_URL, identity_id)
 
 
 def get_identity_data(identity_id):
@@ -68,7 +68,7 @@ def activate_identity(user, identity_id):
             session.patch(email['url'], json={'validated': True})
             break
     else:
-        response = session.post(urljoin(settings.IDM_CORE_URL, 'email/'), json={
+        response = session.post(urljoin(settings.IDM_CORE_API_URL, 'email/'), json={
             'identity': identity_id,
             'context': 'home',
             'value': user.email,

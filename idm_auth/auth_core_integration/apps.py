@@ -22,7 +22,7 @@ class IDMAuthCoreIntegrationConfig(AppConfig):
             utils.update_user_from_identity(instance)
         elif instance.is_active and not instance.identity_id:
             app_config = apps.get_app_config('idm_auth')
-            identity_url = urllib.parse.urljoin(settings.IDM_CORE_URL, 'person/')
+            identity_url = urllib.parse.urljoin(settings.IDM_CORE_API_URL, 'person/')
             data = {
                 'names': [{
                     'context': 'presentational',

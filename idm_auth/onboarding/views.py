@@ -243,7 +243,7 @@ class ActivationView(SocialPipelineMixin, NamedUrlCookieWizardView):
             return PendingActivation.objects.get(activation_code=activation_code)
 
     def get_identity_url(self, identity_id):
-        return urljoin(settings.IDM_CORE_URL, 'person/{}/'.format(identity_id))
+        return urljoin(settings.IDM_CORE_API_URL, 'person/{}/'.format(identity_id))
 
     @cached_property
     def identity_data(self):
