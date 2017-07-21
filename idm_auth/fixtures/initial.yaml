@@ -1,5 +1,0 @@
-- model: sites.Site
-  pk: 1
-  fields:
-    name: 'University of Oxford SSO'
-    domain: 'webauth.ox.ac.uk'
