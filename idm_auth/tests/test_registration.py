@@ -11,12 +11,12 @@ from django.test import LiveServerTestCase, TestCase
 from selenium import webdriver
 
 from idm_auth.auth_core_integration.utils import update_user_from_identity
-from idm_auth.tests.utils import BrokerTaskConsumerTestCaseMixin, creates_idm_core_user, GeneratesMessage, \
+from idm_auth.tests.utils import creates_idm_core_user, GeneratesMessage, \
     update_user_from_identity_noop
 
 
 @unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
-class RegistrationTestCase(BrokerTaskConsumerTestCaseMixin, LiveServerTestCase):
+class RegistrationTestCase(LiveServerTestCase):
     test_password = 'ahCoi6shahch5aeViighie6oofiemeim'
 
     def setUp(self):
