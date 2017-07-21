@@ -19,7 +19,7 @@ python3-saml
 psycopg2
 pykerberos
 python-dateutil
-python-kadmin
+-e git://github.com/alexsdutton/python-kadmin.git#egg=python-kadmin
 PyYAML
 requests
 requests-negotiate
