@@ -111,6 +111,7 @@ TEMPLATES = [
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.static',
+                'idm_auth.context_processors.idm_auth',
                 'idm_auth.context_processors.two_factor_enabled',
                 'idm_auth.onboarding.context_processors.onboarding',
             ),
@@ -188,6 +189,7 @@ CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
 OIDC_EXTRA_SCOPE_CLAIMS = 'idm_auth.oidc.claims.IDMAuthScopeClaims'
 
+IDM_CORE_URL = os.environ.get('IDM_CORE_URL', 'http://localhost:8000/')
 IDM_CORE_API_URL = os.environ.get('IDM_CORE_API_URL', 'http://localhost:8000/api/')
 
 SOCIAL_AUTH_SAML_ORG_INFO = {

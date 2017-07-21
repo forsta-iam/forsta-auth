@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from two_factor.utils import default_device
 
 
@@ -15,3 +17,9 @@ class TwoFactorEnabled(object):
 
 def two_factor_enabled(request):
     return {'two_factor_enabled': TwoFactorEnabled(request)}
+
+
+def idm_auth(request):
+    return {
+        'IDM_CORE_URL': settings.IDM_CORE_URL,
+    }
