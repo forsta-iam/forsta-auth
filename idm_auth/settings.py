@@ -273,7 +273,7 @@ ONBOARDING = {
 IDM_BROKER = {
     'CONSUMERS': [{
         'queues': [kombu.Queue('idm.auth.person',
-                               exchange=kombu.Exchange('idm.core.person', type='topic'),
+                               exchange=kombu.Exchange('idm.core.person', type='topic', passive=True),
                                routing_key='#')],
         'tasks': ['idm_auth.auth_core_integration.tasks.process_person_update'],
     }],

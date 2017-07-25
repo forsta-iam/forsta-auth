@@ -1,3 +1,5 @@
+import os
+
 import requests
 from requests_negotiate import HTTPNegotiateAuth
 from django.apps import apps, AppConfig
@@ -16,6 +18,9 @@ class IDMAuthConfig(AppConfig):
     def ready(self):
         self.session = requests.Session()
         self.session.auth = HTTPNegotiateAuth(negotiate_client_name=getattr(settings, 'CLIENT_PRINCIPAL_NAME', None))
+        # Support explicitly using system (or other) trust
+        if 'SSL_CERT_FILE' in os.environ:
+            self.session.verify = os.environ['SSL_CERT_FILE']
 
         from social_django.models import UserSocialAuth
         from . import models, serializers
