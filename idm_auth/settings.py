@@ -207,6 +207,12 @@ SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
     "emailAddress": "alexander.dutton@it.ox.ac.uk",
 }
 
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+  'locale': 'en_GB',
+  'fields': 'id, name, email'
+}
 
 def _get_inactive_user_url():
     return reverse('login') + '?awaiting-activation'
