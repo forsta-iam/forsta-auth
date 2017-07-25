@@ -95,6 +95,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.twitter.TwitterOAuth',
     'social_core.backends.yahoo.YahooOpenId',
     'social_core.backends.github.GithubOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
     'idm_auth.saml.social_backend.SAMLAuth',
     # The authentication form will forbid inactive users from logging in regardless, but this means we can present them
     # with a "not yet active" message
