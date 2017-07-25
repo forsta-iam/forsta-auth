@@ -1,21 +1,19 @@
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import views as auth_views
-from django.forms import Form
-from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404, resolve_url, redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import resolve_url, redirect
 from django.urls import reverse
 from django.utils.http import is_safe_url
 from django.views import View
 from django.views.generic import TemplateView
-from django.contrib.auth.views import login as auth_login
 
 from idm_auth.kerberos.apps import get_kadmin
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
 from two_factor.views.core import LoginView as TwoFactorLoginView
 from two_factor.utils import default_device
 
-from idm_auth import backend_meta, models
+from idm_auth import backend_meta
 from idm_auth.backend_meta import BackendMeta
 from . import forms
 from idm_auth.models import User
@@ -33,10 +31,8 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
     def has_auth_step(self):
         return 'partial_pipeline' not in self.request.session
 
-    condition_dict = {
-        'auth': has_auth_step,
-        **TwoFactorLoginView.condition_dict
-    }
+    condition_dict = TwoFactorLoginView.condition_dict.copy()
+    condition_dict['auth'] =  has_auth_step,
 
     def get_user(self):
         try:
