@@ -74,6 +74,14 @@ class GithubBackendMeta(BackendMeta):
     name = 'GitHub'
     font_icon = 'fa fa-github'
 
+    @property
+    def username(self):
+        return self.user_social_auth.extra_data['login']
+
+    @property
+    def profile_url(self):
+        return 'https://github.com/' + self.username
+
 
 class SAMLBackendMeta(BackendMeta):
     backend_id = 'saml'
