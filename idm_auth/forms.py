@@ -19,9 +19,9 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
         widget=forms.PasswordInput(attrs={'placeholder': 'Password', 'class': 'pure-u-1'}),
     )
 
-    error_messages = {**auth_forms.AuthenticationForm.error_messages,
-                      'inactive': _('You need to activate your account before you can log in. Follow the instructions '
-                                    'in the email you received, and then try again.')}
+    error_messages = auth_forms.AuthenticationForm.error_messages.copy()
+    error_messages['inactive'] = _('You need to activate your account before you can log in. Follow the instructions '
+                                   'in the email you received, and then try again.')
 
     def clean(self):
         username = self.cleaned_data.get('username')
