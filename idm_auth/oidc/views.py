@@ -10,6 +10,5 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = models.Client.objects.all()
     renderer_classes = [
         renderers.DjangoOIDCAuthRenderer,
-        *viewsets.ModelViewSet.renderer_classes,
-    ]
+    ] + list(viewsets.ModelViewSet.renderer_classes)
     permission_classes = (DjangoModelPermissions,)
