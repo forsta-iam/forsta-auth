@@ -38,13 +38,13 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
             return None
 
     def has_auth_step(self):
-        return self.current_partial is None
+        return self.current_partial is None or 'user_id' not in self.current_partial.data['kwargs']
 
     condition_dict = TwoFactorLoginView.condition_dict.copy()
     condition_dict['auth'] = has_auth_step
 
     def get_user(self):
-        if self.current_partial:
+        if self.current_partial and 'user_id' in self.current_partial.data['kwargs']:
             return User.objects.get(pk=self.current_partial.data['kwargs']['user_id'])
         else:
             return super().get_user()
