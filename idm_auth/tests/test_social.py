@@ -1,9 +1,16 @@
+import unittest
+import uuid
 from urllib.parse import urljoin, urlencode
 
 from django.test import LiveServerTestCase
 from django.urls import reverse
-from selenium import webdriver
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
+from django_otp.models import Device
+from selenium import webdriver
+from social_django.models import UserSocialAuth
+
+from idm_auth.auth_core_integration.apps import IDMAuthCoreIntegrationConfig
 from idm_auth.models import User
 
 
@@ -73,3 +80,16 @@ class SocialAuthTestCase(LiveServerTestCase):
             selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
                                  '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
             self.assertEqual(selenium.find_element_by_css_selector('h1').text, 'Registration closed')
+
+    @unittest.mock.patch('idm_auth.auth_core_integration.utils.update_user_from_identity')
+    def test_social_with_two_factor(self, update_user_from_identity):
+        user = User.objects.create(identity_id=uuid.uuid4(), primary=True)
+        user_social_auth = UserSocialAuth.objects.create(user=user, provider='dummy', uid='alice')
+        TOTPDevice.objects.create(user=user, name='default', confirmed=True)
+        begin_dummy_login_url = reverse('social:begin', kwargs={'backend': 'dummy'})
+        selenium = self.selenium
+        selenium.get(urljoin(self.live_server_url, begin_dummy_login_url + '?id=alice'))
+        self.assertEqual(selenium.current_url,
+                         urljoin(self.live_server_url, reverse('login')))
+        # Make sure we're being asked for a token
+        selenium.find_element_by_name('token-otp_token')

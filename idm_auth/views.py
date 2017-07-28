@@ -4,9 +4,11 @@ from django.contrib.auth import views as auth_views
 from django.http import HttpResponseRedirect
 from django.shortcuts import resolve_url, redirect
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.http import is_safe_url
 from django.views import View
 from django.views.generic import TemplateView
+from social_django.models import Partial
 
 from idm_auth.kerberos.apps import get_kadmin
 from two_factor.forms import AuthenticationTokenForm, BackupTokenForm
@@ -28,23 +30,31 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
         ('backup', BackupTokenForm),
     )
 
+    @cached_property
+    def current_partial(self):
+        try:
+            return Partial.objects.get(token=self.request.session['partial_pipeline_token'])
+        except (KeyError, Partial.DoesNotExist):
+            return None
+
     def has_auth_step(self):
-        return 'partial_pipeline' not in self.request.session
+        return self.current_partial is None
 
     condition_dict = TwoFactorLoginView.condition_dict.copy()
-    condition_dict['auth'] =  has_auth_step,
+    condition_dict['auth'] = has_auth_step
 
     def get_user(self):
-        try:
-            return User.objects.get(pk=self.request.session['partial_pipeline']['kwargs']['user_id'])
-        except KeyError:
+        if self.current_partial:
+            return User.objects.get(pk=self.current_partial.data['kwargs']['user_id'])
+        else:
             return super().get_user()
 
     def done(self, form_list, **kwargs):
-        try:
-            self.request.session['partial_pipeline']['kwargs']['two_factor_complete'] = True
-            return HttpResponseRedirect(reverse('social:complete', kwargs={'backend': self.request.session['partial_pipeline']['backend']}))
-        except KeyError:
+        if self.current_partial:
+            self.current_partial.data['kwargs']['two_factor_complete'] = True
+            self.current_partial.save()
+            return HttpResponseRedirect(reverse('social:complete', kwargs={'backend': self.current_partial.backend}))
+        else:
             return super().done(form_list, **kwargs)
 
     def get_context_data(self, form, **kwargs):

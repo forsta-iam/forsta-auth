@@ -30,7 +30,6 @@ DATABASES = {
     },
 }
 
-
 INSTALLED_APPS = [
     'idm_auth.apps.IDMAuthConfig',
     'idm_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
