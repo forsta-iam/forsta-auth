@@ -11,7 +11,7 @@ django-registration
 django-templated-email
 django-zxcvbn-password
 social-auth-app-django
--e git://github.com/alexsdutton/idm-notification.git#egg=idm-notification
+-e git://github.com/alexsdutton/idm-broker.git#egg=idm-broker
 -e git://github.com/alexsdutton/idm-brand.git#egg=idm-brand
 kombu
 phonenumbers
