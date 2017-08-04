@@ -49,7 +49,7 @@ class Command(BaseCommand):
             idp.entity_id = idp_descriptor.attrib['entityID']
             idp.label = idp_descriptor.xpath('saml:Organization/saml:OrganizationDisplayName/text()', **NS)[0]
             idp.url = idp_descriptor.xpath('saml:IDPSSODescriptor/saml:SingleSignOnService[@Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"]/@Location', **NS)[0]
-            idp.x509cert = idp_descriptor.xpath('saml:IDPSSODescriptor/saml:KeyDescriptor[@use="signing"]//ds:X509Certificate/text()', **NS)[0]
+            idp.x509cert = idp_descriptor.xpath('saml:IDPSSODescriptor/saml:KeyDescriptor[1]//ds:X509Certificate/text()', **NS)[0]
             idp.save()
 
         IDP.objects.exclude(name__in=seen_idp_names).delete()
