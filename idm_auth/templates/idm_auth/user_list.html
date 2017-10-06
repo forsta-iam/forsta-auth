@@ -1,0 +1,42 @@
+{% extends "base.html" %}{% load idm_auth %}
+
+{% block title %}Users{% endblock %}
+{% block h1_title %}Users{% endblock %}
+
+{% block content %}
+
+    <table class="pure-table pure-table-bordered">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Expiry</th>
+            <th>Password?</th>
+            <th>Password expiry</th>
+            <th>Social</th>
+            <th>MFA</th>
+        </tr>
+        </thead>
+        <tbody>{% for object in object_list %}
+            <tr>
+            <td>{{ object.first_name }} {{ object.last_name }}</td>
+            <td><a href="{% url "user-detail" pk=object.pk %}" title="{{ object.id }}">{{ object.id|truncatechars:10 }}</a></td>
+            <td>{{ object.username|default:"" }}</td>
+            <td></td>
+            <td>
+            {% if object.password and object.has_usable_password %}
+                <i class="fa fa-check" title="Yes"> </i>
+            {% elif object.password %}
+                <i class="fa fa-exclamation-circle" title="Locked"> </i>
+            {% else %}
+                <i class="fa fa-times" title="No"> </i>
+                {% endif %}
+            <td>{{ object.kerberos_principal.pwexpire|default_if_none:"Never" }}</td>
+            <td><i class="fa {{ object.social_auth.exists|yesno:"fa-check,fa-times" }}"> </i></td>
+            <td>{% for device in object|devices_for_user %}<i class="fa fa-{{ device.icon }}" title="{{ device.type }}"> </i> {% endfor %}</td>
+        {% endfor %}</tr>
+        </tbody>
+    </table>
+
+{% endblock %}
