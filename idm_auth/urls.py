@@ -14,6 +14,8 @@ import idm_auth.api_views
 from registration.backends.hmac import views as hmac_views
 from . import views
 
+uuid_re = '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
+
 router = routers.DefaultRouter()
 router.register('oidc/client', idm_auth.oidc.views.ClientViewSet, base_name='client')
 router.register('user', idm_auth.api_views.UserViewSet, base_name='user')
@@ -69,4 +71,7 @@ urlpatterns = [
     url(r'', include(tf_urls, 'two_factor')),
     url(r'^ssh-key/', include('idm_auth.ssh_key.urls', 'ssh-key')),
     url(r'^admin/', admin.site.urls),
+
+    url('^user/$', views.UserListView.as_view(), name='user-list'),
+    url('^user/(?P<pk>' + uuid_re + ')/$', views.UserDetailView.as_view(), name='user-detail'),
 ]

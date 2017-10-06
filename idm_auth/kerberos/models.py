@@ -1,11 +1,18 @@
 from django.apps import apps
 from django.contrib.auth.hashers import make_password, check_password, is_password_usable, get_hasher, \
     get_hashers_by_algorithm
+from django.utils.functional import cached_property
 
+from idm_auth.kerberos import KerberosAttribute
 from idm_auth.kerberos.apps import get_kadmin
 
 
 class KerberosBackedUserMixin(object):
+    @cached_property
+    def kerberos_principal(self):
+        if self.password.startswith('kerberos$'):
+            return get_kadmin().get_principal(self.password.split('$', 3)[2])
+
     def set_password(self, raw_password):
         if self.username and 'kerberos' in get_hashers_by_algorithm():
             self.password = make_password(raw_password, salt=self.username, hasher='kerberos')
@@ -36,7 +43,10 @@ class KerberosBackedUserMixin(object):
         self.password = make_password(None)
 
     def has_usable_password(self):
-        return is_password_usable(self.password)
+        if self.kerberos_principal:
+            return KerberosAttribute.DISALLOW_ALL_TIX.value not in self.kerberos_principal.attributes
+        else:
+            return is_password_usable(self.password)
 
     def save(self, *args, **kwargs):
         if self.password and self.password.startswith('kerberos$'):

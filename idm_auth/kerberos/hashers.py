@@ -45,8 +45,8 @@ class KerberosHasher(BasePasswordHasher):
         try:
             return kerberos.checkPassword(principal, password,
                                           settings.CLIENT_PRINCIPAL_NAME,
-                                          settings.DEFAULT_REALM)
-        except kerberos.BasicAuthError:
+                                           settings.DEFAULT_REALM)
+        except kerberos.BasicAuthError as e:
             return False
 
     def safe_summary(self, encoded):
