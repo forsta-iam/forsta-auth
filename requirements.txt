@@ -23,4 +23,5 @@ python-dateutil
 PyYAML
 requests
 requests-negotiate
+sshpubkeys
 xmlsec

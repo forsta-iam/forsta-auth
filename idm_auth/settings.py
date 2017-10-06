@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'idm_auth.kerberos.apps.KerberosConfig',
     'idm_auth.onboarding.apps.OnboardingConfig',
     'idm_auth.saml',
+    'idm_auth.ssh_key',
     'idm_brand',
     'idm_broker.apps.IDMBrokerConfig',
     'django.contrib.admin',

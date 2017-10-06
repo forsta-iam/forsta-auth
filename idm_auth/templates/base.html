@@ -11,7 +11,7 @@
         {% if user.is_authenticated %}
             <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "password-change" %}">Password management</a></li>
             <li class="pure-menu-item"><a class="pure-menu-link" href="#">Device management</a></li>
-            <li class="pure-menu-item"><a class="pure-menu-link" href="#">GPG and SSH keys</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "ssh-key:list" %}">SSH keys</a></li>
             <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "social-logins" %}">Social logins</a></li>
             <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "two_factor:profile" %}">Two-factor auth
                 {% if two_factor_enabled %}<i class="fa fa-check-circle" title="(enabled)"> </i>{% endif %}</a></li>

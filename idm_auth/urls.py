@@ -67,5 +67,6 @@ urlpatterns = [
     url(r'^openid/', include('oidc_provider.urls', namespace='oidc_provider')),
     url(r'', include('social_django.urls', namespace='social')),
     url(r'', include(tf_urls, 'two_factor')),
+    url(r'^ssh-key/', include('idm_auth.ssh_key.urls', 'ssh-key')),
     url(r'^admin/', admin.site.urls),
 ]
