@@ -31,7 +31,7 @@ DATABASES = {
 }
 
 INSTALLED_APPS = [
-    'idm_auth.apps.IDMAuthConfig',
+    'idm_auth',
     'idm_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
     'idm_auth.kerberos.apps.KerberosConfig',
     'idm_auth.onboarding.apps.OnboardingConfig',
