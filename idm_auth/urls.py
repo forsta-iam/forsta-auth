@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth.views import logout
@@ -74,4 +75,9 @@ urlpatterns = [
 
     url('^user/$', views.UserListView.as_view(), name='user-list'),
     url('^user/(?P<pk>' + uuid_re + ')/$', views.UserDetailView.as_view(), name='user-detail'),
+
+    url('^proxied-api/orcid/(?P<path_info>.*)',
+        views.ProxiedAPIView.as_view(api_url='https://api.sandbox.orcid.org/',
+                                     provider='orcid',
+                                     client_id=settings.SOCIAL_AUTH_ORCID_KEY)),
 ]

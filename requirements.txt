@@ -3,12 +3,13 @@ Django
 djangorestframework
 django-oidc-provider
 django-reversion
-django-two-factor-auth
 django-otp
-django-otp-yubikey
+#django-otp-u2f
 django-auth-kerberos
+django-phonenumber-field
 django-registration
 django-templated-email
+django-two-factor-auth
 django-zxcvbn-password
 social-auth-app-django
 -e git://github.com/alexsdutton/idm-broker.git#egg=idm-broker
@@ -22,6 +23,7 @@ python-dateutil
 -e git://github.com/alexsdutton/python-kadmin.git#egg=python-kadmin
 PyYAML
 requests
+requests_oauthlib
 requests-negotiate
 sshpubkeys
 xmlsec
