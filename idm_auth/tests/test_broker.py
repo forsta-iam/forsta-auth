@@ -22,6 +22,8 @@ class BrokerTestCase(TransactionTestCase):
             queue = kombu.Queue(exclusive=True).bind(conn)
             queue.declare()
             queue.bind_to(exchange=kombu.Exchange('idm.auth.user'), routing_key='#')
+            connection = transaction.get_connection()
+            self.assertFalse(connection.in_atomic_block)
             with transaction.atomic():
                 user = User.objects.create(identity_id=uuid.uuid4(),
                                            primary=True, is_active=True,

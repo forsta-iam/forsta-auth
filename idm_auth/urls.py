@@ -75,9 +75,12 @@ urlpatterns = [
 
     url('^user/$', views.UserListView.as_view(), name='user-list'),
     url('^user/(?P<pk>' + uuid_re + ')/$', views.UserDetailView.as_view(), name='user-detail'),
-
-    url('^proxied-api/orcid/(?P<path_info>.*)',
-        views.ProxiedAPIView.as_view(api_url='https://api.sandbox.orcid.org/',
-                                     provider='orcid',
-                                     client_id=settings.SOCIAL_AUTH_ORCID_KEY)),
 ]
+
+if getattr(settings, 'SOCIAL_AUTH_ORCID_KEY', None):
+    urlpatterns += [
+        url('^proxied-api/orcid/(?P<path_info>.*)',
+            views.ProxiedAPIView.as_view(api_url='https://api.sandbox.orcid.org/',
+                                         provider='orcid',
+                                         client_id=settings.SOCIAL_AUTH_ORCID_KEY)),
+    ]
