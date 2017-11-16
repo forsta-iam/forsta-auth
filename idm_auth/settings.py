@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
-    'otp_yubikey',
+    #'otp_yubikey',
     'registration',
     # OpenID Connect
     'oidc_provider',
