@@ -97,6 +97,7 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
     'idm_auth.saml.social_backend.SAMLAuth',
+    'idm_auth.social_backend.ORCIDSandboxAuth',
     # The authentication form will forbid inactive users from logging in regardless, but this means we can present them
     # with a "not yet active" message
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
