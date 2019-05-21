@@ -63,19 +63,23 @@ urlpatterns = [
             template_name='registration/registration_closed.html'
         ),
         name='registration_disallowed'),
-    url(r'', include('registration.auth_urls')),
+    url(r'', include('django_registration.backends.activation.urls')),
 
     url(r'^saml-metadata/$', idm_auth.saml.views.SAMLMetadataView.as_view(), name='saml-metadata'),
     # OpenID Connect
     url(r'^openid/', include('oidc_provider.urls', namespace='oidc_provider')),
     url(r'', include('social_django.urls', namespace='social')),
     url(r'', include(tf_urls, 'two_factor')),
-    url(r'^ssh-key/', include('idm_auth.ssh_key.urls', 'ssh-key')),
     url(r'^admin/', admin.site.urls),
 
     url('^user/$', views.UserListView.as_view(), name='user-list'),
     url('^user/(?P<pk>' + uuid_re + ')/$', views.UserDetailView.as_view(), name='user-detail'),
 ]
+
+if settings.SSH_KEYS_ENABLED:
+    urlpatterns.append(
+        url(r'^ssh-key/', include('idm_auth.ssh_key.urls', 'ssh-key'))
+    )
 
 if getattr(settings, 'SOCIAL_AUTH_ORCID_KEY', None):
     urlpatterns += [

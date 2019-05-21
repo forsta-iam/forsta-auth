@@ -1,7 +1,6 @@
 import os
 
 import requests
-from requests_negotiate import HTTPNegotiateAuth
 from django.apps import apps, AppConfig
 from django.conf import settings
 from django.db import connection
@@ -17,7 +16,14 @@ class IDMAuthConfig(AppConfig):
 
     def ready(self):
         self.session = requests.Session()
-        self.session.auth = HTTPNegotiateAuth(negotiate_client_name=getattr(settings, 'CLIENT_PRINCIPAL_NAME', None))
+        try:
+            from requests_negotiate import HTTPNegotiateAuth
+        except ImportError:
+            self.session.auth = None
+        else:
+            self.session.auth = HTTPNegotiateAuth(
+                negotiate_client_name=getattr(settings, 'CLIENT_PRINCIPAL_NAME', None))
+
         # Support explicitly using system (or other) trust
         if 'SSL_CERT_FILE' in os.environ:
             self.session.verify = os.environ['SSL_CERT_FILE']
@@ -25,9 +31,10 @@ class IDMAuthConfig(AppConfig):
         from social_django.models import UserSocialAuth
         from . import models, serializers
 
-        apps.get_app_config('idm_broker').register_notifications([
-            {'serializer': serializers.UserSerializer, 'exchange': 'user'},
-        ])
+        if settings.BROKER_ENABLED:
+            apps.get_app_config('idm_broker').register_notifications([
+                {'serializer': serializers.UserSerializer, 'exchange': 'user'},
+            ])
 
         post_delete.connect(self.user_social_auth_updated, UserSocialAuth)
         post_save.connect(self.user_social_auth_updated, UserSocialAuth)

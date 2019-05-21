@@ -23,3 +23,11 @@ def idm_auth(request):
     return {
         'IDM_CORE_URL': settings.IDM_CORE_URL,
     }
+
+
+def features_enabled(request):
+    return {
+        'SAML_ENABLED': settings.SAML_ENABLED,
+        'KERBEROS_ENABLED': settings.KERBEROS_ENABLED,
+        'BROKER_ENABLED': settings.BROKER_ENABLED,
+    }

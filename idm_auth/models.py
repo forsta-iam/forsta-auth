@@ -8,7 +8,11 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from idm_auth.kerberos.models import KerberosBackedUserMixin
+if settings.KERBEROS_ENABLED:
+    from idm_auth.kerberos.models import KerberosBackedUserMixin
+else:
+    class KerberosBackedUserMixin:
+        pass
 
 
 def get_uuid():

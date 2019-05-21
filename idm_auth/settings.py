@@ -3,7 +3,6 @@ import email.utils
 
 import kombu
 import os
-import six
 from django.urls import reverse
 from django.utils.functional import lazy
 
@@ -14,10 +13,6 @@ TIME_ZONE = 'Europe/London'
 
 
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() if not DEBUG else ['*']
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
-if not SECRET_KEY and DEBUG:
-    SECRET_KEY = 'very secret key'
 
 if 'DJANGO_ADMINS' in os.environ:
     ADMINS = [email.utils.parseaddr(addr.strip()) for addr in os.environ['DJANGO_ADMINS'].split(',')]
@@ -33,15 +28,11 @@ DATABASES = {
 INSTALLED_APPS = [
     'idm_auth',
     'idm_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
-    'idm_auth.kerberos.apps.KerberosConfig',
     'idm_auth.onboarding.apps.OnboardingConfig',
-    'idm_auth.saml',
-    'idm_auth.ssh_key',
-    'idm_brand',
-    'idm_broker.apps.IDMBrokerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.staticfiles',
@@ -54,13 +45,21 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_totp',
     'two_factor',
     #'otp_yubikey',
-    'registration',
+    'django_registration',
     # OpenID Connect
     'oidc_provider',
-    # Kerberos auth
-    'django_auth_kerberos',
     'zxcvbn_password',
 ]
+
+try:
+    __import__('idm_broker')
+except ImportError:
+    BROKER_ENABLED = False
+else:
+    INSTALLED_APPS.append('idm_broker')
+    BROKER_ENABLED = True
+
+
 try:
     __import__('django_extensions')
 except ImportError:
@@ -70,7 +69,7 @@ else:
 
 SITE_ID = 1
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -83,10 +82,8 @@ MIDDLEWARE_CLASSES = [
 
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'idm_auth.kerberos.backends.KerberosBackend',
+AUTHENTICATION_BACKENDS = [
     'idm_auth.tests.social_backends.DummyBackend',
-    #'django_auth_kerberos.backends.KrbBackend',
     'social_core.backends.open_id.OpenIdAuth',
     'social_core.backends.google.GoogleOpenId',
     'social_core.backends.google.GoogleOAuth2',
@@ -96,12 +93,11 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.yahoo.YahooOpenId',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
-    'idm_auth.saml.social_backend.SAMLAuth',
     'idm_auth.social_backend.ORCIDSandboxAuth',
     # The authentication form will forbid inactive users from logging in regardless, but this means we can present them
     # with a "not yet active" message
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
-)
+]
 
 TEMPLATES = [
     {
@@ -109,15 +105,17 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': (
+            'context_processors': [
                 'django.contrib.auth.context_processors.auth',
                 'social_django.context_processors.backends',
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.static',
+                'django.contrib.messages.context_processors.messages',
                 'idm_auth.context_processors.idm_auth',
                 'idm_auth.context_processors.two_factor_enabled',
+                'idm_auth.context_processors.features_enabled',
                 'idm_auth.onboarding.context_processors.onboarding',
-            ),
+            ],
         },
     },
 ]
@@ -180,7 +178,6 @@ SOCIAL_AUTH_PIPELINE = (
 
 
 # For kombu, generally AMQP
-BROKER_ENABLED = bool(os.environ.get('BROKER_ENABLED'))
 BROKER_TRANSPORT = os.environ.get('BROKER_TRANSPORT', 'amqp')
 BROKER_HOSTNAME= os.environ.get('BROKER_HOSTNAME', 'localhost')
 BROKER_SSL = os.environ.get('BROKER_SSL', 'yes').lower() not in ('no', '0', 'off', 'false')
@@ -217,9 +214,11 @@ SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
   'fields': 'id, name, email'
 }
 
+
 def _get_inactive_user_url():
     return reverse('login') + '?awaiting-activation'
-SOCIAL_AUTH_INACTIVE_USER_URL = lazy(_get_inactive_user_url, six.text_type)()
+
+SOCIAL_AUTH_INACTIVE_USER_URL = lazy(_get_inactive_user_url, str)()
 
 SESSION_COOKIE_NAME = 'idm-auth-sessionid'
 
@@ -247,7 +246,7 @@ IDM_APPLICATION_ID = '4ff517c5-532f-42ee-afb1-a5d3da2f61d5'
 
 from django.conf import global_settings
 
-PASSWORD_HASHERS = global_settings.PASSWORD_HASHERS + ['idm_auth.kerberos.hashers.KerberosHasher']
+PASSWORD_HASHERS = global_settings.PASSWORD_HASHERS
 
 DEFAULT_REALM = os.environ.get('DEFAULT_REALM', 'EXAMPLE.COM')
 KADMIN_PRINCIPAL_NAME = os.environ.get('KADMIN_PRINCIPAL_NAME')
@@ -289,3 +288,34 @@ IDM_BROKER = {
         'tasks': ['idm_auth.auth_core_integration.tasks.process_person_update'],
     }],
 }
+
+
+# Optional features
+
+try:
+    __import__('kadmin') and __import__('kerberos')
+except ImportError:
+    KERBEROS_ENABLED = False
+else:
+    INSTALLED_APPS.append('idm_auth.kerberos')
+    AUTHENTICATION_BACKENDS.insert(0, 'idm_auth.kerberos.backends.KerberosBackend')
+    PASSWORD_HASHERS.append('idm_auth.kerberos.hashers.KerberosHasher')
+    KERBEROS_ENABLED = True
+
+try:
+    __import__('sshpubkeys')
+except ImportError:
+    SSH_KEYS_ENABLED = False
+else:
+    INSTALLED_APPS.append('idm_auth.ssh_key')
+    SSH_KEYS_ENABLED = True
+
+try:
+    __import__('xmlsec') and __import__('onelogin.saml2')
+except ImportError:
+    SAML_ENABLED = False
+else:
+    INSTALLED_APPS.append('idm_auth.saml')
+    AUTHENTICATION_BACKENDS.insert(0, 'idm_auth.saml.social_backend.SAMLAuth')
+    TEMPLATES[0]['OPTIONS']['context_processors'].append('idm_auth.saml.context_processors.idps')
+    SAML_ENABLED = True

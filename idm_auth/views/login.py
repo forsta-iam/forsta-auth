@@ -7,7 +7,6 @@ from django.utils.functional import cached_property
 from django.utils.http import is_safe_url
 from social_django.models import Partial
 
-from idm_auth.saml.models import IDP
 from two_factor.forms import AuthenticationTokenForm
 from two_factor.forms import BackupTokenForm
 
@@ -16,6 +15,7 @@ from two_factor.views.core import LoginView as TwoFactorLoginView
 from .. import backend_meta, forms
 
 __all__ = ['SocialTwoFactorLoginView']
+
 
 class SocialTwoFactorLoginView(TwoFactorLoginView):
     template_name = 'registration/login.html'
@@ -62,7 +62,6 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
         if self.steps.current == 'auth':
             context.update({
                 'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.backend_id != 'saml'], key=lambda sb: sb.name)),
-                'idps': IDP.objects.all().order_by('label'),
                 'awaiting_activation': 'awaiting-activation' in self.request.GET,
             })
         return context

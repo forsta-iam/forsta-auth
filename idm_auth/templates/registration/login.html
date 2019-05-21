@@ -91,19 +91,21 @@
                     {% endif %}
                 </form>
                 {% if wizard.steps.current == 'auth' %}
-                    <hr>
-                    <section>
-                        <h2>Institutional login</h2>
-                        <form method="get" action="{% url "social:begin" backend='saml' %}" class="pure-form">
-                            <select name="idp" class="pure-u pure-3-4">{% for idp in idps %}
-                                <option value="{{ idp.name }}">{{ idp.label }}</option>{% endfor %}
-                            </select>
-                        {% if redirect_to %}
-                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_to }}">
-                        {% endif %}
-                            <input class="pure-u pure-u-1-4 pure-button" type="submit" value="Go">
-                        </form>
-                    </section>
+                    {% if SAML_ENABLED %}
+                        <hr>
+                        <section>
+                            <h2>Institutional login</h2>
+                            <form method="get" action="{% url "social:begin" backend='saml' %}" class="pure-form">
+                                <select name="idp" class="pure-u pure-3-4">{% for idp in idps %}
+                                    <option value="{{ idp.name }}">{{ idp.label }}</option>{% endfor %}
+                                </select>
+                                {% if redirect_to %}
+                                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_to }}">
+                                {% endif %}
+                                <input class="pure-u pure-u-1-4 pure-button" type="submit" value="Go">
+                            </form>
+                        </section>
+                    {% endif %}
                     <hr>
                     <section>
                         <h2>Social login</h2>
