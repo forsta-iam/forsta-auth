@@ -3,7 +3,7 @@ from django.db import models
 
 
 class SSHKey(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     label = models.TextField()
     key = models.TextField()
 

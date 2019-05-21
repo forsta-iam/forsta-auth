@@ -1,9 +1,10 @@
 from django.shortcuts import render
+from django.utils.deprecation import MiddlewareMixin
 
 from idm_auth.onboarding.exceptions import RegistrationClosed
 
 
-class OnboardingMiddleware(object):
+class OnboardingMiddleware(MiddlewareMixin):
     def process_exception(self, request, exception):
         if isinstance(exception, RegistrationClosed):
             context = {

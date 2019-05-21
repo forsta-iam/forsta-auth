@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
-from django.contrib.auth.views import logout
+from django.contrib.auth.views import LogoutView
 from django.views.generic import TemplateView
 from rest_framework import routers
 
@@ -12,7 +12,7 @@ import idm_auth.onboarding.views
 import idm_auth.oidc.views
 import idm_auth.saml.views
 import idm_auth.api_views
-from registration.backends.hmac import views as hmac_views
+from django_registration.backends.activation import views as registration_views
 from . import views
 
 uuid_re = '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
@@ -24,7 +24,7 @@ router.register('user', idm_auth.api_views.UserViewSet, base_name='user')
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^login/$', views.SocialTwoFactorLoginView.as_view(), name='login'),
-    url(r'^logout/$', logout, name='logout'),
+    url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^password/$', views.PasswordChangeView.as_view(), name='password-change'),
     url(r'^password/done/$', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     url(r'^recover/$', views.RecoverView.as_view(), name='recover'),
@@ -48,10 +48,10 @@ urlpatterns = [
     # The activation key can make use of any character from the
     # URL-safe base64 alphabet, plus the colon as a separator.
     url(r'^activate/(?P<activation_key>[-:\w]+)/$',
-        hmac_views.ActivationView.as_view(),
+        registration_views.ActivationView.as_view(),
         name='registration_activate'),
     url(r'^register/$',
-        hmac_views.RegistrationView.as_view(),
+        registration_views.RegistrationView.as_view(),
         name='registration_register'),
     url(r'^register/complete/$',
         TemplateView.as_view(
