@@ -11,20 +11,17 @@ from django.urls import reverse
 from django.utils.datastructures import MultiValueDict
 from django.utils.functional import cached_property
 from django.views import View
-from django.views.generic import TemplateView, DetailView
-from django.views.generic.detail import SingleObjectMixin
-from formtools.wizard.views import SessionWizardView, NamedUrlSessionWizardView, NamedUrlCookieWizardView
-from registration.backends.hmac.views import RegistrationView, REGISTRATION_SALT
+from django.views.generic import TemplateView
+from django_registration.backends.activation.views import RegistrationView, REGISTRATION_SALT
+from formtools.wizard.views import SessionWizardView, NamedUrlCookieWizardView
 from social_django.models import Partial
 
 from idm_auth.auth_core_integration.utils import get_identity_data
 from idm_auth.forms import SetPasswordForm
 from idm_auth.onboarding.forms import PersonalDataForm, WelcomeForm, ActivationCodeForm, \
-    ConfirmDetailsForm, ExistingAccountForm, LoginForm, ConfirmActivationForm
+    ConfirmDetailsForm, ExistingAccountForm, ConfirmActivationForm
 from idm_auth.onboarding.models import PendingActivation
-
 from .. import models
-
 
 CLAIM_SALT = 'idm_auth.onboarding.claim'
 
