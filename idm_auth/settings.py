@@ -194,19 +194,6 @@ OIDC_EXTRA_SCOPE_CLAIMS = 'idm_auth.oidc.claims.IDMAuthScopeClaims'
 IDM_CORE_URL = os.environ.get('IDM_CORE_URL', 'http://localhost:8000/')
 IDM_CORE_API_URL = os.environ.get('IDM_CORE_API_URL', 'http://localhost:8000/api/')
 
-SOCIAL_AUTH_SAML_ORG_INFO = {
-    "en-GB": {
-        "name": "penguin-colony",
-        "displayname": "Penguin Colony at the University of Oxford",
-        "url": "https://penguin-colony.oucs.ox.ac.uk/",
-    }
-}
-
-SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
-    "givenName": "Alexander Dutton",
-    "emailAddress": "alexander.dutton@it.ox.ac.uk",
-}
-
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
 SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
@@ -319,3 +306,16 @@ else:
     AUTHENTICATION_BACKENDS.insert(0, 'idm_auth.saml.social_backend.SAMLAuth')
     TEMPLATES[0]['OPTIONS']['context_processors'].append('idm_auth.saml.context_processors.idps')
     SAML_ENABLED = True
+
+    SOCIAL_AUTH_SAML_ORG_INFO = {
+        "en-GB": {
+            "name": "penguin-colony",
+            "displayname": "Penguin Colony at the University of Oxford",
+            "url": "https://penguin-colony.oucs.ox.ac.uk/",
+        }
+    }
+
+    SOCIAL_AUTH_SAML_TECHNICAL_CONTACT = SOCIAL_AUTH_SAML_SUPPORT_CONTACT = {
+        "givenName": "Alexander Dutton",
+        "emailAddress": "alexander.dutton@it.ox.ac.uk",
+    }
