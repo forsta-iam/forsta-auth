@@ -28,7 +28,7 @@ class BackendMeta(object):
 class TwitterBackendMeta(BackendMeta):
     backend_id = 'twitter'
     name = 'Twitter'
-    font_icon = 'fa fa-twitter'
+    font_icon = 'fab fa-twitter'
 
     @property
     def username(self):
@@ -42,7 +42,7 @@ class TwitterBackendMeta(BackendMeta):
 class GoogleOAuth2BackendMeta(BackendMeta):
     backend_id = 'google-oauth2'
     name = 'Google'
-    font_icon = 'fa fa-google'
+    font_icon = 'fab fa-google'
 
 
 class ORCIDBackendMeta(BackendMeta):
@@ -54,7 +54,7 @@ class ORCIDBackendMeta(BackendMeta):
 class FacebookBackendMeta(BackendMeta):
     backend_id = 'facebook'
     name = 'Facebook'
-    font_icon = 'fa fa-facebook-official'
+    font_icon = 'fab fa-facebook-official'
 
 
 class FigshareBackendMeta(BackendMeta):
@@ -66,13 +66,13 @@ class FigshareBackendMeta(BackendMeta):
 class LinkedinBackendMeta(BackendMeta):
     backend_id = 'linkedin'
     name = 'LinkedIn'
-    font_icon = 'fa fa-linkedin'
+    font_icon = 'fab fa-linkedin'
 
 
 class GithubBackendMeta(BackendMeta):
     backend_id = 'github'
     name = 'GitHub'
-    font_icon = 'fa fa-github'
+    font_icon = 'fab fa-github'
 
     @property
     def username(self):
@@ -86,7 +86,7 @@ class GithubBackendMeta(BackendMeta):
 class SAMLBackendMeta(BackendMeta):
     backend_id = 'saml'
     name = 'SAML'
-    font_icon = 'fa fa-university'
+    font_icon = 'fab fa-university'
 
     @property
     def name(self):
