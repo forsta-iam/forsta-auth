@@ -1,0 +1,25 @@
+    <ul class="pure-menu-list">
+        {% if user.is_authenticated %}
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "password-change" %}">Password management</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="#">Device management</a></li>
+            {%  if SSH_KEYS_ENABLED %}
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "ssh-key:list" %}">SSH keys</a></li>
+                {% endif %}
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "social-logins" %}">Social logins</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "two_factor:profile" %}">Two-factor auth
+                {% if two_factor_enabled %}<i class="fa fa-check-circle" title="(enabled)"> </i>{% endif %}</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="#">Audit and logging</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "logout" %}">Log out</a></li>
+        {% else %}
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "login" %}">Log in</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "activate" %}?reset">Claim</a></li>
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "recover" %}">Recover</a></li>
+            {% if ONBOARDING.REGISTRATION_OPEN %}
+                <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "signup" %}">Sign-up</a></li>
+            {% endif %}
+        {% endif %}
+
+        <hr>
+        <li class="pure-menu-item"><a class="pure-menu-link" href="{{ IDM_CORE_URL }}">Identity self-service</a></li>
+
+    </ul>

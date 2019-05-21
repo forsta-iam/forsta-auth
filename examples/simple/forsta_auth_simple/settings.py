@@ -1,4 +1,4 @@
-from idm_auth.settings import *  # pragma: noqa
+from forsta_auth.settings import *  # pragma: noqa
 
 SECRET_KEY = "very secret key"
 

@@ -5,7 +5,7 @@ import setuptools
 with open('README.md') as f:
     long_description = f.read()
 
-with open(os.path.join('idm_auth', '__init__.py')) as f:
+with open(os.path.join('forsta_auth', '__init__.py')) as f:
     version = re.search(
         r'''^__version__\s*=\s*(['"])(.*)\1''', f.read(), re.MULTILINE
     ).group(2)
