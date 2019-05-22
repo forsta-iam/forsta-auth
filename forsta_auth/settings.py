@@ -70,6 +70,7 @@ else:
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

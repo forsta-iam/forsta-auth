@@ -7,9 +7,12 @@ verify_ssl = true
 django-extensions = "*"
 
 [packages]
-forsta-auth = {path = "../..", editable = true, extras = ["saml"]}
+forsta-auth = {git = "https://github.com/forsta-iam/forsta-auth.git", editable = true, extras = ["saml"]}
 forsta-brand = {git = "https://github.com/forsta-iam/forsta-brand.git", editable = true}
 psycopg2 = "*"
+whitenoise = {version = "*", extras = ["brotli"]}
+gunicorn = "*"
+django-environ = "*"
 
 [requires]
 python_version = "3.7"
