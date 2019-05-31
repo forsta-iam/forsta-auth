@@ -1,4 +1,6 @@
+/forsta_auth.egg-info/
 __pycache__/
 *.pyc
 /build
 /.idea
+examples/*/*/staticfiles
