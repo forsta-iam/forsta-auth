@@ -5,6 +5,8 @@ from forsta_auth.settings import *  # pragma: noqa
 env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, ['*']),
+    SECURE_PROXY_SSL_HEADER_NAME=(str, None),
+    SECURE_PROXY_SSL_HEADER_VALUE=(str, None),
 )
 
 SECRET_KEY = "very secret key"
@@ -33,3 +35,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DATABASES = {
     'default': env.db(),
 }
+
+
+# nginx ingress uses this HTTP request header to say that the original request was HTTPS.
+# This is used when constructing URLs in responses.
+SECURE_PROXY_SSL_HEADER = (env('SECURE_PROXY_SSL_HEADER_NAME'),
+                           env('SECURE_PROXY_SSL_HEADER_VALUE'))
