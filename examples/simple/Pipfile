@@ -13,6 +13,7 @@ psycopg2 = "*"
 whitenoise = {version = "*", extras = ["brotli"]}
 gunicorn = "*"
 django-environ = "*"
+django-oidc-provider = {git = "https://github.com/forsta-iam/django-oidc-provider.git", ref = "develop", editable = true}
 
 [requires]
 python_version = "3.7"
