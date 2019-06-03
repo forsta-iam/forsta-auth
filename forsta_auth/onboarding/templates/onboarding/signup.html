@@ -6,12 +6,12 @@
 
 {% block header %}
     {% if pending_activation %}
-        <h1>Claim your Oxford identity</h1>
+        <h1>Claim {{ TEXT_BRANDING.your_account }}</h1>
         {% if wizard.steps.current == 'password' %}
             <h2>Step 4 of 4: Set a password</h2>
         {% endif %}
     {% else %}
-        <h1>Register for an Oxford identity</h1>
+        <h1>Register for {{ TEXT_BRANDING.an_account }}</h1>
     {% endif %}
 {% endblock %}
 

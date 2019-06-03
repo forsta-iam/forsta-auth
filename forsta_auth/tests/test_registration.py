@@ -4,6 +4,7 @@ import uuid
 from urllib.parse import urljoin, urlparse
 
 import re
+from django.conf import settings
 from django.core import mail
 from django.core.mail import EmailMultiAlternatives
 from kombu.message import Message
@@ -71,7 +72,7 @@ class RegistrationTestCase(LiveServerTestCase):
 
         message = mail.outbox[0]
         assert isinstance(message, EmailMultiAlternatives)
-        self.assertEqual(message.subject, 'Activate your Oxford account')
+        self.assertEqual(message.subject, f"Activate {settings.TEXT_BRANDING['your_account']}")
 
         activation_link = re.search('https://.*', message.body, re.MULTILINE).group(0)
         activation_link = urljoin(self.live_server_url, urlparse(activation_link).path)

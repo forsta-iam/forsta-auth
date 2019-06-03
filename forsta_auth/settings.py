@@ -112,7 +112,7 @@ TEMPLATES = [
                 'social_django.context_processors.login_redirect',
                 'django.template.context_processors.static',
                 'django.contrib.messages.context_processors.messages',
-                'forsta_auth.context_processors.idm_auth',
+                'forsta_auth.context_processors.forsta_auth',
                 'forsta_auth.context_processors.two_factor_enabled',
                 'forsta_auth.context_processors.features_enabled',
                 'forsta_auth.onboarding.context_processors.onboarding',
@@ -320,3 +320,10 @@ else:
         "givenName": "Alexander Dutton",
         "emailAddress": "alexander.dutton@it.ox.ac.uk",
     }
+
+TEXT_BRANDING = {
+    'organization_name': 'Example Organization',
+    'organization_name_in_context': 'the Example Organization',
+    'your_account': 'your account',
+    'an_account': 'an account',
+}

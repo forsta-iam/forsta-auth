@@ -1,11 +1,11 @@
-{% block subject %}Activate your Oxford account{% endblock %}
+{% block subject %}Activate {{ TEXT_BRANDING.your_account }}{% endblock %}
 
 {% block plain %}
 Dear {{ identity.primary_name.plain|default:"user" }},
 
-Welcome to the University of Oxford!
+Welcome to {{ TEXT_BRANDING.organization_name_in_context }}!
 
-You have been invited to create an account with the University of Oxford in
+You have been invited to create an account with {{ TEXT_BRANDING.organization_name_in_context }} in
 order to access services. If you already have an account, you should log in
 with your existing credentials to accept your new service entitlements.
 
@@ -14,6 +14,6 @@ https://{{ site.domain }}{% url "activate" %}?activation_code={{ pending_activat
 Yours,
 
 The Identity Management System
-University of Oxford
+{{ TEXT_BRANDING.organization_name }}
 
 {% endblock %}

@@ -7,6 +7,12 @@ env = environ.Env(
     ALLOWED_HOSTS=(list, ['*']),
     SECURE_PROXY_SSL_HEADER_NAME=(str, None),
     SECURE_PROXY_SSL_HEADER_VALUE=(str, None),
+
+    # Branding
+    ORGANIZATION_NAME=(str, TEXT_BRANDING['organization_name']),
+    ORGANIZATION_NAME_IN_CONTEXT=(str, TEXT_BRANDING['organization_name_in_context']),
+    YOUR_ACCOUNT=(str, TEXT_BRANDING['your_account']),
+    AN_ACCOUNT=(str, TEXT_BRANDING['an_account']),
 )
 
 SECRET_KEY = "very secret key"
@@ -41,3 +47,11 @@ DATABASES = {
 # This is used when constructing URLs in responses.
 SECURE_PROXY_SSL_HEADER = (env('SECURE_PROXY_SSL_HEADER_NAME'),
                            env('SECURE_PROXY_SSL_HEADER_VALUE'))
+
+
+TEXT_BRANDING = {
+    'organization_name': env('ORGANIZATION_NAME'),
+    'organization_name_in_context': env('ORGANIZATION_NAME_IN_CONTEXT'),
+    'your_account': env('YOUR_ACCOUNT'),
+    'an_account': env('AN_ACCOUNT'),
+}

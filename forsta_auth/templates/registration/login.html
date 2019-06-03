@@ -114,7 +114,7 @@
                     <section>
                         <h2>Register new account</h2>
                         Don’t have an account?
-                        <a href="{% url "signup" %}{% if redirect_to %}?{{ redirect_field_name }}={{ redirect_to|urlencode }}{% endif %}">Create an Oxford account</a>.
+                        <a href="{% url "signup" %}{% if redirect_to %}?{{ redirect_field_name }}={{ redirect_to|urlencode }}{% endif %}">Create {{ TEXT_BRANDING.an_account }}</a>.
                     </section>{% endif %}
                 {% endif %}
 

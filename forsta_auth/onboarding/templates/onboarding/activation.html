@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}Claim your Oxford identity{% endblock %}
+{% block title %}Claim {{ TEXT_BRANDING.your_account }}{% endblock %}
 {% block header %}
-    <h1>Claim your Oxford identity</h1>
+    <h1>Claim {{ TEXT_BRANDING.your_account }}</h1>
     <h2>Step {{ wizard.steps.step1 }} of {{ wizard.steps.count }}:
         {% if wizard.steps.current == "activation-code" %}
             Enter your activation code

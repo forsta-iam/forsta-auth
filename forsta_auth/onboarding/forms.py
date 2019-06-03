@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -33,7 +34,7 @@ class ConfirmDetailsForm(forms.Form):
 
 class ExistingAccountForm(forms.Form):
     existing_account = forms.TypedChoiceField(
-        label="Do you already have an existing account with the University of Oxford?",
+        label=f"Do you already have an existing account with {settings.TEXT_BRANDING['organization_name_in_context']}?",
         coerce=lambda v: v=='yes',
         widget=forms.RadioSelect,
         choices=(('no', 'No'), ('yes', 'Yes')))

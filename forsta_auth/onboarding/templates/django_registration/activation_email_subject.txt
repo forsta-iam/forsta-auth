@@ -1,1 +1,1 @@
-Activate your Oxford account
+Activate {{ TEXT_BRANDING.your_account }}

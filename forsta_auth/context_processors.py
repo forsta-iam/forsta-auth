@@ -19,9 +19,9 @@ def two_factor_enabled(request):
     return {'two_factor_enabled': TwoFactorEnabled(request)}
 
 
-def idm_auth(request):
+def forsta_auth(request):
     return {
-        'IDM_CORE_URL': settings.IDM_CORE_URL,
+        'TEXT_BRANDING': settings.TEXT_BRANDING,
     }
 
 
