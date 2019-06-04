@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core import signing
 from django.core.exceptions import PermissionDenied
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -12,7 +13,11 @@ from django.utils.datastructures import MultiValueDict
 from django.utils.functional import cached_property
 from django.views import View
 from django.views.generic import TemplateView
-from django_registration.backends.activation.views import RegistrationView, REGISTRATION_SALT
+from django_registration.backends.activation.views import RegistrationView, REGISTRATION_SALT, \
+    ActivationView as BaseActivationView
+from django_registration.exceptions import ActivationError
+from django.utils.translation import ugettext_lazy as _
+
 from formtools.wizard.views import SessionWizardView, NamedUrlCookieWizardView
 from social_django.models import Partial
 
@@ -76,7 +81,8 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
         """
         return signing.dumps(
             # Wrap username in str(), to handle our UUIDField
-            obj=str(getattr(user, user.USERNAME_FIELD)),
+            obj={'username': str(getattr(user, user.USERNAME_FIELD)),
+                 'email': user.email},
             salt=REGISTRATION_SALT
         )
 
@@ -183,7 +189,7 @@ class SignupCompleteView(TemplateView):
         return context
 
 
-class ActivationView(SocialPipelineMixin, NamedUrlCookieWizardView):
+class IdentityClaimView(SocialPipelineMixin, NamedUrlCookieWizardView):
     template_name = 'onboarding/activation.html'
 
     form_list = (
@@ -247,7 +253,6 @@ class ActivationView(SocialPipelineMixin, NamedUrlCookieWizardView):
         if self.pending_activation:
             return get_identity_data(self.pending_activation.identity_id)
 
-
     def done(self, form_list, form_dict, **kwargs):
         existing_identity_id = self.request.user.identity_id
         if existing_identity_id:
@@ -262,3 +267,50 @@ class ActivationView(SocialPipelineMixin, NamedUrlCookieWizardView):
         self.pending_activation.delete()
 
         return render(self.request, 'onboarding/activation-done.html')
+
+
+class ActivationView(BaseActivationView):
+    EMAIL_IN_USE_MESSAGE = _(
+        "The email address you're trying to activate is already in use."
+    )
+
+    def activate(self, *args, **kwargs):
+        username, email = self.validate_key(kwargs.get('activation_key'))
+        user = self.get_user(username)
+        try:
+            models.UserEmail.objects.create(user=user, email=email)
+        except IntegrityError as e:
+            raise ActivationError(
+                self.EMAIL_IN_USE_MESSAGE,
+                code='email-in-use',
+            )
+        user.email = email
+        user.is_active = True
+        user.save()
+        return user
+
+    def validate_key(self, activation_key):
+        """
+        Verify that the activation key is valid and within the
+        permitted activation time window, returning the username if
+        valid or raising ``ActivationError`` if not.
+
+        """
+        try:
+            obj = signing.loads(
+                activation_key,
+                salt=REGISTRATION_SALT,
+                max_age=settings.ACCOUNT_ACTIVATION_DAYS * 86400
+            )
+            return obj['username'], obj['email']
+        except signing.SignatureExpired:
+            raise ActivationError(
+                self.EXPIRED_MESSAGE,
+                code='expired'
+            )
+        except signing.BadSignature:
+            raise ActivationError(
+                self.INVALID_KEY_MESSAGE,
+                code='invalid_key',
+                params={'activation_key': activation_key}
+            )

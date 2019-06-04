@@ -29,9 +29,9 @@ urlpatterns = [
     url(r'^password/done/$', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     url(r'^recover/$', views.RecoverView.as_view(), name='recover'),
     url(r'^claim/$',
-        forsta_auth.onboarding.views.ActivationView.as_view(url_name='activate'), name='activate'),
+        forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
     url(r'^claim/(?P<step>[a-z-]+)/$',
-        forsta_auth.onboarding.views.ActivationView.as_view(url_name='activate'), name='activate'),
+        forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
     url(r'^signup/$', forsta_auth.onboarding.views.SignupView.as_view(), name='signup'),
     url(r'^signup/complete/$', forsta_auth.onboarding.views.SignupCompleteView.as_view(), name='signup-done'),
     url(r'^account/profile/$', views.ProfileView.as_view(), name='profile'),
@@ -48,7 +48,7 @@ urlpatterns = [
     # The activation key can make use of any character from the
     # URL-safe base64 alphabet, plus the colon as a separator.
     url(r'^activate/(?P<activation_key>[-:\w]+)/$',
-        registration_views.ActivationView.as_view(),
+        forsta_auth.onboarding.views.ActivationView.as_view(),
         name='registration_activate'),
     url(r'^register/$',
         registration_views.RegistrationView.as_view(),
