@@ -12,8 +12,8 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libxmlsec1-dev chromium-chromedriver
 install:
-  - python setup.py install
-  - pip install codecov selenium -e 'git+https://github.com/forsta-iam/forsta-brand.git#egg=forsta-brand'
+  - pip install wheel codecov selenium -e 'git+https://github.com/forsta-iam/forsta-brand.git#egg=forsta-brand'
+  - pip install .
 env:
   - DJANGO_SETTINGS_MODULE=forsta_auth.tests.settings DJANGO_ALLOWED_HOSTS=localhost DJANGO_SECRET_KEY=secret-key-for-travis
 script: PYTHONPATH=. coverage run --source=. `which django-admin.py` test
