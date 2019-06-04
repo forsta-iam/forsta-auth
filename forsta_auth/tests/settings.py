@@ -11,6 +11,8 @@ ALLOWED_HOSTS = ['testserver', 'testserver.local']
 
 SECRET_KEY = 'test secret key'
 
+INSTALLED_APPS.append('forsta_brand')
+
 SOCIAL_AUTH_SAML_SP_PRIVATE_KEY = """\
 -----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkR4S26dW8j+yO
@@ -73,10 +75,16 @@ AUTHENTICATION_BACKENDS += (
     'forsta_auth.tests.social_backends.DummyBackend',
 )
 
-PASSWORD_HASHERS.remove('forsta_auth.kerberos.hashers.KerberosHasher')
+# PASSWORD_HASHERS.remove('forsta_auth.kerberos.hashers.KerberosHasher')
 
 ONBOARDING = {
     'REGISTRATION_OPEN': True,
     'REGISTRATION_OPEN_SOCIAL': True,
     'REGISTRATION_OPEN_SAML': True,
 }
+
+MEDIA_ROOT = 'media-root'
+STATIC_ROOT = 'static-root'
+
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'

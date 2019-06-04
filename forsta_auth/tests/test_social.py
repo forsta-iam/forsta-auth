@@ -8,6 +8,7 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 
 from django_otp.models import Device
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from social_django.models import UserSocialAuth
 
 from forsta_auth.auth_core_integration.apps import IDMAuthCoreIntegrationConfig
@@ -16,7 +17,10 @@ from forsta_auth.models import User
 
 class SocialAuthTestCase(LiveServerTestCase):
     def setUp(self):
-        self.selenium = webdriver.PhantomJS()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--window-size=1920x1080")
+        self.selenium = webdriver.Chrome(chrome_options=chrome_options)
         super().setUp()
 
     def tearDown(self):
@@ -28,8 +32,8 @@ class SocialAuthTestCase(LiveServerTestCase):
         selenium = self.selenium
         selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
                      '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
-        self.assertEqual(selenium.current_url,
-                         urljoin(self.live_server_url, reverse('signup')))
+        self.assertEqual(urljoin(self.live_server_url, reverse('signup')),
+                         selenium.current_url)
 
         continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
         self.assertEqual(continue_button.text, 'Continue')

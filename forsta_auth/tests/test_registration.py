@@ -10,6 +10,7 @@ from django.core.mail import EmailMultiAlternatives
 from kombu.message import Message
 from django.test import LiveServerTestCase, TestCase
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 from forsta_auth.auth_core_integration.utils import update_user_from_identity
 from forsta_auth.tests.utils import creates_idm_core_user, GeneratesMessage, \
@@ -21,7 +22,10 @@ class RegistrationTestCase(LiveServerTestCase):
     test_password = 'ahCoi6shahch5aeViighie6oofiemeim'
 
     def setUp(self):
-        self.selenium = webdriver.PhantomJS()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--window-size=1920x1080")
+        self.selenium = webdriver.Chrome(chrome_options=chrome_options)
         super().setUp()
 
     def tearDown(self):
@@ -58,10 +62,11 @@ class RegistrationTestCase(LiveServerTestCase):
         with GeneratesMessage('idm.auth.user') as gm:
             continue_button.click()
 
-        self.assertIsInstance(gm.message, Message)
-        self.assertTrue(gm.message.delivery_info['routing_key'].startswith('User.created.'))
-        self.assertEqual(gm.message.content_type, 'application/json')
-        self.assertEqual(json.loads(gm.message.body.decode())['@type'], 'User')
+        if settings.BROKER_ENABLED:
+            self.assertIsInstance(gm.message, Message)
+            self.assertTrue(gm.message.delivery_info['routing_key'].startswith('User.created.'))
+            self.assertEqual(gm.message.content_type, 'application/json')
+            self.assertEqual(json.loads(gm.message.body.decode())['@type'], 'User')
 
         user = User.objects.get()
         self.assertFalse(user.is_active)
@@ -81,7 +86,8 @@ class RegistrationTestCase(LiveServerTestCase):
 
         user = User.objects.get()
         self.assertTrue(user.is_active)
-        self.assertEqual(user.identity_id, identity_id)
+        if settings.BROKER_ENABLED:
+            self.assertEqual(user.identity_id, identity_id)
 
 
 @unittest.mock.patch('forsta_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
@@ -98,8 +104,6 @@ class DuplicateEmailTestCase(TestCase):
 
         user_one.is_active = True
         user_one.save()
-        # Email addresses on User are only for activation; they get removed afterwards.
-        self.assertEqual(user_one.email, '')
 
     def test_non_primary_no_email(self):
         identity_id = uuid.uuid4()

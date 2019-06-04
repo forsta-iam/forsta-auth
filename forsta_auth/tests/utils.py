@@ -8,6 +8,7 @@ from unittest import mock
 import functools
 import kombu
 from django.apps import apps
+from django.conf import settings
 
 
 def creates_idm_core_user(f):
@@ -51,23 +52,24 @@ class GeneratesMessage(object):
         self.timeout = timeout
 
     def __enter__(self):
-        idm_broker_config = apps.get_app_config('idm_broker')
-        self.conn = idm_broker_config.broker.acquire(block=True)
-        self.queue = kombu.Queue(exclusive=True).bind(self.conn)
-        self.queue.declare()
-        self.queue.bind_to(exchange=kombu.Exchange(self.exchange_name), routing_key=self.routing_key)
-        return self
+        if settings.BROKER_ENABLED:
+            idm_broker_config = apps.get_app_config('idm_broker')
+            self.conn = idm_broker_config.broker.acquire(block=True)
+            self.queue = kombu.Queue(exclusive=True).bind(self.conn)
+            self.queue.declare()
+            self.queue.bind_to(exchange=kombu.Exchange(self.exchange_name), routing_key=self.routing_key)
+            return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.message = None
-        for i in range(self.timeout+1):
-            self.message = self.queue.get()
-            if self.message:
-                break
-            time.sleep(1)
+        if settings.BROKER_ENABLED:
+            self.message = None
+            for i in range(self.timeout+1):
+                self.message = self.queue.get()
+                if self.message:
+                    break
+                time.sleep(1)
 
-
-        self.conn.close()
+            self.conn.close()
 
 
 def get_fake_identity_data(identity_id):

@@ -4,6 +4,7 @@ import unittest.mock
 import uuid
 
 import kombu
+from django.conf import settings
 from kombu.message import Message
 from django.apps import apps
 from django.db import transaction
@@ -16,8 +17,10 @@ from ..models import User
 
 @unittest.mock.patch('forsta_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
 class BrokerTestCase(TransactionTestCase):
+    @unittest.skipUnless('forsta_broker' in settings.INSTALLED_APPS,
+                         "Broker support not tested if not in INSTALLED_APPS")
     def test_user_published(self):
-        idm_broker_config = apps.get_app_config('idm_broker')
+        idm_broker_config = apps.get_app_config('forsta_broker')
         with idm_broker_config.broker.acquire(block=True) as conn:
             queue = kombu.Queue(exclusive=True).bind(conn)
             queue.declare()

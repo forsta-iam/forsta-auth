@@ -18,7 +18,7 @@ class DummyBackend(BaseAuth):
         request_data = self.strategy.request_data(merge=False)
         return reverse('social:complete', kwargs={'backend': self.name}) + '?' + urllib.parse.urlencode(request_data)
 
-    def auth_complete(self, user=None):
+    def auth_complete(self, user=None, **kwargs):
         request_data = self.strategy.request_data(merge=False)
         request_data = {k: request_data[k] for k in request_data}
         kwargs = {'user': user,
