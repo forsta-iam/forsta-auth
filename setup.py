@@ -41,6 +41,7 @@ setuptools.setup(
         "django-registration",
         "django-oidc-provider",
         "django-dirtyfields",
+        "django-templated-email",
     ],
     extras_require={
         "kerberos": ["pykerberos", "requests-negotiate"],
