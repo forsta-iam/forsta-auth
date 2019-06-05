@@ -1,10 +1,10 @@
-{% extends "base.html" %}{% load i18n two_factor %}
+{% extends "base.html" %}{% load i18n two_factor staticfiles %}
 
 {% block h1_title %}Log in{% endblock %}
 {% block title %}Log in{% endblock %}
 
 {% block extra_head %}{{ block.super }}
-    <link rel="stylesheet" href="{{ STATIC_URL }}idm-auth.css" type="text/css">
+    <link rel="stylesheet" href="{% static "idm-auth.css" %}" type="text/css">
 {% endblock %}
 
 {% block content %}

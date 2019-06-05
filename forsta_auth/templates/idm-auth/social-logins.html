@@ -1,10 +1,10 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load staticfiles %}
 
 {% block h1_title %}Social logins{% endblock %}
 {% block title %}Social logins{% endblock %}
 
 {% block extra_head %}{{ block.super }}
-<link rel="stylesheet" href="{{ STATIC_URL }}idm-auth.css" type="text/css">
+<link rel="stylesheet" href="{% static "idm-auth.css" %}" type="text/css">
 {% endblock %}
 
 {% block content %}
