@@ -28,7 +28,7 @@ DATABASES = {
 INSTALLED_APPS = [
     'forsta_auth',
     # 'forsta_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
-    'forsta_auth.onboarding.apps.OnboardingConfig',
+    'forsta_auth.onboarding',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,25 +80,21 @@ MIDDLEWARE = [
     # Always include for two-factor auth
     'django_otp.middleware.OTPMiddleware',
     'forsta_auth.onboarding.middleware.OnboardingMiddleware',
-
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'forsta_auth.tests.social_backends.DummyBackend',
-    'social_core.backends.open_id.OpenIdAuth',
-    'social_core.backends.google.GoogleOpenId',
     'social_core.backends.google.GoogleOAuth2',
-    'social_core.backends.google.GoogleOAuth',
     'social_core.backends.username.UsernameAuth',
     'social_core.backends.twitter.TwitterOAuth',
-    'social_core.backends.yahoo.YahooOpenId',
     'social_core.backends.github.GithubOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',
+    'social_core.backends.linkedin.LinkedinOAuth2',
     'forsta_auth.social_backend.ORCIDSandboxAuth',
     # The authentication form will forbid inactive users from logging in regardless, but this means we can present them
     # with a "not yet active" message
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
 ]
+
 
 TEMPLATES = [
     {

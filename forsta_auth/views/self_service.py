@@ -25,7 +25,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
             'associated': [BackendMeta.wrap(user_social_auth)
                            for user_social_auth in self.request.user.social_auth.all()],
             'two_factor_default_device': default_device(self.request.user),
-            'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.backend_id != 'saml'], key=lambda sb: sb.name)),
+            'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.show], key=lambda sb: sb.name)),
         }
 
 

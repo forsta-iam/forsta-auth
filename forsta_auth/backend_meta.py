@@ -1,3 +1,9 @@
+from django.conf import settings
+from django.contrib.auth import get_backends
+from django.utils.functional import cached_property
+from social_core.backends.base import BaseAuth
+
+
 class BackendMetaMetaclass(type):
     def __new__(mcs, name, bases, attrs):
         cls = type.__new__(mcs, name, bases, attrs)
@@ -29,6 +35,15 @@ class BackendMeta(metaclass=BackendMetaMetaclass):
     def id(self):
         return self.user_social_auth.id
 
+    @cached_property
+    def enabled(self):
+        return any(isinstance(b, BaseAuth) and b.name == self.backend_id and all(b.get_key_and_secret())
+                   for b in get_backends())
+
+    @property
+    def show(self):
+        return self.enabled
+
 
 class TwitterBackendMeta(BackendMeta):
     backend_id = 'twitter'
@@ -59,7 +74,7 @@ class ORCIDBackendMeta(BackendMeta):
 class FacebookBackendMeta(BackendMeta):
     backend_id = 'facebook'
     name = 'Facebook'
-    font_icon = 'fab fa-facebook-official'
+    font_icon = 'fab fa-facebook'
 
 
 class FigshareBackendMeta(BackendMeta):
@@ -69,7 +84,7 @@ class FigshareBackendMeta(BackendMeta):
 
 
 class LinkedinBackendMeta(BackendMeta):
-    backend_id = 'linkedin'
+    backend_id = 'linkedin-oauth2'
     name = 'LinkedIn'
     font_icon = 'fab fa-linkedin'
 

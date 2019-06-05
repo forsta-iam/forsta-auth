@@ -20,3 +20,11 @@ class SAMLBackendMeta(BackendMeta):
     @property
     def username(self):
         return '{} at {}'.format(self.user_social_auth.uid.split(':')[1], self.name)
+
+    @property
+    def enabled(self):
+        return True
+
+    @property
+    def show(self):
+        return False
