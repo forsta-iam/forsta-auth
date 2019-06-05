@@ -22,7 +22,6 @@ ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 TEMPLATE_DEBUG = DEBUG = env('DEBUG')
 SECRET_KEY = env('SECRET_KEY')
 
-
 INSTALLED_APPS = [
     'forsta_auth_simple',
     'forsta_brand',
@@ -47,6 +46,8 @@ DATABASES = {
 # This is used when constructing URLs in responses.
 SECURE_PROXY_SSL_HEADER = (env('SECURE_PROXY_SSL_HEADER_NAME'),
                            env('SECURE_PROXY_SSL_HEADER_VALUE'))
+if not all(SECURE_PROXY_SSL_HEADER):
+    SECURE_PROXY_SSL_HEADER = None
 
 
 TEXT_BRANDING = {
