@@ -148,6 +148,8 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
 
         if form_dict.get('password'):
             user.set_password(form_dict['password'].cleaned_data['new_password1'])
+        else:
+            user.set_unusable_password()
 
         user.save()
         self.registration_view.send_activation_email(user)
