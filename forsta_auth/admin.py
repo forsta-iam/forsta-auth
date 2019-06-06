@@ -20,8 +20,8 @@ class UserChangeForm(BaseUserChangeForm):
 
 
 class UserAdmin(BaseUserAdmin):
-    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'identity_id', 'identity_type', 'is_staff',
-                    'primary')
+    list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'identity_id', 'identity_type', 'is_active',
+                    'is_staff', 'is_superuser', 'primary')
     add_fieldsets = copy.deepcopy(BaseUserAdmin.add_fieldsets)
     add_fieldsets[0][1]['fields'] += ('identity_id', 'primary')
 
