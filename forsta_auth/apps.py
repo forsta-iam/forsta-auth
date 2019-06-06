@@ -40,6 +40,6 @@ class IDMAuthConfig(AppConfig):
         post_save.connect(self.user_social_auth_updated, UserSocialAuth)
 
     def user_social_auth_updated(self, instance, **kwargs):
-        if not getattr(instance, '_sync_social_auth_pending', False):
+        if not getattr(instance, '_sync_social_auth_pending', False) and instance.user:
             instance._sync_social_auth_pending = True
             connection.on_commit(lambda: sync_social_accounts.delay(instance.user.pk))
