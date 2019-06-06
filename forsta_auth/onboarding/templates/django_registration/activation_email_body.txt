@@ -4,7 +4,7 @@ Thank you for registering for {{ TEXT_BRANDING.an_account }}.
 
 To complete your registration, please follow the following link:
 
-https://{{ site.domain }}{% url "registration_activate" activation_key=activation_key %}
+{{ scheme }}://{{ site.domain }}{% url "registration_activate" activation_key=activation_key %}
 
 If it wasn't you who registered for {{ TEXT_BRANDING.an_account }}, you can safely ignore
 this email.
