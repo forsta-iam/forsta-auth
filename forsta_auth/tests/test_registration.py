@@ -79,7 +79,7 @@ class RegistrationTestCase(LiveServerTestCase):
         assert isinstance(message, EmailMultiAlternatives)
         self.assertEqual(message.subject, f"Activate {settings.TEXT_BRANDING['your_account']}")
 
-        activation_link = re.search('https://.*', message.body, re.MULTILINE).group(0)
+        activation_link = re.search('https?://.*', message.body, re.MULTILINE).group(0)
         activation_link = urljoin(self.live_server_url, urlparse(activation_link).path)
         selenium.get(activation_link)
         self.assertEqual(selenium.current_url, urljoin(self.live_server_url, '/activate/complete/'))
