@@ -36,4 +36,5 @@ class DummyBackendMeta(BackendMeta):
     name = 'Dummy'
     font_icon = 'fa fa-exclamation-triangle'
 
+
 BackendMeta.registry[DummyBackendMeta.backend_id] = DummyBackendMeta()
