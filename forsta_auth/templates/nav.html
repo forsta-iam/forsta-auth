@@ -9,6 +9,9 @@
         <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "two_factor:profile" %}">Two-factor auth
             {% if two_factor_enabled %}<i class="fa fa-check-circle" title="(enabled)"> </i>{% endif %}</a></li>
         <li class="pure-menu-item"><a class="pure-menu-link" href="#">Audit and logging</a></li>
+        {% if user.is_staff %}
+            <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "admin:index" %}">Admin</a></li>
+        {% endif %}
         <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "logout" %}">Log out</a></li>
     {% else %}
         <li class="pure-menu-item"><a class="pure-menu-link" href="{% url "login" %}">Log in</a></li>
