@@ -106,11 +106,14 @@
                             </form>
                         </section>
                     {% endif %}
-                    <hr>
-                    <section>
-                        <h2>Social login</h2>
-                        {% include "idm-auth/social-login-links.html" %}
-                    </section>{% if ONBOARDING.REGISTRATION_OPEN %}<hr>
+                    {% if social_backends %}
+                        <hr>
+                        <section>
+                            <h2>Social login</h2>
+                            {% include "idm-auth/social-login-links.html" %}
+                        </section>
+                    {% endif %}
+                    {% if ONBOARDING.REGISTRATION_OPEN %}<hr>
                     <section>
                         <h2>Register new account</h2>
                         Don’t have an account?
