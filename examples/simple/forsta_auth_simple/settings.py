@@ -42,6 +42,8 @@ DATABASES = {
 }
 
 
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='accounts@example.org')
+
 # nginx ingress uses this HTTP request header to say that the original request was HTTPS.
 # This is used when constructing URLs in responses.
 SECURE_PROXY_SSL_HEADER = (env('SECURE_PROXY_SSL_HEADER_NAME'),
