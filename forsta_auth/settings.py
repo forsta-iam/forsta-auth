@@ -218,9 +218,9 @@ for key in os.environ:
     if key.startswith('SOCIAL_AUTH_'):
         locals()[key] = os.environ[key]
 
-EMAIL_HOST = os.environ.get('SMTP_SERVER')
-EMAIL_HOST_USER = os.environ.get('SMTP_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD')
+EMAIL_HOST = os.environ.get('EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
