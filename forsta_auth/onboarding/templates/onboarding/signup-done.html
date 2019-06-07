@@ -9,5 +9,5 @@
     <p>We've sent you an email, and you'll need to follow the link to confirm your email address before you can
         log in.</p>
 
-    <a class="pure-button pure-button-primary" href="{{ redirect_to }}">I've confirmed my email address</a>
+    <a class="pure-button pure-button-primary" href="{% if redirect_to %}{{ redirect_to }}{% else %}{% url "profile" %}{% endif %}">I've confirmed my email address</a>
 {% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block h1_title %}Activation failed{% endblock %}
+{% block title %}Activation failed{% endblock %}
+
+{% block content %}
+    <p>Activating your account failed for the following reason:</p>
+
+    <p>{{ activation_error.message }}</p>
+{% endblock %}
