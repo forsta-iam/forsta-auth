@@ -15,8 +15,6 @@ env = environ.Env(
     AN_ACCOUNT=(str, TEXT_BRANDING['an_account']),
 )
 
-SECRET_KEY = "very secret key"
-
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
 TEMPLATE_DEBUG = DEBUG = env('DEBUG')
