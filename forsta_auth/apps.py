@@ -36,8 +36,8 @@ class IDMAuthConfig(AppConfig):
                 {'serializer': serializers.UserSerializer, 'exchange': 'user'},
             ])
 
-        post_delete.connect(self.user_social_auth_updated, UserSocialAuth)
-        post_save.connect(self.user_social_auth_updated, UserSocialAuth)
+            post_delete.connect(self.user_social_auth_updated, UserSocialAuth)
+            post_save.connect(self.user_social_auth_updated, UserSocialAuth)
 
     def user_social_auth_updated(self, instance, **kwargs):
         if not getattr(instance, '_sync_social_auth_pending', False) and instance.user:
