@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b9f56650846c78ea7100e6f394342737bee354effdcd6104673392cad3dbe6b6"
+            "sha256": "a89288309eab9b064564ef2230329d490da3f685dcb04274e382415e1c717afb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -158,12 +158,32 @@
             ],
             "version": "==3.0.1"
         },
+        "django-render-block": {
+            "hashes": [
+                "sha256:95c7dc9610378a10e0c4a10d8364ec7307210889afccd6a67a6aaa0fd599bd4d"
+            ],
+            "version": "==0.6"
+        },
+        "django-request-id": {
+            "hashes": [
+                "sha256:0eb7ef17e21ff5efe5014e5b3cc6d22fc3396d4ea9d5b353bba2c43107998368",
+                "sha256:f7f296a7c6de44193af9461c72cbdb6a12887fffe00a7dcfa0f43a4ec67e4643"
+            ],
+            "index": "pypi",
+            "version": "==1.0.0"
+        },
         "django-reversion": {
             "hashes": [
                 "sha256:1aeed0b723b5be14c4dc7e7c7e03f9538e7ef29c997585e2e8fb414cf38818f4",
                 "sha256:ed46722389fb2441860d471c7538967dee545bcee891d3d907b04f4baa98f5fa"
             ],
             "version": "==3.0.4"
+        },
+        "django-templated-email": {
+            "hashes": [
+                "sha256:536c4e5ae099eabfb9aab36087d4d7799948c654e73da55a744213d086d5bb33"
+            ],
+            "version": "==2.3.0"
         },
         "django-two-factor-auth": {
             "hashes": [
@@ -192,7 +212,7 @@
                 "saml"
             ],
             "git": "https://github.com/forsta-iam/forsta-auth.git",
-            "ref": "31d3a576ee349fb1159f816371557de3b9aceddd"
+            "ref": "5cb59728e2f95feb68cdac57174f5609622d0911"
         },
         "forsta-brand": {
             "editable": true,
@@ -229,10 +249,10 @@
         },
         "kombu": {
             "hashes": [
-                "sha256:14997e6d76d36f2b296f57e37fd1d388e4e0159edea8368a8c6f4620a355a722",
-                "sha256:27345bb569eb6bb583bca27dfc0ef181ca6c59c40c6e203cecaa0aeca84360be"
+                "sha256:056a31cc95b10ca4eb0d4ebcba714007b1db1c6c45c8e2d139fe91933481b00b",
+                "sha256:af5b0f892b081f49d95c772a241fb7687f4cc3e42c94328f118dffb1f4e161e5"
             ],
-            "version": "==4.6.0"
+            "version": "==4.6.1"
         },
         "lxml": {
             "hashes": [

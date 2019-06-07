@@ -1,5 +1,8 @@
+import json
+
 import environ
 
+from django.conf import global_settings
 from forsta_auth.settings import *  # pragma: noqa
 
 env = environ.Env(
@@ -56,3 +59,9 @@ TEXT_BRANDING = {
     'your_account': env('YOUR_ACCOUNT'),
     'an_account': env('AN_ACCOUNT'),
 }
+
+LOGGING = env('LOGGING', cast=json.loads, default=global_settings.LOGGING)
+
+
+INSTALLED_APPS.append('request_id')
+MIDDLEWARE.insert(0, 'request_id.middleware.RequestIdMiddleware')

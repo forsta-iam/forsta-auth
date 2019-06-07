@@ -9,13 +9,14 @@ selenium = "*"
 codecov = "*"
 
 [packages]
-forsta-auth = {git = "https://github.com/forsta-iam/forsta-auth.git", editable = true, extras = ["saml"]}
-forsta-brand = {git = "https://github.com/forsta-iam/forsta-brand.git", editable = true}
+forsta-auth = {git = "https://github.com/forsta-iam/forsta-auth.git",editable = true,extras = ["saml"]}
+forsta-brand = {git = "https://github.com/forsta-iam/forsta-brand.git",editable = true}
 psycopg2 = "*"
-whitenoise = {version = "*", extras = ["brotli"]}
+whitenoise = {version = "*",extras = ["brotli"]}
 gunicorn = "*"
 django-environ = "*"
-django-oidc-provider = {git = "https://github.com/forsta-iam/django-oidc-provider.git", ref = "develop", editable = true}
+django-oidc-provider = {git = "https://github.com/forsta-iam/django-oidc-provider.git",ref = "develop",editable = true}
+django-request-id = "*"
 
 [requires]
 python_version = "3.7"
