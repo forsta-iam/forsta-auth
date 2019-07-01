@@ -1,4 +1,4 @@
-Dear {{ user.first_name }} {{ user.last_name }},
+Dear {{ user }},
 
 Thank you for registering for {{ TEXT_BRANDING.an_account }}.
 

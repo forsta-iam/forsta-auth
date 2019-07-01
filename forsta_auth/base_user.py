@@ -45,8 +45,11 @@ class AbstractBaseUser(KerberosBackedUserMixin, DirtyFieldsMixin, AbstractUser):
 
     USERNAME_FIELD = 'id'
 
-    def __str__(self):
+    def __repr__(self):
         return '<User {}>'.format(self.id)
+
+    def __str__(self):
+        return ' '.join([self.first_name or '', self.last_name or '']).strip()
 
     def get_username(self):
         return str(self.id)
