@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     # OpenID Connect
     'oidc_provider',
     'zxcvbn_password',
+    'corsheaders',
 ]
 
 try:
@@ -70,6 +71,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -134,6 +136,9 @@ MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT')
 LOGIN_REDIRECT_URL = '/account/profile/'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
 
 SOCIAL_AUTH_PIPELINE = (
     # Get the information we can about the user and return it in a simple
