@@ -10,14 +10,16 @@ from . import models, serializers
 AUTH_USER_SERIALIZER = import_string(getattr(settings, 'AUTH_USER_SERIALIZER',
                                              'forsta_auth.serializers.UserSerializer'))
 
-class UserChangeSelfPermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        # if isinstance(request.auth, Token) and
-        if hasattr(obj, 'user'):
-            return request.user == obj.user
-        else:
-            return request.user == obj
 
+class UserChangeSelfPermission(permissions.DjangoObjectPermissions):
+    perms_map = {
+        **permissions.DjangoObjectPermissions.perms_map,
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'HEAD': ['%(app_label)s.view_%(model_name)s'],
+    }
+
+    def has_permission(self, request, view):
+        return True
 
 
 class UserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
