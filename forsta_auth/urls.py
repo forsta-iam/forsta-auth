@@ -18,8 +18,9 @@ from . import views
 uuid_re = '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'
 
 router = routers.DefaultRouter()
-router.register('oidc/client', forsta_auth.oidc.views.ClientViewSet, base_name='client')
-router.register('user', forsta_auth.api_views.UserViewSet, base_name='user')
+router.register('oidc/client', forsta_auth.oidc.views.ClientViewSet)
+router.register('user', forsta_auth.api_views.UserViewSet)
+router.register('user-email', forsta_auth.api_views.UserEmailViewSet)
 
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),

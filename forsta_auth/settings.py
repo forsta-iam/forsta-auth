@@ -94,6 +94,12 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'forsta_auth.oidc.authentication.BearerAuthentication',
+    )
+}
 
 TEMPLATES = [
     {

@@ -42,6 +42,7 @@ setuptools.setup(
         "django-oidc-provider",
         "django-dirtyfields",
         "django-templated-email",
+        "django-cors-headers",
     ],
     extras_require={
         "kerberos": ["pykerberos", "requests-negotiate"],

@@ -59,3 +59,10 @@ class SetPasswordForm(auth_forms.SetPasswordForm):
 
 class PasswordChangeForm(SetPasswordForm, auth_forms.PasswordChangeForm):
     pass
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ('first_name', 'last_name', 'username')
+
