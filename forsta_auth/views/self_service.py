@@ -1,4 +1,8 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils.module_loading import import_string
 from django.views import View
 from django.views.generic import TemplateView
 
@@ -17,11 +21,13 @@ class IndexView(TemplateView):
         return {}
 
 
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'idm-auth/profile.html'
+class ProfileView(LoginRequiredMixin, DetailView):
+    def get_object(self):
+        return self.request.user
 
     def get_context_data(self, **kwargs):
         return {
+            **super().get_context_data(**kwargs),
             'associated': [BackendMeta.wrap(user_social_auth)
                            for user_social_auth in self.request.user.social_auth.all()],
             'two_factor_default_device': default_device(self.request.user),

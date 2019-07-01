@@ -1,5 +1,6 @@
 import copy
 from django.contrib import admin
+from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm as BaseUserChangeForm
 from social_django.models import UserSocialAuth
@@ -34,4 +35,4 @@ class UserAdmin(BaseUserAdmin):
     ) + BaseUserAdmin.fieldsets[1:]
     #readonly_fields = BaseUserAdmin.readonly_fields + ('identity_id', 'primary')
 
-admin.site.register(models.User, UserAdmin)
+admin.site.register(get_user_model(), UserAdmin)

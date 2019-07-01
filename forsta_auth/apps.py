@@ -5,7 +5,7 @@ from django.apps import apps, AppConfig
 from django.conf import settings
 from django.db import connection
 from django.db.models.signals import post_delete, post_save
-from requests.auth import HTTPBasicAuth
+from django.utils.module_loading import import_string
 
 from forsta_auth.tasks.social_accounts import sync_social_accounts
 
@@ -28,12 +28,13 @@ class IDMAuthConfig(AppConfig):
         if 'SSL_CERT_FILE' in os.environ:
             self.session.verify = os.environ['SSL_CERT_FILE']
 
-        from social_django.models import UserSocialAuth
-        from . import models, serializers
-
         if settings.BROKER_ENABLED:
+            from social_django.models import UserSocialAuth
+            user_serializer = import_string(getattr(settings, 'AUTH_USER_SERIALIZER',
+                                                    'forsta_auth.serializers.UserSerializer'))
+
             apps.get_app_config('idm_broker').register_notifications([
-                {'serializer': serializers.UserSerializer, 'exchange': 'user'},
+                {'serializer': user_serializer, 'exchange': 'user'},
             ])
 
             post_delete.connect(self.user_social_auth_updated, UserSocialAuth)

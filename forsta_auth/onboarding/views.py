@@ -2,7 +2,7 @@ from urllib.parse import urlencode, urljoin
 
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth import REDIRECT_FIELD_NAME, get_user_model
 from django.core import signing
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
@@ -26,7 +26,7 @@ from forsta_auth.forms import SetPasswordForm
 from forsta_auth.onboarding.forms import PersonalDataForm, WelcomeForm, ActivationCodeForm, \
     ConfirmDetailsForm, ExistingAccountForm, ConfirmActivationForm
 from forsta_auth.onboarding.models import PendingActivation
-from .. import models
+from ..models import UserEmail
 
 CLAIM_SALT = 'forsta_auth.onboarding.claim'
 
@@ -133,18 +133,17 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
             redirect_chain.append(self.request.GET[self.redirect_field_name])
 
         if self.pending_activation:
-            user = models.User(is_active=False,
-                               primary=True,
-                               identity_id=self.pending_activation.identity_id)
+            user = get_user_model()(is_active=False,
+                                    primary=True,
+                                    identity_id=self.pending_activation.identity_id)
             self.pending_activation.delete()
         else:
             personal_cleaned_data = form_dict['personal'].cleaned_data
-            user = models.User(first_name=personal_cleaned_data['first_name'],
-                               last_name=personal_cleaned_data['last_name'],
-                               email=personal_cleaned_data['email'],
-                               date_of_birth=personal_cleaned_data['date_of_birth'].isoformat(),
-                               is_active=False,
-                               primary=True)
+            user = get_user_model()(first_name=personal_cleaned_data['first_name'],
+                                    last_name=personal_cleaned_data['last_name'],
+                                    email=personal_cleaned_data['email'],
+                                    is_active=False,
+                                    primary=True)
 
         if form_dict.get('password'):
             user.set_password(form_dict['password'].cleaned_data['new_password1'])
@@ -280,7 +279,7 @@ class ActivationView(BaseActivationView):
         username, email = self.validate_key(kwargs.get('activation_key'))
         user = self.get_user(username)
         try:
-            models.UserEmail.objects.create(user=user, email=email)
+            UserEmail.objects.create(user=user, email=email)
         except IntegrityError as e:
             raise ActivationError(
                 self.EMAIL_IN_USE_MESSAGE,
