@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^signup/$', forsta_auth.onboarding.views.SignupView.as_view(), name='signup'),
     url(r'^signup/complete/$', forsta_auth.onboarding.views.SignupCompleteView.as_view(), name='signup-done'),
     url(r'^profile/$', views.ProfileView.as_view(), name='profile'),
+    url(r'^profile/edit/$', views.ProfileFormView.as_view(), name='profile-edit'),
     url(r'^social-logins/$', views.SocialLoginsView.as_view(), name='social-logins'),
 
     url(r'^api/', include((router.urls, 'api'), namespace='api')),

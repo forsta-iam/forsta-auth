@@ -9,8 +9,12 @@ from two_factor.utils import default_device
 
 from forsta_auth import backend_meta
 from forsta_auth.backend_meta import BackendMeta
+from .. import forms
 
-__all__ = ['ProfileView', 'SocialLoginsView', 'IndexView', 'RecoverView']
+__all__ = ['ProfileView', 'ProfileFormView', 'SocialLoginsView', 'IndexView', 'RecoverView']
+
+AUTH_USER_FORM = import_string(getattr(settings, 'AUTH_USER_FORM',
+                                       'forsta_auth.forms.ProfileForm'))
 
 
 class IndexView(View):
@@ -32,6 +36,16 @@ class ProfileView(LoginRequiredMixin, DetailView):
             'two_factor_default_device': default_device(self.request.user),
             'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.show], key=lambda sb: sb.name)),
         }
+
+
+class ProfileFormView(UpdateView):
+    form_class = AUTH_USER_FORM
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_success_url(self):
+        return reverse('profile')
 
 
 class SocialLoginsView(LoginRequiredMixin, TemplateView):

@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% load staticfiles %}
+
+{% block h1_title %}Update your profile{% endblock %}
+{% block title %}Update your profile{% endblock %}
+
+{% block content %}
+
+<form method="post">{% csrf_token %}
+    <table>
+        <tbody>
+{{ form }}
+
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="2">
+                <button type="submit">Update</button>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+    </form>
+{% endblock %}
