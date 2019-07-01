@@ -51,6 +51,11 @@ class AbstractBaseUser(KerberosBackedUserMixin, DirtyFieldsMixin, AbstractUser):
     def __str__(self):
         return ' '.join([self.first_name or '', self.last_name or '']).strip()
 
+    def save(self, *args, **kwargs):
+        # If there isn't a username, explicitly make it None so that '' doesn't mess up a uniqueness constraint.
+        self.username = self.username or None
+        return super().save(*args, **kwargs)
+
     def get_username(self):
         return str(self.id)
 
