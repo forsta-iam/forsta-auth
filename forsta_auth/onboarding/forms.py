@@ -14,7 +14,6 @@ class WelcomeForm(forms.Form):
 class PersonalDataForm(forms.Form):
     first_name = forms.CharField()
     last_name = forms.CharField()
-    date_of_birth = forms.DateField()
     email = forms.EmailField()
 
 

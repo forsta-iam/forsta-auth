@@ -46,7 +46,6 @@ class RegistrationTestCase(LiveServerTestCase):
 
         selenium.find_element_by_name('personal-first_name').send_keys('Edgar')
         selenium.find_element_by_name('personal-last_name').send_keys('Poe')
-        selenium.find_element_by_name('personal-date_of_birth').send_keys('1809-01-19')
         selenium.find_element_by_name('personal-email').send_keys('edgar@example.org')
 
         continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')

@@ -32,14 +32,14 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
                 user = models.User.objects.get(username=username)
             except models.User.DoesNotExist:
                 try:
-                    user = models.User.objects.get(useremail__email=username)
+                    user = models.User.objects.get(emails__email=username)
                 except models.User.DoesNotExist:
                     username = str(uuid.uuid4())
                 else:
                     username = str(user.pk)
             else:
                 try:
-                    models.User.objects.get(useremail__email=username)
+                    models.User.objects.get(emails__email=username)
                 except models.User.DoesNotExist:
                     pass
                 username = str(user.pk)

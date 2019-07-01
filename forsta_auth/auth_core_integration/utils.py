@@ -46,11 +46,11 @@ def update_user_from_identity(user, identity=None):
         validated_emails = [email['value']
                             for email in identity.get('emails', ())
                             if email['validated'] and user.primary]
-        user.useremail_set.exclude(email__in=validated_emails).delete()
+        user.emails.exclude(email__in=validated_emails).delete()
         UserEmail.objects.bulk_create([
             UserEmail(user=user, email=email)
             for email in validated_emails
-            if email not in user.useremail_set.values_list('email', flat=True)
+            if email not in user.emails.values_list('email', flat=True)
         ])
 
 

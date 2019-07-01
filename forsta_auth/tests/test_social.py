@@ -1,4 +1,4 @@
-import unittest
+import unittest.mock
 import uuid
 from urllib.parse import urljoin, urlencode
 
@@ -41,7 +41,6 @@ class SocialAuthTestCase(LiveServerTestCase):
 
         self.assertEqual(selenium.find_element_by_name('personal-first_name').get_attribute('value'), 'Alice')
         self.assertEqual(selenium.find_element_by_name('personal-last_name').get_attribute('value'), 'Hacker')
-        selenium.find_element_by_name('personal-date_of_birth').send_keys('1809-01-19')
         self.assertEqual(selenium.find_element_by_name('personal-email').get_attribute('value'), 'alice@example.org')
         selenium.find_element_by_name('personal-email').clear()
         selenium.find_element_by_name('personal-email').send_keys('eve@example.org')

@@ -159,7 +159,6 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
                 'first_name': personal_cleaned_data['first_name'],
                 'last_name': personal_cleaned_data['last_name'],
                 'email': personal_cleaned_data['email'],
-                'date_of_birth': personal_cleaned_data['date_of_birth'].isoformat(),
             })
             partial.data['kwargs'].update({
                 'user': str(user.pk),

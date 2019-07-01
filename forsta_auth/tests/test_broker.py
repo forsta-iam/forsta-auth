@@ -29,8 +29,7 @@ class BrokerTestCase(TransactionTestCase):
             self.assertFalse(connection.in_atomic_block)
             with transaction.atomic():
                 user = User.objects.create(identity_id=uuid.uuid4(),
-                                           primary=True, is_active=True,
-                                           date_of_birth=datetime.datetime(1970, 1, 1))
+                                           primary=True, is_active=True)
             for i in range(5):
                 message = queue.get()
                 if message:
