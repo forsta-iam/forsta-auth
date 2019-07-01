@@ -35,10 +35,10 @@ urlpatterns = [
         forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
     url(r'^signup/$', forsta_auth.onboarding.views.SignupView.as_view(), name='signup'),
     url(r'^signup/complete/$', forsta_auth.onboarding.views.SignupCompleteView.as_view(), name='signup-done'),
-    url(r'^account/profile/$', views.ProfileView.as_view(), name='profile'),
-    url(r'^account/social-logins/$', views.SocialLoginsView.as_view(), name='social-logins'),
+    url(r'^profile/$', views.ProfileView.as_view(), name='profile'),
+    url(r'^social-logins/$', views.SocialLoginsView.as_view(), name='social-logins'),
 
-    url(r'^api/', include(router.urls)),
+    url(r'^api/', include((router.urls, 'api'), namespace='api')),
 
     # Copied from django-registration's HMAC urls
     url(r'^activate/complete/$',

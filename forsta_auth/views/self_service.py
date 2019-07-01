@@ -4,8 +4,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.module_loading import import_string
 from django.views import View
-from django.views.generic import TemplateView
-
+from django.views.generic import TemplateView, UpdateView, DetailView
 from two_factor.utils import default_device
 
 from forsta_auth import backend_meta
@@ -14,11 +13,11 @@ from forsta_auth.backend_meta import BackendMeta
 __all__ = ['ProfileView', 'SocialLoginsView', 'IndexView', 'RecoverView']
 
 
-class IndexView(TemplateView):
+class IndexView(View):
     template_name = 'idm-auth/index.html'
 
-    def get_context_data(self, **kwargs):
-        return {}
+    def get(self, request):
+        return redirect('profile' if request.user.is_authenticated else 'login')
 
 
 class ProfileView(LoginRequiredMixin, DetailView):
