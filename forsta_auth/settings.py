@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'forsta_auth',
     # 'forsta_auth.auth_core_integration.apps.IDMAuthCoreIntegrationConfig',
     'forsta_auth.onboarding',
+    'forsta_auth.oidc',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
