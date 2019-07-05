@@ -95,7 +95,6 @@ AUTHENTICATION_BACKENDS = [
     # The authentication form will forbid inactive users from logging in regardless, but this means we can present them
     # with a "not yet active" message
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
-    'forsta_auth.backends.UserSelfBackend',
 ]
 
 REST_FRAMEWORK = {
