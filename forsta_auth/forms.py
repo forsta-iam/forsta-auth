@@ -5,8 +5,6 @@ from django.contrib.auth import forms as auth_forms, get_user_model
 from django.utils.translation import ugettext_lazy as _
 import zxcvbn_password.fields
 
-from . import models
-
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
     username = auth_forms.UsernameField(
@@ -25,22 +23,23 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
 
     def clean(self):
         username = self.cleaned_data.get('username')
+        user_model = get_user_model()
         try:
             str(uuid.UUID(username or ''))
         except ValueError:
             try:
-                user = models.User.objects.get(username=username)
-            except models.User.DoesNotExist:
+                user = user_model.objects.get(username=username)
+            except user_model.DoesNotExist:
                 try:
-                    user = models.User.objects.get(emails__email=username)
-                except models.User.DoesNotExist:
+                    user = user_model.objects.get(emails__email=username)
+                except user_model.DoesNotExist:
                     username = str(uuid.uuid4())
                 else:
                     username = str(user.pk)
             else:
                 try:
-                    models.User.objects.get(emails__email=username)
-                except models.User.DoesNotExist:
+                    user_model.objects.get(emails__email=username)
+                except user_model.DoesNotExist:
                     pass
                 username = str(user.pk)
         self.cleaned_data['username'] = username
