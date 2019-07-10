@@ -229,6 +229,8 @@ TWO_FACTOR_LOCAL_YUBIKEY_VALIDATION = True
 for key in os.environ:
     if key.startswith('SOCIAL_AUTH_'):
         locals()[key] = os.environ[key]
+        if key.endswith('_SCOPE'):
+            locals()[key] = locals()[key].split()
 
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
