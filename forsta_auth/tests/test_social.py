@@ -32,7 +32,7 @@ class SocialAuthTestCase(LiveServerTestCase):
         selenium = self.selenium
         selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
                      '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
-        self.assertEqual(urljoin(self.live_server_url, reverse('signup')),
+        self.assertEqual(urljoin(self.live_server_url, reverse('signup') + '?from-social'),
                          selenium.current_url)
 
         continue_button = selenium.find_element_by_css_selector('button.pure-button-primary')
@@ -60,6 +60,26 @@ class SocialAuthTestCase(LiveServerTestCase):
         self.assertEqual(user.first_name, 'Alice')
         self.assertEqual(user.last_name, 'Hacker')
         self.assertEqual(user.email, 'eve@example.org')
+
+    def test_aborted_social_signup(self):
+        begin_dummy_login_url = reverse('social:begin', kwargs={'backend': 'dummy'})
+        selenium = self.selenium
+        selenium.get(urljoin(self.live_server_url, begin_dummy_login_url +
+                     '?first_name=Alice&last_name=Hacker&email=alice@example.org&id=alice'))
+        self.assertEqual(urljoin(self.live_server_url, reverse('signup') + '?from-social'),
+                         selenium.current_url)
+        # Click past the welcome step
+        selenium.find_element_by_css_selector('button.pure-button-primary').click()
+        # There shouldn't be a password step, as we're associating a social login
+        self.assertEqual(selenium.find_element_by_css_selector('button.pure-button-primary').text, "Go")
+
+        # But now let's start the signup flow afresh
+        selenium.get(urljoin(self.live_server_url, reverse('signup')))
+        # Click past the welcome step
+        selenium.find_element_by_css_selector('button.pure-button-primary').click()
+        # There should now be a password step beyond the user details step.
+        self.assertEqual(selenium.find_element_by_css_selector('button.pure-button-primary').text, "Continue")
+
 
     def test_closed_social_registration(self):
         with self.settings(ONBOARDING={
@@ -106,7 +126,7 @@ class SocialAuthTestCase(LiveServerTestCase):
         selenium.get(urljoin(self.live_server_url, begin_dummy_login_url + '?id=alice'))
         # Make sure we got to the signup page
         self.assertEqual(selenium.current_url,
-                         urljoin(self.live_server_url, reverse('signup')))
+                         urljoin(self.live_server_url, reverse('signup') + '?from-social'))
         # Now attempt to visit the login page
         selenium.get(urljoin(self.live_server_url, reverse('login')))
         self.assertEqual('Log in', selenium.find_element_by_css_selector('h1').text)

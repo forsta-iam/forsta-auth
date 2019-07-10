@@ -40,6 +40,11 @@ class SocialPipelineMixin(View):
             except Partial.DoesNotExist:  # pragma: nocover
                 return None
 
+    def delete_social_partial(self):
+        if 'partial_pipeline_token' in self.request.session:
+            Partial.objects.filter(token=self.request.session['partial_pipeline_token']).delete()
+            del self.request.session['partial_pipeline_token']
+
 
 class SignupView(SocialPipelineMixin, SessionWizardView):
     template_name = 'onboarding/signup.html'
@@ -102,6 +107,14 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
         if not settings.ONBOARDING['REGISTRATION_OPEN'] and not self.pending_activation:
             return render(request, 'onboarding/signup-closed.html', status=503)
         return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        # This ensures that if a user has previously started a social-based signup, but now attempt to sign up by
+        # clicking the link, then we shouldn't associate that social login with their new account when it's created;
+        # they'll be prompted to set a password instead.
+        if 'from-social' not in request.GET:
+            self.delete_social_partial()
+        return super().get(request, *args, **kwargs)
 
     def get_form_initial(self, step):
         if step == 'personal':

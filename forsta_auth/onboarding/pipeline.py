@@ -18,4 +18,4 @@ def confirm_user_details(user=None, user_details_confirmed=False, backend=None, 
     if user or user_details_confirmed:
         return
 
-    return HttpResponseRedirect(reverse('signup'))
+    return HttpResponseRedirect(reverse('signup') + '?from-social')
