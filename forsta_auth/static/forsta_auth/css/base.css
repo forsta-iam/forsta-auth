@@ -1,3 +1,12 @@
+/* See https://stackoverflow.com/a/31911751 */
+.default-button-handler {
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
 .social-account-icon {
     cursor: default;
 }

@@ -31,7 +31,11 @@
             </div>{% endfor %}
             <div class="pure-controls">
                 {% if wizard.steps.prev %}
-                    {% comment %}https://stackoverflow.com/a/31911751{% endcomment %}
+                    {% comment %}
+                      This button is here to be the default for people pressing enter, so they don't get sent back
+                      unexpectedly, instead of forwards.
+                      See https://stackoverflow.com/a/31911751
+                    {% endcomment %}
                     <button type="submit" class="default-button-handler" aria-hidden="true" tabindex="-1"></button>
                     <button class="pure-button" name="wizard_goto_step" value="{{ wizard.steps.prev }}">Back</button>
                 {% endif %}
