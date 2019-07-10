@@ -2,6 +2,7 @@ import unittest.mock
 import uuid
 
 from django.apps import apps
+from django.conf import settings
 from django.core import mail
 from django.test import TestCase
 
@@ -13,6 +14,8 @@ from forsta_auth.tests.utils import update_user_from_identity_noop
 
 @unittest.mock.patch('forsta_auth.auth_core_integration.utils.update_user_from_identity', update_user_from_identity_noop)
 class ActivationTestCase(TestCase):
+    @unittest.skipUnless('forsta_broker' in settings.INSTALLED_APPS,
+                         "Broker support not tested if not in INSTALLED_APPS")
     @unittest.mock.patch('forsta_auth.onboarding.tasks.start_activation')
     def test_new_established_identity(self, start_activation_task):
         identity_id = uuid.uuid4()
