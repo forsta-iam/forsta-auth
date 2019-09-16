@@ -9,12 +9,11 @@ selenium = "*"
 codecov = "*"
 
 [packages]
-forsta-auth = {git = "https://github.com/forsta-iam/forsta-auth.git",editable = true,extras = ["saml"]}
+forsta-auth = {git = "https://github.com/forsta-iam/forsta-auth.git",editable = true,extras = ["saml", "environ"]}
 forsta-brand = {git = "https://github.com/forsta-iam/forsta-brand.git",editable = true}
 psycopg2 = "*"
 whitenoise = {version = "*",extras = ["brotli"]}
 gunicorn = "*"
-django-environ = "*"
 django-oidc-provider = {git = "https://github.com/forsta-iam/django-oidc-provider.git",ref = "develop",editable = true}
 django-request-id = "*"
 
