@@ -7,12 +7,12 @@ python:
   - "3.6"
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y libxmlsec1-dev chromium-chromedriver
+  - sudo apt-get install -y libxmlsec1-dev chromium-chromedriver chromium-browser
 install:
   - pip install wheel codecov selenium psycopg2 -e 'git+https://github.com/forsta-iam/forsta-brand.git#egg=forsta-brand'
   - pip install '.[saml,environ]'
 env:
-  - DJANGO_SETTINGS_MODULE=forsta_auth.tests.settings DJANGO_ALLOWED_HOSTS=localhost DJANGO_SECRET_KEY=secret-key-for-travis
+  - DJANGO_SETTINGS_MODULE=forsta_auth.tests.settings DJANGO_ALLOWED_HOSTS=localhost DJANGO_SECRET_KEY=secret-key-for-travis CHROME_BIN=chromium-browser
 script: PYTHONPATH=. coverage run --source=. `which django-admin.py` test
 after_success:
   - codecov
