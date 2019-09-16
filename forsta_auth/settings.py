@@ -6,23 +6,28 @@ import os
 from django.urls import reverse
 from django.utils.functional import lazy
 
-DEBUG = os.environ.get('DJANGO_DEBUG')
+from environ import Env
 
-USE_TZ = True
-TIME_ZONE = 'Europe/London'
+env = Env()
+
+DEBUG = env('DEBUG', cast=bool, default=False)
+TEMPLATE_DEBUG = env('TEMPLATE_DEBUG', cast=bool, default=DEBUG)
+SECRET_KEY = env('SECRET_KEY')
+
+USE_TZ = env('USE_TZ', cast=bool, default=True)
+TIME_ZONE = env('TIME_ZONE', default='Europe/London')
 
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split() if not DEBUG else ['*']
+ALLOWED_HOSTS = env('ALLOWED_HOSTS', cast=list, default=['*'] if DEBUG else [])
 
-if 'DJANGO_ADMINS' in os.environ:
-    ADMINS = [email.utils.parseaddr(addr.strip()) for addr in os.environ['DJANGO_ADMINS'].split(',')]
+ADMINS = [email.utils.parseaddr(addr.strip())
+          for addr in env('ADMINS', cast=list, default=[])]
+
+MANAGERS = [email.utils.parseaddr(addr.strip())
+            for addr in env('MANAGERS', cast=list, default=[])]
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.' + (
-            'postgresql' if django.VERSION >= (1, 9) else 'postgresql_psycopg2'),
-        'NAME': os.environ.get('DATABASE_NAME', 'forsta_auth'),
-    },
+    'default': env.db(default='postgres:///forsta-auth'),
 }
 
 INSTALLED_APPS = [
@@ -130,9 +135,9 @@ AUTH_USER_MODEL = 'forsta_auth.User'
 ROOT_URLCONF = 'forsta_auth.urls'
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT')
+STATIC_ROOT = env('STATIC_ROOT')
 
-MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT')
+MEDIA_ROOT = env('MEDIA_ROOT')
 
 LOGIN_REDIRECT_URL = '/profile/'
 LOGIN_URL = 'login'
@@ -186,21 +191,21 @@ SOCIAL_AUTH_PIPELINE = (
 
 
 # For kombu, generally AMQP
-BROKER_TRANSPORT = os.environ.get('BROKER_TRANSPORT', 'amqp')
-BROKER_HOSTNAME= os.environ.get('BROKER_HOSTNAME', 'localhost')
-BROKER_SSL = os.environ.get('BROKER_SSL', 'yes').lower() not in ('no', '0', 'off', 'false')
-BROKER_VHOST= os.environ.get('BROKER_VHOST', '/')
-BROKER_USERNAME = os.environ.get('BROKER_USERNAME', 'guest')
-BROKER_PASSWORD = os.environ.get('BROKER_PASSWORD', 'guest')
-BROKER_PREFIX = os.environ.get('BROKER_PREFIX', 'idm.auth.')
+BROKER_TRANSPORT = env('BROKER_TRANSPORT', default='amqp')
+BROKER_HOSTNAME = env('BROKER_HOSTNAME', default='localhost')
+BROKER_SSL = env('BROKER_SSL', cast=bool, default=True)
+BROKER_VHOST = env('BROKER_VHOST', default='/')
+BROKER_USERNAME = env('BROKER_USERNAME', default='guest')
+BROKER_PASSWORD = env('BROKER_PASSWORD', default='guest')
+BROKER_PREFIX = env('BROKER_PREFIX', default='idm.auth.')
 
 
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+CELERY_BROKER_URL = env('CELERY_BROKER_URL')
 
 OIDC_EXTRA_SCOPE_CLAIMS = 'forsta_auth.oidc.claims.IDMAuthScopeClaims'
 
-IDM_CORE_URL = os.environ.get('IDM_CORE_URL', 'http://localhost:8000/')
-IDM_CORE_API_URL = os.environ.get('IDM_CORE_API_URL', 'http://localhost:8000/api/')
+IDM_CORE_URL = env('IDM_CORE_URL', default='http://localhost:8000/')
+IDM_CORE_API_URL = env('IDM_CORE_API_URL', default='http://localhost:8000/api/')
 
 SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
 
@@ -232,13 +237,13 @@ for key in os.environ:
         if key.endswith('_SCOPE'):
             locals()[key] = locals()[key].split()
 
-EMAIL_HOST = os.environ.get('EMAIL_HOST')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = True
+EMAIL_HOST = env('EMAIL_HOST', default=None)
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', default=None)
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default=None)
+EMAIL_PORT = env('EMAIL_PORT', cast=int, default=587)
+EMAIL_USE_TLS = env('EMAIL_USE_TLS', cast=bool, default=True)
 
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
 
 IDM_APPLICATION_ID = '4ff517c5-532f-42ee-afb1-a5d3da2f61d5'
 
@@ -246,9 +251,9 @@ from django.conf import global_settings
 
 PASSWORD_HASHERS = global_settings.PASSWORD_HASHERS
 
-DEFAULT_REALM = os.environ.get('DEFAULT_REALM', 'EXAMPLE.COM')
-KADMIN_PRINCIPAL_NAME = os.environ.get('KADMIN_PRINCIPAL_NAME')
-CLIENT_PRINCIPAL_NAME = os.environ.get('CLIENT_PRINCIPAL_NAME')
+DEFAULT_REALM = env('DEFAULT_REALM', default='EXAMPLE.COM')
+KADMIN_PRINCIPAL_NAME = env('KADMIN_PRINCIPAL_NAME', default=None)
+CLIENT_PRINCIPAL_NAME = env('CLIENT_PRINCIPAL_NAME', default=None)
 
 
 AUTH_PASSWORD_VALIDATORS = [{
@@ -288,35 +293,41 @@ IDM_BROKER = {
 }
 
 
-# Optional features
+# Optional features requiring extra dependencies
 
-try:
-    __import__('kadmin') and __import__('kerberos')
-except ImportError:
-    KERBEROS_ENABLED = False
-else:
+def _optional_feature(enabled, *import_names):
+    try:
+        for name in import_names:
+            __import__(name)
+    except ImportError:
+        if enabled is True:
+            raise
+        return False
+    else:
+        return enabled is not False
+
+
+KERBEROS_ENABLED = _optional_feature(env('KERBEROS_ENABLED', cast=bool, default=None),
+                                     'kadmin', 'kerberos')
+SSH_KEYS_ENABLED = _optional_feature(env('SSH_KEYS_ENABLED', cast=bool, default=None),
+                                     'sshpubkeys')
+SAML_ENABLED = _optional_feature(env('SAML_ENABLED', cast=bool, default=None),
+                                 'xmlsec', 'onelogin.saml2')
+
+
+
+if KERBEROS_ENABLED:
     INSTALLED_APPS.append('forsta_auth.kerberos')
     AUTHENTICATION_BACKENDS.insert(0, 'forsta_auth.kerberos.backends.KerberosBackend')
     PASSWORD_HASHERS.append('forsta_auth.kerberos.hashers.KerberosHasher')
-    KERBEROS_ENABLED = True
 
-try:
-    __import__('sshpubkeys')
-except ImportError:
-    SSH_KEYS_ENABLED = False
-else:
+if SSH_KEYS_ENABLED is not False:
     INSTALLED_APPS.append('forsta_auth.ssh_key')
-    SSH_KEYS_ENABLED = True
 
-try:
-    __import__('xmlsec') and __import__('onelogin.saml2')
-except ImportError:
-    SAML_ENABLED = False
-else:
+if SAML_ENABLED:
     INSTALLED_APPS.append('forsta_auth.saml')
     AUTHENTICATION_BACKENDS.insert(0, 'forsta_auth.saml.social_backend.SAMLAuth')
     TEMPLATES[0]['OPTIONS']['context_processors'].append('forsta_auth.saml.context_processors.idps')
-    SAML_ENABLED = True
 
     SOCIAL_AUTH_SAML_ORG_INFO = {
         "en-GB": {
@@ -330,6 +341,7 @@ else:
         "givenName": "Alexander Dutton",
         "emailAddress": "alexander.dutton@it.ox.ac.uk",
     }
+
 
 TEXT_BRANDING = {
     'organization_name': 'Example Organization',

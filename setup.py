@@ -47,5 +47,6 @@ setuptools.setup(
     extras_require={
         "kerberos": ["pykerberos", "requests-negotiate"],
         "saml": ["xmlsec", "python3-saml"],
+        "environ": ["django-environ"],
     },
 )

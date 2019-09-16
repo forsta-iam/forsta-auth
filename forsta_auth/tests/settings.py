@@ -1,15 +1,10 @@
 import os
 
-os.environ['DEFAULT_REALM'] = 'EXAMPLE.COM'
+import environ
+
+environ.Env.read_env(os.path.join(os.path.dirname(__file__), '..', '..', 'test.env'))
 
 from ..settings import *
-
-BROKER_TRANSPORT = 'memory'
-CELERY_BROKER_URL = 'memory://localhost/idm-auth-celery'
-
-ALLOWED_HOSTS = ['testserver', 'testserver.local']
-
-SECRET_KEY = 'test secret key'
 
 INSTALLED_APPS.append('forsta_brand')
 
@@ -82,9 +77,6 @@ ONBOARDING = {
     'REGISTRATION_OPEN_SOCIAL': True,
     'REGISTRATION_OPEN_SAML': True,
 }
-
-MEDIA_ROOT = 'media-root'
-STATIC_ROOT = 'static-root'
 
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
