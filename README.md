@@ -35,6 +35,8 @@ EMAIL_BACKEND |  | `'django.core.mail.backends.console.EmailBackend'` |
 DEFAULT_REALM |  | `'EXAMPLE.COM'` |
 KADMIN_PRINCIPAL_NAME |  | `None` |
 CLIENT_PRINCIPAL_NAME |  | `None` |
-KERBEROS_ENABLED | `bool` | `None` |
-SSH_KEYS_ENABLED | `bool` | `None` |
-SAML_ENABLED | `bool` | `None` |
+CLAIM_ENABLED | `bool` | `False` | Allows externally-created accounts to be claimed by users
+TWO_FACTOR_ENABLED | `bool` | `True` | Allows users to set up TOTP for two-factor auth
+KERBEROS_ENABLED | `bool` | `None` | Enables password management in an external KDC
+SSH_KEYS_ENABLED | `bool` | `None` | Lets users manage SSH keys for use elsewhere
+SAML_ENABLED | `bool` | `None` | Allows users to use SAML for federated login

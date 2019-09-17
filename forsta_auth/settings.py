@@ -10,7 +10,7 @@ from environ import Env
 
 env = Env()
 
-DEBUG = env('DEBUG', cast=bool, default=False)
+DEBUG = env('DEBUG', cast=bool, default=False)  # Enable Django's DEBUG mode. Should not be used in production
 TEMPLATE_DEBUG = env('TEMPLATE_DEBUG', cast=bool, default=DEBUG)
 SECRET_KEY = env('SECRET_KEY')
 
@@ -293,10 +293,10 @@ IDM_BROKER = {
 }
 
 
-CLAIM_ENABLED = env('CLAIM_ENABLED', cast=bool, default=False)
+CLAIM_ENABLED = env('CLAIM_ENABLED', cast=bool, default=False)  # Allows externally-created accounts to be claimed by users
 # Two-factor auth has external dependencies, but they're fairly tightly integrated into the login flow, so we'll just
 # disable setting up 2FA, and object if anyone tries to log in when they have 2FA set up.
-TWO_FACTOR_ENABLED = env('TWO_FACTOR_ENABLED', cast=bool, default=True)
+TWO_FACTOR_ENABLED = env('TWO_FACTOR_ENABLED', cast=bool, default=True)  # Allows users to set up TOTP for two-factor auth
 
 
 # Optional features requiring extra dependencies
@@ -313,11 +313,11 @@ def _optional_feature(enabled, *import_names):
         return enabled is not False
 
 
-KERBEROS_ENABLED = _optional_feature(env('KERBEROS_ENABLED', cast=bool, default=None),
+KERBEROS_ENABLED = _optional_feature(env('KERBEROS_ENABLED', cast=bool, default=None),  # Enables password management in an external KDC
                                      'kadmin', 'kerberos')
-SSH_KEYS_ENABLED = _optional_feature(env('SSH_KEYS_ENABLED', cast=bool, default=None),
+SSH_KEYS_ENABLED = _optional_feature(env('SSH_KEYS_ENABLED', cast=bool, default=None),  # Lets users manage SSH keys for use elsewhere
                                      'sshpubkeys')
-SAML_ENABLED = _optional_feature(env('SAML_ENABLED', cast=bool, default=None),
+SAML_ENABLED = _optional_feature(env('SAML_ENABLED', cast=bool, default=None),  # Allows users to use SAML for federated login
                                  'xmlsec', 'onelogin.saml2')
 
 if KERBEROS_ENABLED:
