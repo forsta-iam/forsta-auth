@@ -1,5 +1,4 @@
 from django.conf import settings
-
 from two_factor.utils import default_device
 
 
@@ -31,4 +30,6 @@ def features_enabled(request):
         'KERBEROS_ENABLED': settings.KERBEROS_ENABLED,
         'BROKER_ENABLED': settings.BROKER_ENABLED,
         'SSH_KEYS_ENABLED': settings.SSH_KEYS_ENABLED,
+        'CLAIM_ENABLED': settings.CLAIM_ENABLED,
+        'TWO_FACTOR_ENABLED': settings.TWO_FACTOR_ENABLED,
     }

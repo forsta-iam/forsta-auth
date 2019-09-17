@@ -29,10 +29,6 @@ urlpatterns = [
     url(r'^password/$', views.PasswordChangeView.as_view(), name='password-change'),
     url(r'^password/done/$', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
     url(r'^recover/$', views.RecoverView.as_view(), name='recover'),
-    url(r'^claim/$',
-        forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
-    url(r'^claim/(?P<step>[a-z-]+)/$',
-        forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
     url(r'^signup/$', forsta_auth.onboarding.views.SignupView.as_view(), name='signup'),
     url(r'^signup/complete/$', forsta_auth.onboarding.views.SignupCompleteView.as_view(), name='signup-done'),
     url(r'^profile/$', views.ProfileView.as_view(), name='profile'),
@@ -71,7 +67,6 @@ urlpatterns = [
     # OpenID Connect
     url(r'^', include('oidc_provider.urls', namespace='oidc_provider')),
     url(r'', include('social_django.urls', namespace='social')),
-    url(r'', include(tf_urls, 'two_factor')),
     url(r'^admin/', admin.site.urls),
 
     url('^user/$', views.UserListView.as_view(), name='user-list'),
@@ -82,6 +77,20 @@ if settings.SSH_KEYS_ENABLED:
     urlpatterns.append(
         url(r'^ssh-key/', include('forsta_auth.ssh_key.urls', 'ssh-key'))
     )
+
+if settings.CLAIM_ENABLED:
+    urlpatterns.extend([
+        url(r'^claim/$',
+            forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
+        url(r'^claim/(?P<step>[a-z-]+)/$',
+            forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
+    ])
+
+if settings.TWO_FACTOR_ENABLED:
+    urlpatterns.append(
+        url(r'', include(tf_urls, 'two_factor')),
+    )
+
 
 if getattr(settings, 'SOCIAL_AUTH_ORCID_KEY', None):
     urlpatterns += [
