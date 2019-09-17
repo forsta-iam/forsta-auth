@@ -6,6 +6,8 @@ import pathlib
 import re
 
 import astor
+import django.conf.global_settings
+from django.utils.version import get_docs_version
 
 settings_path = pathlib.Path(os.path.dirname(__file__)) / '..' / 'forsta_auth' / 'settings.py'
 settings = settings_path.read_text()
@@ -14,7 +16,7 @@ readme_path = pathlib.Path(os.path.dirname(__file__)) / '..' / 'README.md'
 
 vars = []
 
-for match in re.finditer(r'\W(?P<env>env(?P<db>\.db)?\(.*\)),?([ \t]*#[ \t]*(?P<comment>.*))?$', settings, re.MULTILINE):
+for match in re.finditer(r'((?P<target>[A-Z0-9_]+)\W=)?\W?(?P<env>env(?P<db>\.db)?\(.*\)),?([ \t]*#[ \t]*(?P<comment>.*))?$', settings, re.MULTILINE):
     var = match.groupdict()
 
     call = ast.parse(match['env']).body[0].value
@@ -56,11 +58,16 @@ with readme_path.open() as readme:
         name = var['name'].replace('|', '\|')
         if not var.get('default'):
             name = f'**{name}**'
+        comment = (var.get('comment') or '').replace('|', '\|')
+        if var['target'] and hasattr(django.conf.global_settings, var['target']):
+            if comment:
+                comment = comment.rstrip('.') + '. '
+            comment += f" [See Django documentation](https://docs.djangoproject.com/en/{get_docs_version()}/ref/settings/#{var['target'].lower().replace('_', '-')})"
         new_readme.append("{} | {} | {} | {}".format(
             name,
             var.get('cast') or '',
             var.get('default') or '',
-            (var.get('comment') or '').replace('|', '\|'),
+            comment,
         ).strip() + '\n')
 
     resume = False
