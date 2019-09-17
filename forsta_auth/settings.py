@@ -293,6 +293,9 @@ IDM_BROKER = {
 }
 
 
+CLAIM_ENABLED = env('CLAIM_ENABLED', cast=bool, default=False)
+
+
 # Optional features requiring extra dependencies
 
 def _optional_feature(enabled, *import_names):

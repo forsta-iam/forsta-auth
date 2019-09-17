@@ -31,4 +31,5 @@ def features_enabled(request):
         'KERBEROS_ENABLED': settings.KERBEROS_ENABLED,
         'BROKER_ENABLED': settings.BROKER_ENABLED,
         'SSH_KEYS_ENABLED': settings.SSH_KEYS_ENABLED,
+        'CLAIM_ENABLED': settings.CLAIM_ENABLED,
     }
