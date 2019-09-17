@@ -55,9 +55,11 @@
             </div></div></div>
 
     </section>
-    <div class="pad-1">
-        <h2>Two-factor authentication</h2>
-        {{ two_factor_default_device }}
-        <a class="pure-button" href="{% url "two_factor:setup" %}"><i class="fa fa-cogs"> </i> Configure</a>
-    </div>
+    {% if TWO_FACTOR_ENABLED %}
+        <div class="pad-1">
+            <h2>Two-factor authentication</h2>
+            {{ two_factor_default_device }}
+            <a class="pure-button" href="{% url "two_factor:setup" %}"><i class="fa fa-cogs"> </i> Configure</a>
+        </div>
+    {% endif %}
 {% endblock %}

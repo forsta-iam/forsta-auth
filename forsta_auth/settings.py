@@ -294,6 +294,9 @@ IDM_BROKER = {
 
 
 CLAIM_ENABLED = env('CLAIM_ENABLED', cast=bool, default=False)
+# Two-factor auth has external dependencies, but they're fairly tightly integrated into the login flow, so we'll just
+# disable setting up 2FA, and object if anyone tries to log in when they have 2FA set up.
+TWO_FACTOR_ENABLED = env('TWO_FACTOR_ENABLED', cast=bool, default=True)
 
 
 # Optional features requiring extra dependencies
@@ -316,8 +319,6 @@ SSH_KEYS_ENABLED = _optional_feature(env('SSH_KEYS_ENABLED', cast=bool, default=
                                      'sshpubkeys')
 SAML_ENABLED = _optional_feature(env('SAML_ENABLED', cast=bool, default=None),
                                  'xmlsec', 'onelogin.saml2')
-
-
 
 if KERBEROS_ENABLED:
     INSTALLED_APPS.append('forsta_auth.kerberos')

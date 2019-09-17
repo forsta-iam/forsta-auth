@@ -1,10 +1,13 @@
 import uuid
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from social_core.pipeline.partial import partial
 from two_factor.utils import default_device
+
+from forsta_auth.exceptions import TwoFactorDisabled
 
 
 def add_user_id(user=None, **kwargs):
@@ -21,6 +24,8 @@ def perform_two_factor(user=None, user_id=None, two_factor_complete=False, **kwa
         user = User.objects.get(id=uuid.UUID(user_id))
 
     if user and default_device(user) and not two_factor_complete:
+        if not settings.TWO_FACTOR_ENABLED:
+            raise TwoFactorDisabled
         return HttpResponseRedirect(reverse('login'))
 
     return {'user': user}

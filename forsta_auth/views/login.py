@@ -9,9 +9,11 @@ from social_django.models import Partial
 
 from two_factor.forms import AuthenticationTokenForm
 from two_factor.forms import BackupTokenForm
+from two_factor.utils import default_device
 
 from two_factor.views.core import LoginView as TwoFactorLoginView
 
+from forsta_auth.exceptions import TwoFactorDisabled
 from .. import backend_meta, forms
 
 __all__ = ['SocialTwoFactorLoginView']
@@ -21,9 +23,13 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
     template_name = 'registration/login.html'
     form_list = (
         ('auth', forms.AuthenticationForm),
-        ('token', AuthenticationTokenForm),
-        ('backup', BackupTokenForm),
     )
+
+    if settings.TWO_FACTOR_ENABLED:
+        form_list += (
+            ('token', AuthenticationTokenForm),
+            ('backup', BackupTokenForm),
+        )
 
     @cached_property
     def current_partial(self):
@@ -41,9 +47,12 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
     def get_user(self):
         if self.current_partial and 'user_id' in self.current_partial.data['kwargs']:
             user_model = get_user_model()
-            return user_model.objects.get(pk=self.current_partial.data['kwargs']['user_id'])
+            user = user_model.objects.get(pk=self.current_partial.data['kwargs']['user_id'])
         else:
-            return super().get_user()
+            user = super().get_user()
+        if not settings.TWO_FACTOR_ENABLED and default_device(user):
+            raise TwoFactorDisabled
+        return user
 
     def done(self, form_list, **kwargs):
         if self.current_partial:

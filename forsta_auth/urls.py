@@ -67,7 +67,6 @@ urlpatterns = [
     # OpenID Connect
     url(r'^', include('oidc_provider.urls', namespace='oidc_provider')),
     url(r'', include('social_django.urls', namespace='social')),
-    url(r'', include(tf_urls, 'two_factor')),
     url(r'^admin/', admin.site.urls),
 
     url('^user/$', views.UserListView.as_view(), name='user-list'),
@@ -86,6 +85,12 @@ if settings.CLAIM_ENABLED:
         url(r'^claim/(?P<step>[a-z-]+)/$',
             forsta_auth.onboarding.views.IdentityClaimView.as_view(url_name='activate'), name='activate'),
     ])
+
+if settings.TWO_FACTOR_ENABLED:
+    urlpatterns.append(
+        url(r'', include(tf_urls, 'two_factor')),
+    )
+
 
 if getattr(settings, 'SOCIAL_AUTH_ORCID_KEY', None):
     urlpatterns += [

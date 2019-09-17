@@ -42,6 +42,8 @@ class ActivationTestCase(TestCase):
         start_activation_task.delay.assert_called_once_with(str(pending_activation.id))
 
     @unittest.mock.patch('forsta_auth.auth_core_integration.utils.get_identity_data')
+    @unittest.skipUnless(settings.CLAIM_ENABLED,
+                         "No activation emails if claim functionality is disabled")
     def test_start_activation_email(self, get_identity_data):
         # Tests whether the start_activation sends an appropriate activation email if the identity has a home contact
         # email address
