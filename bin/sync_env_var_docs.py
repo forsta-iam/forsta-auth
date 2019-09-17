@@ -14,7 +14,7 @@ readme_path = pathlib.Path(os.path.dirname(__file__)) / '..' / 'README.md'
 
 vars = []
 
-for match in re.finditer(r'\W(?P<env>env(?P<db>\.db)?\(.*\)),?(\s*#\s+(?P<comment>.*))?$', settings, re.MULTILINE):
+for match in re.finditer(r'\W(?P<env>env(?P<db>\.db)?\(.*\)),?([ \t]*#[ \t]*(?P<comment>.*))?$', settings, re.MULTILINE):
     var = match.groupdict()
 
     call = ast.parse(match['env']).body[0].value
