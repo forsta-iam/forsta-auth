@@ -23,7 +23,7 @@ BROKER_VHOST |  | `'/'` |
 BROKER_USERNAME |  | `'guest'` |
 BROKER_PASSWORD |  | `'guest'` |
 BROKER_PREFIX |  | `'idm.auth.'` |
-**CELERY_BROKER_URL** |  |  |
+CELERY_BROKER_URL |  | `'amqp://guest:guest@localhost:5672//'` |
 IDM_CORE_URL |  | `'http://localhost:8000/'` |
 IDM_CORE_API_URL |  | `'http://localhost:8000/api/'` |
 EMAIL_HOST |  | `None` |

@@ -200,7 +200,7 @@ BROKER_PASSWORD = env('BROKER_PASSWORD', default='guest')
 BROKER_PREFIX = env('BROKER_PREFIX', default='idm.auth.')
 
 
-CELERY_BROKER_URL = env('CELERY_BROKER_URL')
+CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='amqp://guest:guest@localhost:5672//')
 
 OIDC_EXTRA_SCOPE_CLAIMS = 'forsta_auth.oidc.claims.IDMAuthScopeClaims'
 
