@@ -1,3 +1,4 @@
+import http.client
 import unittest.mock
 import uuid
 from urllib.parse import urljoin, urlencode
@@ -5,13 +6,10 @@ from urllib.parse import urljoin, urlencode
 from django.test import LiveServerTestCase
 from django.urls import reverse
 from django_otp.plugins.otp_totp.models import TOTPDevice
-
-from django_otp.models import Device
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from social_django.models import UserSocialAuth
 
-from forsta_auth.auth_core_integration.apps import IDMAuthCoreIntegrationConfig
 from forsta_auth.models import User
 
 
@@ -131,3 +129,26 @@ class SocialAuthTestCase(LiveServerTestCase):
         selenium.get(urljoin(self.live_server_url, reverse('login')))
         self.assertEqual('Log in', selenium.find_element_by_css_selector('h1').text)
 
+    def test_not_allowed_to_disconnect(self):
+        user = User(identity_id=uuid.uuid4(), primary=True)
+        user.set_unusable_password()
+        user.save()
+        user_social_auth = UserSocialAuth.objects.create(user=user, provider='dummy', uid='alice')
+        self.client.force_login(user)
+        response = self.client.post(reverse('social:disconnect_individual',
+                                            kwargs={'backend': 'dummy',
+                                                    'association_id': user_social_auth.pk}))
+        self.assertEqual(http.client.FORBIDDEN, response.status_code)
+        self.assertTemplateUsed(response, 'exceptions/social_core/not_allowed_to_disconnect.html')
+
+    def test_auth_already_associated(self):
+        alice = User.objects.create(identity_id=uuid.uuid4(), primary=True)
+        bob = User.objects.create(identity_id=uuid.uuid4(), primary=True)
+        UserSocialAuth.objects.create(user=alice, provider='dummy', uid='alice')
+        # Bob is logged in, but tries to associate Alice's social auth with his account
+        self.client.force_login(bob)
+        response = self.client.get(reverse('social:begin',
+                                            kwargs={'backend': 'dummy'}) + '?id=alice',
+                                   follow=True)
+        self.assertEqual(http.client.FORBIDDEN, response.status_code)
+        self.assertTemplateUsed(response, 'exceptions/social_core/auth_already_associated.html')

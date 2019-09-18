@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block h1_title %}Sorry, that external account is already associated with another {{ TEXT_BRANDING.account }}{% endblock %}
+{% block title %}Already associated{% endblock %}
+
+{% block content %}
+    <p>You've attempted to link an external account with your {{ TEXT_BRANDING.account }}, but unfortunately the
+        external account is already associated with another {{ TEXT_BRANDING.account }}.</p>
+
+    <p>You can <a href="{% url "logout" %}?next={% url "social:begin" backend=exception.backend.name %}">try again after
+        logging out</a> to see which account it's linked to.</p>
+
+    <p>If you've inadvertently created multiple {{ TEXT_BRANDING.accounts }}s and would like them merged, please email
+        <a href="mailto:{{ SUPPORT_EMAIL_ADDRESS }}">{{ SUPPORT_EMAIL_NAME }}</a>.</p>
+{% endblock %}
