@@ -86,6 +86,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     # Always include for two-factor auth
     'django_otp.middleware.OTPMiddleware',
+    'forsta_auth.middleware.SocialAuthExceptionMiddleware',
     'forsta_auth.onboarding.middleware.OnboardingMiddleware',
 ]
 
