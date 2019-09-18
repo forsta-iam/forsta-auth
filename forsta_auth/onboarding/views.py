@@ -22,7 +22,7 @@ from formtools.wizard.views import SessionWizardView, NamedUrlCookieWizardView
 from social_django.models import Partial
 
 from forsta_auth.auth_core_integration.utils import get_identity_data
-from forsta_auth.forms import SetPasswordForm
+from forsta_auth.forms import PasswordSetForm
 from forsta_auth.onboarding.forms import PersonalDataForm, WelcomeForm, ActivationCodeForm, \
     ConfirmDetailsForm, ExistingAccountForm, ConfirmActivationForm
 from forsta_auth.onboarding.models import PendingActivation
@@ -54,7 +54,7 @@ class SignupView(SocialPipelineMixin, SessionWizardView):
     form_list = (
         ('welcome', WelcomeForm),
         ('personal', PersonalDataForm),
-        ('password', SetPasswordForm),
+        ('password', PasswordSetForm),
     )
 
     def has_welcome_step(self):
