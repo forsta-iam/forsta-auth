@@ -5,6 +5,7 @@ import kombu
 import os
 from django.urls import reverse
 from django.utils.functional import lazy
+from django.conf import global_settings
 
 from environ import Env
 
@@ -86,6 +87,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     # Always include for two-factor auth
     'django_otp.middleware.OTPMiddleware',
+    'forsta_auth.middleware.SocialAuthExceptionMiddleware',
     'forsta_auth.onboarding.middleware.OnboardingMiddleware',
 ]
 
@@ -242,12 +244,14 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER', default=None)
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default=None)
 EMAIL_PORT = env('EMAIL_PORT', cast=int, default=587)
 EMAIL_USE_TLS = env('EMAIL_USE_TLS', cast=bool, default=True)
-
 EMAIL_BACKEND = env('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default=global_settings.DEFAULT_FROM_EMAIL)
+SERVER_EMAIL = env('SERVER_EMAIL', default=global_settings.SERVER_EMAIL)
+SUPPORT_EMAIL = env('SUPPORT_EMAIL', default=DEFAULT_FROM_EMAIL)
 
 IDM_APPLICATION_ID = '4ff517c5-532f-42ee-afb1-a5d3da2f61d5'
 
-from django.conf import global_settings
 
 PASSWORD_HASHERS = global_settings.PASSWORD_HASHERS
 
@@ -352,4 +356,6 @@ TEXT_BRANDING = {
     'organization_name_in_context': 'the Example Organization',
     'your_account': 'your account',
     'an_account': 'an account',
+    'account': 'account',
+    'accounts': 'accounts',
 }

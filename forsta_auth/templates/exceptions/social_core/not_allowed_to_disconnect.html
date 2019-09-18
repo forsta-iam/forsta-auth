@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block h1_title %}Unable to disconnect this external account{% endblock %}
+{% block title %}Can't disconnect external account{% endblock %}
+
+{% block content %}
+    <p>The external account you attempted to disconnect currently provides your only authentication method.</p>
+
+    <p>Before you can remove it, you must either <a href="{% url "password-change" %}">set a password</a> or
+        <a href="{% url "social-logins" %}">associate an alternative external account</a>.</p>
+{% endblock %}

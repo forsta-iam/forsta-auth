@@ -1,3 +1,5 @@
+from email.utils import parseaddr
+
 from django.conf import settings
 from two_factor.utils import default_device
 
@@ -19,8 +21,11 @@ def two_factor_enabled(request):
 
 
 def forsta_auth(request):
+    support_email = parseaddr(settings.SUPPORT_EMAIL)
     return {
         'TEXT_BRANDING': settings.TEXT_BRANDING,
+        'SUPPORT_EMAIL_NAME': support_email[0],
+        'SUPPORT_EMAIL_ADDRESS': support_email[1],
     }
 
 

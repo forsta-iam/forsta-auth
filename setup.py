@@ -43,6 +43,7 @@ setuptools.setup(
         "django-dirtyfields",
         "django-templated-email",
         "django-cors-headers",
+        "inflection",
     ],
     extras_require={
         "kerberos": ["pykerberos", "requests-negotiate"],

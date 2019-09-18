@@ -1,9 +1,13 @@
 import uuid
 
+import zxcvbn_password.fields
 from django import forms
+from django.conf import settings
 from django.contrib.auth import forms as auth_forms, get_user_model
 from django.utils.translation import ugettext_lazy as _
-import zxcvbn_password.fields
+from two_factor.utils import default_device
+
+from forsta_auth.exceptions import TwoFactorDisabled
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -44,6 +48,11 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
                 username = str(user.pk)
         self.cleaned_data['username'] = username
         return super().clean()
+
+    def confirm_login_allowed(self, user):
+        if not settings.TWO_FACTOR_ENABLED and default_device(user):
+            raise TwoFactorDisabled(None)
+        return super().confirm_login_allowed(user)
 
 
 class SetPasswordForm(auth_forms.SetPasswordForm):

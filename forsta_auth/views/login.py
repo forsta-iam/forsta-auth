@@ -21,18 +21,17 @@ __all__ = ['SocialTwoFactorLoginView']
 
 class SocialTwoFactorLoginView(TwoFactorLoginView):
     template_name = 'registration/login.html'
+
     form_list = (
         ('auth', forms.AuthenticationForm),
+        ('token', AuthenticationTokenForm),
+        ('backup', BackupTokenForm),
     )
-
-    if settings.TWO_FACTOR_ENABLED:
-        form_list += (
-            ('token', AuthenticationTokenForm),
-            ('backup', BackupTokenForm),
-        )
 
     @cached_property
     def current_partial(self):
+        if 'from-social' not in self.request.GET:
+            return None
         try:
             return Partial.objects.get(token=self.request.session['partial_pipeline_token'])
         except (KeyError, Partial.DoesNotExist):
@@ -50,8 +49,6 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
             user = user_model.objects.get(pk=self.current_partial.data['kwargs']['user_id'])
         else:
             user = super().get_user()
-        if not settings.TWO_FACTOR_ENABLED and default_device(user):
-            raise TwoFactorDisabled
         return user
 
     def done(self, form_list, **kwargs):
