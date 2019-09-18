@@ -111,7 +111,7 @@ class SocialAuthTestCase(LiveServerTestCase):
         selenium = self.selenium
         selenium.get(urljoin(self.live_server_url, begin_dummy_login_url + '?id=alice'))
         self.assertEqual(selenium.current_url,
-                         urljoin(self.live_server_url, reverse('login')))
+                         urljoin(self.live_server_url, reverse('login') + '?from-social'))
         # Make sure we're being asked for a token
         selenium.find_element_by_name('token-otp_token')
 

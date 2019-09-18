@@ -12,7 +12,7 @@ class SocialAuthExceptionMiddleware:
         social_core.exceptions.NotAllowedToDisconnect: FORBIDDEN,
         social_core.exceptions.AuthAlreadyAssociated: FORBIDDEN,
         social_core.exceptions.AuthCanceled: SERVICE_UNAVAILABLE,
-        TwoFactorDisabled: FORBIDDEN,
+        TwoFactorDisabled: SERVICE_UNAVAILABLE,
     }  # type: Mapping[Exception, int]
 
     def __init__(self, get_response):

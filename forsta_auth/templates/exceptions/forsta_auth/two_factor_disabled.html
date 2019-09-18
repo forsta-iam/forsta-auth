@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block h1_title %}Sorry, you can't log in right now{% endblock %}
+{% block title %}Unable to log in{% endblock %}
+
+{% block content %}
+    <p>Your account has two-factor authentication set up, but {{ TEXT_BRANDING.organization_name_in_context }} have
+        disabled two-factor authentication.</p>
+
+    <p>Please contact <a href="mailto:{{ SUPPORT_EMAIL_ADDRESS }}">{{ SUPPORT_EMAIL_NAME }}</a> for support.</p>
+{% endblock %}
