@@ -4,8 +4,13 @@ from .. import forms
 
 __all__ = ['PasswordChangeView', 'PasswordChangeDoneView']
 
+
 class PasswordChangeView(auth_views.PasswordChangeView):
-    form_class = forms.PasswordChangeForm
+    def get_form_class(self):
+        if self.request.user.has_usable_password():
+            return forms.PasswordChangeForm
+        else:
+            return forms.PasswordSetForm
 
 
 class PasswordChangeDoneView(auth_views.PasswordChangeDoneView):

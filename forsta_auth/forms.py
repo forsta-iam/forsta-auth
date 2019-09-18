@@ -55,7 +55,7 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
         return super().confirm_login_allowed(user)
 
 
-class SetPasswordForm(auth_forms.SetPasswordForm):
+class PasswordSetForm(auth_forms.SetPasswordForm):
     new_password1 = zxcvbn_password.fields.PasswordField(label=_("New password"))
     new_password2 = zxcvbn_password.fields.PasswordConfirmationField(label=_("New password confirmation"),
                                                                      confirm_with='password1')
@@ -65,7 +65,7 @@ class SetPasswordForm(auth_forms.SetPasswordForm):
         super().__init__(user, *args, **kwargs)
 
 
-class PasswordChangeForm(SetPasswordForm, auth_forms.PasswordChangeForm):
+class PasswordChangeForm(PasswordSetForm, auth_forms.PasswordChangeForm):
     pass
 
 
