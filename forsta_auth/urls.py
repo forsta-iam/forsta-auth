@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView
+from django.contrib.auth import views as auth_views
+from django.urls import path
 from django.views.generic import TemplateView
 from rest_framework import routers
 
@@ -25,10 +26,16 @@ router.register('user-email', forsta_auth.api_views.UserEmailViewSet)
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^login/$', views.SocialTwoFactorLoginView.as_view(), name='login'),
-    url(r'^logout/$', LogoutView.as_view(), name='logout'),
-    url(r'^password/$', views.PasswordChangeView.as_view(), name='password-change'),
+    url(r'^logout/$', auth_views.LogoutView.as_view(), name='logout'),
+
+    url(r'^password/$', views.PasswordChangeView.as_view(), name='password_change'),
     url(r'^password/done/$', views.PasswordChangeDoneView.as_view(), name='password_change_done'),
-    url(r'^recover/$', views.RecoverView.as_view(), name='recover'),
+
+    path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
     url(r'^signup/$', forsta_auth.onboarding.views.SignupView.as_view(), name='signup'),
     url(r'^signup/complete/$', forsta_auth.onboarding.views.SignupCompleteView.as_view(), name='signup-done'),
     url(r'^profile/$', views.ProfileView.as_view(), name='profile'),
