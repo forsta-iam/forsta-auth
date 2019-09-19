@@ -14,7 +14,7 @@ class PasswordTestCase(TestCase):
         user.save()
 
         self.client.force_login(user)
-        response = self.client.get(reverse('password-change'))
+        response = self.client.get(reverse('password_change'))
         self.assertIsInstance(response.context['form'], PasswordSetForm)
         self.assertNotIsInstance(response.context['form'], PasswordChangeForm)
 
@@ -26,5 +26,5 @@ class PasswordTestCase(TestCase):
         user.save()
 
         self.client.force_login(user)
-        response = self.client.get(reverse('password-change'))
+        response = self.client.get(reverse('password_change'))
         self.assertIsInstance(response.context['form'], PasswordChangeForm)

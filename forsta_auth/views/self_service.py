@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetConfirmView as BasePasswordResetConfirmView
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.module_loading import import_string
@@ -11,7 +12,7 @@ from forsta_auth import backend_meta
 from forsta_auth.backend_meta import BackendMeta
 from .. import forms
 
-__all__ = ['ProfileView', 'ProfileFormView', 'SocialLoginsView', 'IndexView', 'RecoverView']
+__all__ = ['ProfileView', 'ProfileFormView', 'SocialLoginsView', 'IndexView']
 
 AUTH_USER_FORM = import_string(getattr(settings, 'AUTH_USER_FORM',
                                        'forsta_auth.forms.ProfileForm'))
@@ -57,8 +58,3 @@ class SocialLoginsView(LoginRequiredMixin, TemplateView):
                            for user_social_auth in self.request.user.social_auth.all()],
             'social_backends': list(sorted([bm for bm in backend_meta.BackendMeta.registry.values() if bm.show], key=lambda sb: sb.name)),
         }
-
-
-class RecoverView(View):
-    pass
-

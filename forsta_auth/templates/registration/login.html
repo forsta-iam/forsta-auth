@@ -42,7 +42,7 @@
                             <div class="pure-g">
                                 <a class="pure-u pure-u-1-3 pure-button" href="help">Help</a>
                                 <button class="pure-u pure-u-2-3 pure-button pure-button-primary" type="submit" name="submit">Login</button>
-                                <div class="pure-u pure-u-1 pure-center"><a href="{% url "recover" %}">Forgotten your password?</a></div>
+                                <div class="pure-u pure-u-1 pure-center"><a href="{% url "password_reset" %}">Forgotten your password?</a></div>
 
                             </div>
                         </section>                    {%  elif wizard.steps.current == 'token' %}
