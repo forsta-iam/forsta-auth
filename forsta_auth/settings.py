@@ -359,3 +359,11 @@ TEXT_BRANDING = {
     'account': 'account',
     'accounts': 'accounts',
 }
+
+
+OIDC_CODE_EXPIRE = env('OIDC_CODE_EXPIRE', cast=int, default=60*10)
+OIDC_IDTOKEN_EXPIRE = env('OIDC_IDTOKEN_EXPIRE', cast=int, default=60*10)
+OIDC_TOKEN_EXPIRE = env('OIDC_TOKEN_EXPIRE', cast=int, default=60*60)
+OIDC_SESSION_MANAGEMENT_ENABLE = env('OIDC_SESSION_MANAGEMENT_ENABLE', cast=bool, default=False)  # If enabled, the Server will support Session Management 1.0 specification.
+OIDC_SKIP_CONSENT_EXPIRE = env('OIDC_SKIP_CONSENT_EXPIRE', cast=int, default=30*3)  # How many days before users have to re-consent if "re-use consent" is enabled for a client.
+OIDC_GRANT_TYPE_PASSWORD_ENABLE = env('OIDC_GRANT_TYPE_PASSWORD_ENABLE', cast=bool, default=False)  # Whether to allow the Resource Owner Password Credentials Grant
