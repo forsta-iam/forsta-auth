@@ -382,3 +382,6 @@ SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', cast=bool, default=False)
 SESSION_COOKIE_NAME = env('SESSION_COOKIE_NAME', default='sessionid')
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', cast=bool, default=False)
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', cast=bool, default=False)
+
+
+SILENCED_SYSTEM_CHECKS = env('SILENCED_SYSTEM_CHECKS', cast=list, default=[])

@@ -9,3 +9,6 @@ __all__ = ['celery_app', '__version__']
 __version__ = '0.1'
 
 default_app_config = 'forsta_auth.apps.IDMAuthConfig'
+
+
+from . import checks
