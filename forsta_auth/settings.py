@@ -78,6 +78,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'reversion.middleware.RevisionMiddleware',
@@ -223,8 +224,6 @@ def _get_inactive_user_url():
 
 SOCIAL_AUTH_INACTIVE_USER_URL = lazy(_get_inactive_user_url, str)()
 
-SESSION_COOKIE_NAME = 'idm-auth-sessionid'
-
 # django-registration
 ACCOUNT_ACTIVATION_DAYS = 7
 
@@ -369,3 +368,17 @@ OIDC_SESSION_MANAGEMENT_ENABLE = env('OIDC_SESSION_MANAGEMENT_ENABLE', cast=bool
 OIDC_SKIP_CONSENT_EXPIRE = env('OIDC_SKIP_CONSENT_EXPIRE', cast=int, default=30*3)  # How many days before users have to re-consent if "re-use consent" is enabled for a client.
 OIDC_GRANT_TYPE_PASSWORD_ENABLE = env('OIDC_GRANT_TYPE_PASSWORD_ENABLE', cast=bool, default=False)  # Whether to allow the Resource Owner Password Credentials Grant
 OIDC_INTROSPECTION_VALIDATE_AUDIENCE_SCOPE = env('OIDC_INTROSPECTION_VALIDATE_AUDIENCE_SCOPE', cast=bool, default=True)
+
+
+# HTTP Strict Transport Security
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env('SECURE_HSTS_INCLUDE_SUBDOMAINS', cast=bool, default=False)
+SECURE_HSTS_PRELOAD = env('SECURE_HSTS_PRELOAD', cast=bool, default=False)
+SECURE_HSTS_SECONDS = env('SECURE_HSTS_SECONDS', cast=int, default=0)
+
+# Other security settings (the first of which differs from the Django default
+SECURE_CONTENT_TYPE_NOSNIFF = env('SECURE_CONTENT_TYPE_NOSNIFF', cast=bool, default=True)
+SECURE_BROWSER_XSS_FILTER = env('SECURE_BROWSER_XSS_FILTER', cast=bool, default=True)
+SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', cast=bool, default=False)
+SESSION_COOKIE_NAME = env('SESSION_COOKIE_NAME', default='sessionid')
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', cast=bool, default=False)
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', cast=bool, default=False)
