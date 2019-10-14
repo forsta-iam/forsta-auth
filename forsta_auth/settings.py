@@ -224,8 +224,6 @@ def _get_inactive_user_url():
 
 SOCIAL_AUTH_INACTIVE_USER_URL = lazy(_get_inactive_user_url, str)()
 
-SESSION_COOKIE_NAME = 'idm-auth-sessionid'
-
 # django-registration
 ACCOUNT_ACTIVATION_DAYS = 7
 
@@ -376,3 +374,11 @@ OIDC_INTROSPECTION_VALIDATE_AUDIENCE_SCOPE = env('OIDC_INTROSPECTION_VALIDATE_AU
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env('SECURE_HSTS_INCLUDE_SUBDOMAINS', cast=bool, default=False)
 SECURE_HSTS_PRELOAD = env('SECURE_HSTS_PRELOAD', cast=bool, default=False)
 SECURE_HSTS_SECONDS = env('SECURE_HSTS_SECONDS', cast=int, default=0)
+
+# Other security settings (the first of which differs from the Django default
+SECURE_CONTENT_TYPE_NOSNIFF = env('SECURE_CONTENT_TYPE_NOSNIFF', cast=bool, default=True)
+SECURE_BROWSER_XSS_FILTER = env('SECURE_BROWSER_XSS_FILTER', cast=bool, default=True)
+SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', cast=bool, default=False)
+SESSION_COOKIE_NAME = env('SESSION_COOKIE_NAME', default='sessionid')
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', cast=bool, default=False)
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', cast=bool, default=False)
