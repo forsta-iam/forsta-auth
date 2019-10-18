@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from two_factor.utils import default_device
 
 from forsta_auth.exceptions import TwoFactorDisabled
+from . import models
 
 UserModel = get_user_model()
 
@@ -75,3 +76,12 @@ class ProfileForm(forms.ModelForm):
         model = UserModel
         fields = ('first_name', 'last_name', 'username')
 
+
+class PasswordResetForm(auth_forms.PasswordResetForm):
+    def get_users(self, email):
+        """Given an email, return matching user(s) who should receive a reset.
+
+        This is overridden to also send emails to people that don't have a usable password
+        """
+        return UserModel.objects.filter(emails__in=models.UserEmail.objects.filter(email__iexact=email, verified=True),
+                                        is_active=True).distinct()
