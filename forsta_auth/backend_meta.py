@@ -44,6 +44,10 @@ class BackendMeta(metaclass=BackendMetaMetaclass):
     def show(self):
         return self.enabled
 
+    @property
+    def profile_url(self):
+        return None
+
 
 class TwitterBackendMeta(BackendMeta):
     backend_id = 'twitter'
@@ -87,6 +91,10 @@ class LinkedinBackendMeta(BackendMeta):
     backend_id = 'linkedin-oauth2'
     name = 'LinkedIn'
     font_icon = 'fab fa-linkedin'
+
+    @property
+    def username(self):
+        return None
 
 
 class GithubBackendMeta(BackendMeta):
