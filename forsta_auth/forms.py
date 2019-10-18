@@ -9,6 +9,8 @@ from two_factor.utils import default_device
 
 from forsta_auth.exceptions import TwoFactorDisabled
 
+UserModel = get_user_model()
+
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
     username = auth_forms.UsernameField(
@@ -27,23 +29,22 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
 
     def clean(self):
         username = self.cleaned_data.get('username')
-        user_model = get_user_model()
         try:
             str(uuid.UUID(username or ''))
         except ValueError:
             try:
-                user = user_model.objects.get(username=username)
-            except user_model.DoesNotExist:
+                user = UserModel.objects.get(username=username)
+            except UserModel.DoesNotExist:
                 try:
-                    user = user_model.objects.get(emails__email=username)
-                except user_model.DoesNotExist:
+                    user = UserModel.objects.get(emails__email=username)
+                except UserModel.DoesNotExist:
                     username = str(uuid.uuid4())
                 else:
                     username = str(user.pk)
             else:
                 try:
-                    user_model.objects.get(emails__email=username)
-                except user_model.DoesNotExist:
+                    UserModel.objects.get(emails__email=username)
+                except UserModel.DoesNotExist:
                     pass
                 username = str(user.pk)
         self.cleaned_data['username'] = username
@@ -71,6 +72,6 @@ class PasswordChangeForm(PasswordSetForm, auth_forms.PasswordChangeForm):
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        model = get_user_model()
+        model = UserModel
         fields = ('first_name', 'last_name', 'username')
 
