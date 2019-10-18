@@ -35,7 +35,13 @@
                             <td class="align-center">
                                 <i class="{{ user_social_auth.font_icon }} fa-2x social-account-icon-{{ user_social_auth.backend_id }}" title="{{ user_social_auth.name }}"> </i>
                             </td>
-                            <td>{{ user_social_auth.username }}</td>
+                            <td>
+                                {% if user_social_auth.profile_url %}
+                                    <a href="{{ user_social_auth.profile_url }}">{{ user_social_auth.username|default_if_none:"—" }}</a>
+                                {% else %}
+                                    {{ user_social_auth.username|default_if_none:"—" }}
+                                {% endif %}
+                            </td>
                             <td>
                                 <form method="post" action="{% url "social:disconnect_individual" backend=user_social_auth.provider association_id=user_social_auth.id %}">
                                     {% csrf_token %}
