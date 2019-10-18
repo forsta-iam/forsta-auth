@@ -34,7 +34,7 @@ class RegistrationTestCase(LiveServerTestCase):
 
     @creates_idm_core_user
     def testNewRegistration(self, identity_id):
-        from forsta_auth.models import User
+        from forsta_auth.models import User, UserEmail
 
         # This is the whole signup flow
         selenium = self.selenium
@@ -85,6 +85,13 @@ class RegistrationTestCase(LiveServerTestCase):
 
         user = User.objects.get()
         self.assertTrue(user.is_active)
+        self.assertEqual(user.email, 'edgar@example.org')
+
+        user_email = user.emails.get()  # type: UserEmail
+        self.assertTrue(user_email.primary)
+        self.assertTrue(user_email.verified)
+        self.assertEqual(user_email.email, 'edgar@example.org')
+
         if settings.BROKER_ENABLED:
             self.assertEqual(user.identity_id, identity_id)
 

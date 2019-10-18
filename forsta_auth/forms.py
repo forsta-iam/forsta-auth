@@ -8,6 +8,9 @@ from django.utils.translation import ugettext_lazy as _
 from two_factor.utils import default_device
 
 from forsta_auth.exceptions import TwoFactorDisabled
+from . import models
+
+UserModel = get_user_model()
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -27,23 +30,22 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
 
     def clean(self):
         username = self.cleaned_data.get('username')
-        user_model = get_user_model()
         try:
             str(uuid.UUID(username or ''))
         except ValueError:
             try:
-                user = user_model.objects.get(username=username)
-            except user_model.DoesNotExist:
+                user = UserModel.objects.get(username=username)
+            except UserModel.DoesNotExist:
                 try:
-                    user = user_model.objects.get(emails__email=username)
-                except user_model.DoesNotExist:
+                    user = UserModel.objects.get(emails__email=username)
+                except UserModel.DoesNotExist:
                     username = str(uuid.uuid4())
                 else:
                     username = str(user.pk)
             else:
                 try:
-                    user_model.objects.get(emails__email=username)
-                except user_model.DoesNotExist:
+                    UserModel.objects.get(emails__email=username)
+                except UserModel.DoesNotExist:
                     pass
                 username = str(user.pk)
         self.cleaned_data['username'] = username
@@ -71,6 +73,15 @@ class PasswordChangeForm(PasswordSetForm, auth_forms.PasswordChangeForm):
 
 class ProfileForm(forms.ModelForm):
     class Meta:
-        model = get_user_model()
+        model = UserModel
         fields = ('first_name', 'last_name', 'username')
 
+
+class PasswordResetForm(auth_forms.PasswordResetForm):
+    def get_users(self, email):
+        """Given an email, return matching user(s) who should receive a reset.
+
+        This is overridden to also send emails to people that don't have a usable password
+        """
+        return UserModel.objects.filter(emails__in=models.UserEmail.objects.filter(email__iexact=email, verified=True),
+                                        is_active=True).distinct()

@@ -6,8 +6,11 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
+from django.utils.functional import cached_property
 
 from django.utils.translation import ugettext_lazy as _
+
+from .backend_meta import BackendMeta
 
 
 if settings.KERBEROS_ENABLED:
@@ -58,6 +61,11 @@ class AbstractBaseUser(KerberosBackedUserMixin, DirtyFieldsMixin, AbstractUser):
 
     def get_username(self):
         return str(self.id)
+
+    @cached_property
+    def social_auth_metas(self):
+        return sorted([BackendMeta.wrap(user_social_auth) for user_social_auth in self.social_auth.all()],
+                      key=lambda s: (s.backend_id, s.username))
 
     class Meta:
         abstract = True

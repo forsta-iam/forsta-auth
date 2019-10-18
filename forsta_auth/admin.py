@@ -15,6 +15,11 @@ class UserSocialAuthInline(admin.TabularInline):
     max_num = 0
 
 
+class UserEmailInline(admin.TabularInline):
+    model = models.UserEmail
+    fields = ('email', 'verified', 'primary')
+
+
 class UserChangeForm(BaseUserChangeForm):
     class Meta(BaseUserChangeForm.Meta):
         field_classes = {}
@@ -28,6 +33,7 @@ class UserAdmin(BaseUserAdmin):
 
     inlines = [
         UserSocialAuthInline,
+        UserEmailInline,
     ]
     form = UserChangeForm
     fieldsets = BaseUserAdmin.fieldsets[:1] + (

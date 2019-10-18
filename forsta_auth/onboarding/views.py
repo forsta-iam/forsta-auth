@@ -291,7 +291,7 @@ class ActivationView(BaseActivationView):
         username, email = self.validate_key(kwargs.get('activation_key'))
         user = self.get_user(username)
         try:
-            UserEmail.objects.create(user=user, email=email)
+            UserEmail.objects.create(user=user, email=email, primary=True, verified=True)
         except IntegrityError as e:
             raise ActivationError(
                 self.EMAIL_IN_USE_MESSAGE,

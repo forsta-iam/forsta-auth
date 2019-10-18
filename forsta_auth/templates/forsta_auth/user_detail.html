@@ -30,7 +30,7 @@
                         <th>Disassociate</th>
                     </tr>
                     </thead>
-                    <tbody>{% for user_social_auth in associated %}
+                    <tbody>{% for user_social_auth in user.social_auth_metas %}
                         <tr class="social-account-{{ user_social_auth.backend_id }}">
                             <td class="align-center">
                                 <i class="{{ user_social_auth.font_icon }} fa-2x social-account-icon-{{ user_social_auth.backend_id }}" title="{{ user_social_auth.name }}"> </i>
