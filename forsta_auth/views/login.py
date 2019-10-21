@@ -1,8 +1,10 @@
+from urllib.parse import urlparse, parse_qs
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.shortcuts import resolve_url, redirect
-from django.urls import reverse
+from django.urls import reverse, resolve, Resolver404
 from django.utils.functional import cached_property
 from django.utils.http import is_safe_url
 from social_django.models import Partial
@@ -64,6 +66,7 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
         context.update({
             'redirect_field_name': self.redirect_field_name,
             'redirect_to': self.request.GET.get(self.redirect_field_name),
+            'oidc_client': self.get_next_authorize_oidc_client(),
         })
         if self.steps.current == 'auth':
             context.update({
@@ -71,6 +74,27 @@ class SocialTwoFactorLoginView(TwoFactorLoginView):
                 'awaiting_activation': 'awaiting-activation' in self.request.GET,
             })
         return context
+
+    def get_next_authorize_oidc_client(self):
+        """Parses the next redirect URL to discover which OIDC client the user will be authorizing on the next page
+
+        This is opportunistic; if anything it fails silently and returns None.
+
+        A URL of </login/?next=/authorize%3Fclient_id%3Dabcdef%26…> etc will result in the Client with a client_id of
+        abcdef being returned.
+        """
+        if self.redirect_field_name in self.request.GET:
+            try:
+                resolver_match = resolve(self.request.GET[self.redirect_field_name].split('?', 1)[0])
+                if resolver_match.view_name == 'oidc_provider:authorize':
+                    query = parse_qs(urlparse(self.request.GET[self.redirect_field_name]).query)
+                    # Ensure they've specified one and only one client ID, so that an attacker can't construct a URL
+                    # that shows one client name on the login page, and another on the authorize page.
+                    if len(query.get('client_id', [])) == 1:
+                        from oidc_provider.models import Client
+                        return Client.objects.filter(client_id=query['client_id'][0]).first()
+            except Resolver404:
+                pass
 
     def dispatch(self, request, *args, **kwargs):
         redirect_to = self.request.GET.get(self.redirect_field_name, '')
