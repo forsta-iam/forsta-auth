@@ -55,20 +55,6 @@ urlpatterns = [
     url(r'^activate/(?P<activation_key>[-:\w]+)/$',
         forsta_auth.onboarding.views.ActivationView.as_view(),
         name='registration_activate'),
-    url(r'^register/$',
-        registration_views.RegistrationView.as_view(),
-        name='registration_register'),
-    url(r'^register/complete/$',
-        TemplateView.as_view(
-            template_name='registration/registration_complete.html'
-        ),
-        name='registration_complete'),
-    url(r'^register/closed/$',
-        TemplateView.as_view(
-            template_name='registration/registration_closed.html'
-        ),
-        name='registration_disallowed'),
-    url(r'', include('django_registration.backends.activation.urls')),
 
     url(r'^saml-metadata/$', forsta_auth.saml.views.SAMLMetadataView.as_view(), name='saml-metadata'),
     # OpenID Connect
